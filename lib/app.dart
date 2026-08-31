@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:new_strucuture/features/main_screen/cubit/cubit.dart';
 import 'package:new_strucuture/features/forget_password/cubit/cubit.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:go_router/go_router.dart';
 import 'config/routes/app_routes.dart';
 import 'config/themes/app_theme.dart';
 import 'config/themes/theme_cubit.dart';
@@ -11,6 +11,9 @@ import 'core/utils/app_strings.dart';
 import 'package:new_strucuture/injector.dart' as injector;
 import 'features/login/cubit/cubit.dart';
 import 'features/splash/cubit/cubit.dart';
+import 'features/auth/cubit/auth_cubit.dart';
+import 'features/cart/cubit/cart_cubit.dart';
+import 'features/store/cubit/store_cubit.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -20,49 +23,56 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final AuthCubit _authCubit;
+  late final CartCubit _cartCubit;
+  late final GoRouter _router;
+
   @override
   void initState() {
     super.initState();
+    _authCubit = injector.serviceLocator<AuthCubit>();
+    _cartCubit = injector.serviceLocator<CartCubit>();
+    _router = AppRoutes.createRouter(_authCubit);
   }
 
   @override
   void dispose() {
+    _router.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => injector.serviceLocator<SplashCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<LoginCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<MainCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<ThemeCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => injector.serviceLocator<ForgetPasswordCubit>(),
-          ),
-        ],
-        child: BlocBuilder<ThemeCubit, ThemeMode>(
-            builder: (context, themeMode) {
-              return GetMaterialApp(
-                supportedLocales: context.supportedLocales,
-                locale: context.locale,
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                themeMode: themeMode,
-                localizationsDelegates: context.localizationDelegates,
-                debugShowCheckedModeBanner: false,
-                title: AppStrings.appName,
-                onGenerateRoute: AppRoutes.onGenerateRoute,
-              );
-            }));
+      providers: [
+        BlocProvider(create: (_) => injector.serviceLocator<SplashCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<LoginCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<MainCubit>()),
+        BlocProvider(create: (_) => injector.serviceLocator<ThemeCubit>()),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<ForgetPasswordCubit>(),
+        ),
+        BlocProvider.value(value: _authCubit),
+        BlocProvider.value(value: _cartCubit),
+        BlocProvider(
+          create: (_) => injector.serviceLocator<StoreCubit>()..watch(),
+        ),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp.router(
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            localizationsDelegates: context.localizationDelegates,
+            debugShowCheckedModeBanner: false,
+            title: AppStrings.appName,
+            routerConfig: _router,
+          );
+        },
+      ),
+    );
   }
 }

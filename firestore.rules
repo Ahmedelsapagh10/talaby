@@ -1,0 +1,114 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function member(ownerId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/owners/$(ownerId)/members/$(request.auth.uid));
+    }
+
+    function memberRole(ownerId) {
+      return get(/databases/$(database)/documents/owners/$(ownerId)/members/$(request.auth.uid)).data.role;
+    }
+
+    function managesStore(ownerId) {
+      return member(ownerId) && memberRole(ownerId) in ['admin', 'staff'];
+    }
+
+    match /users/{uid} {
+      allow read, create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    match /owners/{ownerId} {
+      allow read: if resource.data.active == true || managesStore(ownerId);
+      allow update: if managesStore(ownerId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'slug', 'logoUrl', 'primaryColor', 'secondaryColor',
+          'phone', 'whatsappPhone', 'email', 'instagram', 'facebook',
+          'updatedAt'
+        ]);
+      allow create, delete: if false;
+
+      match /members/{uid} {
+        allow read: if signedIn() && (request.auth.uid == uid || managesStore(ownerId));
+        allow write: if false;
+      }
+
+      match /products/{productId} {
+        allow read: if resource.data.active == true || managesStore(ownerId);
+        allow create: if managesStore(ownerId)
+          && request.resource.data.ownerId == ownerId;
+        allow update: if (managesStore(ownerId)
+          && request.resource.data.ownerId == ownerId)
+          || (signedIn()
+            && request.resource.data.ownerId == resource.data.ownerId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'stock', 'variants', 'updatedAt'
+            ]));
+        allow delete: if false;
+      }
+
+      match /categories/{categoryId} {
+        allow read: if resource.data.active == true || managesStore(ownerId);
+        allow create, update: if managesStore(ownerId);
+        allow delete: if false;
+      }
+
+      match /settings/{settingId} {
+        allow read: if resource.data.public == true || managesStore(ownerId);
+        allow write: if managesStore(ownerId);
+      }
+
+      match /orders/{orderId} {
+        allow read: if managesStore(ownerId)
+          || (signedIn() && resource.data.customerId == request.auth.uid);
+        allow create: if signedIn()
+          && request.resource.data.customerId == request.auth.uid;
+        allow update: if managesStore(ownerId)
+          || (signedIn()
+            && resource.data.customerId == request.auth.uid
+            && request.resource.data.customerId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'payments', 'paidAmount', 'remainingAmount', 'paymentStatus',
+              'events', 'updatedAt'
+            ]));
+        allow delete: if false;
+
+        match /adminEvents/{eventId} {
+          allow read: if managesStore(ownerId);
+          allow create: if signedIn();
+          allow update, delete: if false;
+        }
+      }
+
+      match /customers/{customerId} {
+        allow read: if managesStore(ownerId)
+          || (signedIn() && customerId == request.auth.uid);
+        allow create, update: if signedIn()
+          && customerId == request.auth.uid;
+        allow delete: if false;
+      }
+
+      match /reviews/{reviewId} {
+        allow read: if resource.data.approved == true || managesStore(ownerId);
+        allow create: if signedIn()
+          && request.resource.data.customerId == request.auth.uid
+          && request.resource.data.approved == false
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5;
+        allow update, delete: if managesStore(ownerId);
+      }
+
+      match /counters/{counterId} {
+        allow read, create, update: if signedIn();
+        allow delete: if false;
+      }
+    }
+  }
+}

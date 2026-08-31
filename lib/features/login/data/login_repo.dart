@@ -4,7 +4,10 @@ class LoginRepo {
   BaseApiConsumer dio;
   LoginRepo(this.dio);
   Future<Either<Failure, LoginModel>> login(
-      String phone, String phoneCode, String name) async {
+    String phone,
+    String phoneCode,
+    String name,
+  ) async {
     try {
       var response = await dio.post(
         EndPoints.loginUrl,

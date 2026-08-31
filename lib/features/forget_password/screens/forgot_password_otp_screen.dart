@@ -6,9 +6,12 @@ import 'package:new_strucuture/features/forget_password/data/model/forget_passwo
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 import 'package:pinput/pinput.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordOtpScreen extends StatefulWidget {
-  const ForgotPasswordOtpScreen({super.key});
+  const ForgotPasswordOtpScreen({super.key, required this.email});
+
+  final String email;
 
   @override
   State<ForgotPasswordOtpScreen> createState() =>
@@ -34,7 +37,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final email = ModalRoute.of(context)!.settings.arguments as String;
+    final email = widget.email;
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth > 600;
 
@@ -81,10 +84,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
         child: BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
           listener: (context, state) {
             if (state is ForgetPasswordCodeVerified) {
-              Navigator.pushNamed(
-                context,
+              context.push(
                 Routes.forgotPasswordResetRoute,
-                arguments: ForgotPasswordResetArgs(
+                extra: ForgotPasswordResetArgs(
                   email: state.email,
                   code: state.code,
                 ),

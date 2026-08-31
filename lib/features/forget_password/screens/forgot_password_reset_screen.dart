@@ -5,9 +5,12 @@ import 'package:new_strucuture/config/routes/app_routes.dart';
 import 'package:new_strucuture/features/forget_password/data/model/forget_password_model.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordResetScreen extends StatefulWidget {
-  const ForgotPasswordResetScreen({super.key});
+  const ForgotPasswordResetScreen({super.key, required this.args});
+
+  final ForgotPasswordResetArgs args;
 
   @override
   State<ForgotPasswordResetScreen> createState() =>
@@ -42,8 +45,7 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as ForgotPasswordResetArgs;
+    final args = widget.args;
     final email = args.email;
     final code = args.code;
 
@@ -83,11 +85,7 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
               // Clean Cubit State
               context.read<ForgetPasswordCubit>().reset();
               // Navigate back to Login Screen cleanly
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                Routes.loginRoute,
-                (route) => false,
-              );
+              context.go(Routes.loginRoute);
             } else if (state is ForgetPasswordError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

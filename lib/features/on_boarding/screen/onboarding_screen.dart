@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../config/routes/app_routes.dart';
 import '../../../core/utils/app_colors.dart';
@@ -25,7 +26,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     await preferences.setBool('onBoarding', true);
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, Routes.loginRoute);
+    context.go(Routes.loginRoute);
   }
 
   @override

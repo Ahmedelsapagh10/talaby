@@ -72,8 +72,9 @@ class UploadImagesToS3Api {
 
       log('Canonical Request:\n$canonicalRequest\n');
 
-      final hashedCanonicalRequest =
-          sha256.convert(utf8.encode(canonicalRequest)).toString();
+      final hashedCanonicalRequest = sha256
+          .convert(utf8.encode(canonicalRequest))
+          .toString();
 
       final stringToSign = [
         'AWS4-HMAC-SHA256',

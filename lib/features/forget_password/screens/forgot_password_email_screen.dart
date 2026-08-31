@@ -6,6 +6,7 @@ import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordEmailScreen extends StatefulWidget {
   const ForgotPasswordEmailScreen({super.key});
@@ -73,11 +74,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   backgroundColor: AppColors.success59,
                 ),
               );
-              Navigator.pushNamed(
-                context,
-                Routes.forgotPasswordOtpRoute,
-                arguments: state.email,
-              );
+              context.push(Routes.forgotPasswordOtpRoute, extra: state.email);
             } else if (state is ForgetPasswordError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

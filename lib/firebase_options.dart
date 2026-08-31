@@ -53,7 +53,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '71941644517',
     projectId: 'talabyx',
     storageBucket: 'talabyx.firebasestorage.app',
-    iosClientId: '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
+    iosClientId:
+        '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
     iosBundleId: 'net.octopusteam.talaby',
   );
   static const FirebaseOptions web = FirebaseOptions(
@@ -72,7 +73,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '71941644517',
     projectId: 'talabyx',
     storageBucket: 'talabyx.firebasestorage.app',
-    iosClientId: '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
+    iosClientId:
+        '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
     iosBundleId: 'net.octopusteam.talaby',
   );
 

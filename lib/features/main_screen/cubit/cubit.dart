@@ -11,7 +11,8 @@ class MainCubit extends Cubit<MainState> {
     emit(MainLoading());
     final result = await api.getProducts();
     result.fold(
-      (failure) => emit(MainError("Failed to load products. Please try again.")),
+      (failure) =>
+          emit(MainError("Failed to load products. Please try again.")),
       (products) => emit(MainLoaded(products)),
     );
   }

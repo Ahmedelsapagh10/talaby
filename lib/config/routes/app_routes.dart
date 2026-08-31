@@ -1,105 +1,205 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:new_strucuture/features/forget_password/screens/forgot_password_email_screen.dart';
-import 'package:new_strucuture/features/forget_password/screens/forgot_password_otp_screen.dart';
-import 'package:new_strucuture/features/forget_password/screens/forgot_password_reset_screen.dart';
-import 'package:new_strucuture/features/main_screen/screens/main_screen.dart';
-import 'package:new_strucuture/features/on_boarding/screen/onboarding_screen.dart';
-import 'package:new_strucuture/features/splash/screens/splash_screen.dart';
-import '../../core/utils/app_strings.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../features/auth/cubit/auth_cubit.dart';
+import '../../features/auth/cubit/auth_state.dart';
+import '../../features/cart/presentation/cart_page.dart';
+import '../../features/catalog/cubit/categories_cubit.dart';
+import '../../features/catalog/cubit/products_cubit.dart';
+import '../../features/catalog/cubit/product_details_cubit.dart';
+import '../../features/checkout/cubit/checkout_cubit.dart';
+import '../../features/checkout/presentation/checkout_page.dart';
+import '../../features/forget_password/screens/forgot_password_email_screen.dart';
+import '../../features/forget_password/screens/forgot_password_otp_screen.dart';
+import '../../features/forget_password/screens/forgot_password_reset_screen.dart';
+import '../../features/forget_password/data/model/forget_password_model.dart';
 import '../../features/login/screens/login_screen.dart';
+import '../../features/on_boarding/screen/onboarding_screen.dart';
+import '../../features/order_tracking/presentation/order_tracking_page.dart';
+import '../../features/orders/cubit/order_tracking_cubit.dart';
+import '../../features/orders/cubit/customer_orders_cubit.dart';
+import '../../features/product_details/presentation/product_details_page.dart';
+import '../../features/reviews/cubit/reviews_cubit.dart';
+import '../../features/shop/presentation/shop_page.dart';
+import '../../features/splash/screens/splash_screen.dart';
+import '../../injector.dart';
+import 'admin_routes.dart';
+import 'route_placeholder_page.dart';
 
 class Routes {
-  static const String initialRoute = '/';
-  static const String loginRoute = '/login';
-  static const String mainRoute = '/main';
-  static const String forgotPasswordEmailRoute = '/forgot-password/email';
-  static const String forgotPasswordOtpRoute = '/forgot-password/otp';
-  static const String forgotPasswordResetRoute = '/forgot-password/reset';
-  static const String onboardingPageScreenRoute = '/onboardingPageScreenRoute';
+  const Routes._();
+
+  static const initialRoute = '/';
+  static const productsRoute = '/products';
+  static const productRoute = '/product/:id';
+  static const cartRoute = '/cart';
+  static const checkoutRoute = '/checkout';
+  static const orderRoute = '/orders/:id';
+  static const accountRoute = '/account';
+  static const loginRoute = '/login';
+  static const splashRoute = '/splash';
+  static const onboardingPageScreenRoute = '/onboarding';
+  static const mainRoute = productsRoute;
+  static const forgotPasswordEmailRoute = '/forgot-password/email';
+  static const forgotPasswordOtpRoute = '/forgot-password/otp';
+  static const forgotPasswordResetRoute = '/forgot-password/reset';
 }
 
 class AppRoutes {
-  static String route = '';
+  const AppRoutes._();
 
-  static Route onGenerateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case Routes.initialRoute:
-        return MaterialPageRoute(builder: (context) => const SplashScreen());
-
-      // case Routes.detailsRoute:
-      //   final service = settings.arguments as ServicesModel;
-      //   return MaterialPageRoute(
-      //     // Extract the service model argument from the settings arguments map
-      //
-      //     builder: (context) => Details(service: service),
-      //   );
-      //
-      case Routes.loginRoute:
-        return PageTransition(
-          child: const LoginScreen(),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
-
-      case Routes.onboardingPageScreenRoute:
-        return PageTransition(
-          child: const OnBoardingScreen(),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
-      case Routes.mainRoute:
-        return PageTransition(
-          child: const MainScreen(),
-          type: PageTransitionType.fade,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 800),
-        );
-      case Routes.forgotPasswordEmailRoute:
-        return PageTransition(
-          child: const ForgotPasswordEmailScreen(),
-          type: PageTransitionType.rightToLeft,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 400),
-        );
-      case Routes.forgotPasswordOtpRoute:
-        return PageTransition(
-          child: const ForgotPasswordOtpScreen(),
-          type: PageTransitionType.rightToLeft,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 400),
-          settings: settings,
-        );
-      case Routes.forgotPasswordResetRoute:
-        return PageTransition(
-          child: const ForgotPasswordResetScreen(),
-          type: PageTransitionType.rightToLeft,
-          alignment: Alignment.center,
-          duration: const Duration(milliseconds: 400),
-          settings: settings,
-        );
-      //
-      // case Routes.resultOfLessonExam:
-      //   ResponseOfApplyLessonExmamData model =
-      //       settings.arguments as ResponseOfApplyLessonExmamData;
-      //   return PageTransition(
-      //     child: ResultExamLessonScreen(model: model),
-      //     type: PageTransitionType.fade,
-      //     alignment: Alignment.center,
-      //     duration: const Duration(milliseconds: 800),
-      //   );
-
-      default:
-        return undefinedRoute();
-    }
+  static GoRouter createRouter(AuthCubit authCubit) {
+    return GoRouter(
+      initialLocation: Routes.initialRoute,
+      refreshListenable: CubitRouterRefresh(authCubit),
+      redirect: (context, state) => _redirect(authCubit.state, state),
+      routes: [
+        GoRoute(
+          path: Routes.splashRoute,
+          builder: (_, _) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: Routes.onboardingPageScreenRoute,
+          builder: (_, _) => const OnBoardingScreen(),
+        ),
+        GoRoute(
+          path: Routes.loginRoute,
+          builder: (_, _) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: Routes.forgotPasswordEmailRoute,
+          builder: (_, _) => const ForgotPasswordEmailScreen(),
+        ),
+        GoRoute(
+          path: Routes.forgotPasswordOtpRoute,
+          builder: (_, state) =>
+              ForgotPasswordOtpScreen(email: state.extra?.toString() ?? ''),
+        ),
+        GoRoute(
+          path: Routes.forgotPasswordResetRoute,
+          builder: (_, state) => ForgotPasswordResetScreen(
+            args: state.extra is ForgotPasswordResetArgs
+                ? state.extra! as ForgotPasswordResetArgs
+                : const ForgotPasswordResetArgs(email: '', code: ''),
+          ),
+        ),
+        GoRoute(
+          path: Routes.initialRoute,
+          builder: (_, _) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) =>
+                    serviceLocator<ProductsCubit>()..load(featured: true),
+              ),
+              BlocProvider(
+                create: (_) => serviceLocator<CategoriesCubit>()..load(),
+              ),
+            ],
+            child: const ShopPage(),
+          ),
+        ),
+        GoRoute(
+          path: Routes.productsRoute,
+          builder: (_, _) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => serviceLocator<ProductsCubit>()..load(),
+              ),
+              BlocProvider(
+                create: (_) => serviceLocator<CategoriesCubit>()..load(),
+              ),
+            ],
+            child: const ShopPage(),
+          ),
+        ),
+        GoRoute(
+          path: Routes.productRoute,
+          builder: (_, state) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) =>
+                    serviceLocator<ProductDetailsCubit>()
+                      ..watch(state.pathParameters['id']!),
+              ),
+              BlocProvider(
+                create: (_) =>
+                    serviceLocator<ReviewsCubit>()
+                      ..load(state.pathParameters['id']!),
+              ),
+            ],
+            child: const ProductDetailsPage(),
+          ),
+        ),
+        GoRoute(path: Routes.cartRoute, builder: (_, _) => const CartPage()),
+        GoRoute(
+          path: Routes.checkoutRoute,
+          builder: (_, _) => BlocProvider(
+            create: (_) => serviceLocator<CheckoutCubit>(),
+            child: const CheckoutPage(),
+          ),
+        ),
+        GoRoute(
+          path: Routes.orderRoute,
+          builder: (_, state) => BlocProvider(
+            create: (_) =>
+                serviceLocator<OrderTrackingCubit>()
+                  ..watch(state.pathParameters['id']!),
+            child: const OrderTrackingPage(),
+          ),
+        ),
+        GoRoute(
+          path: Routes.accountRoute,
+          builder: (_, _) => BlocProvider(
+            create: (_) =>
+                serviceLocator<CustomerOrdersCubit>()
+                  ..load(authCubit.state.session!.uid),
+            child: const RoutePlaceholderPage(title: 'Account'),
+          ),
+        ),
+        ...buildAdminRoutes(),
+      ],
+      errorBuilder: (_, state) => RoutePlaceholderPage(
+        title: 'Page not found',
+        message: state.error?.toString(),
+      ),
+    );
   }
 
-  static Route<dynamic> undefinedRoute() {
-    return MaterialPageRoute(
-      builder: (context) =>
-          const Scaffold(body: Center(child: Text(AppStrings.noRouteFound))),
-    );
+  static String? _redirect(AuthState auth, GoRouterState route) {
+    if (auth.status == AuthStatus.initial ||
+        auth.status == AuthStatus.loading) {
+      return null;
+    }
+    final path = route.uri.path;
+    final requiresAuth =
+        path == Routes.checkoutRoute ||
+        path == Routes.accountRoute ||
+        path.startsWith('/orders/') ||
+        path.startsWith('/admin');
+    if (requiresAuth && !auth.isAuthenticated) {
+      return '${Routes.loginRoute}?redirect=${Uri.encodeComponent(route.uri.toString())}';
+    }
+    if (path.startsWith('/admin') && !auth.isAdmin) return Routes.initialRoute;
+    if (path == Routes.loginRoute && auth.isAuthenticated) {
+      return route.uri.queryParameters['redirect'] ?? Routes.initialRoute;
+    }
+    return null;
+  }
+}
+
+class CubitRouterRefresh extends ChangeNotifier {
+  CubitRouterRefresh(AuthCubit cubit) {
+    _subscription = cubit.stream.listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<AuthState> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }

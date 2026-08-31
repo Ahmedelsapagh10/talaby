@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:new_strucuture/core/utils/assets_manager.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../config/routes/app_routes.dart';
-import '../../../../core/utils/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,9 +36,8 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _getStoreUser() async {
-    Navigator.pushReplacementNamed(context, Routes.loginRoute);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     if (prefs.getBool('onBoarding') == true) {
       //! un comment this case u make user mode
       //! and store it in locl and want use it
@@ -47,14 +45,10 @@ class _SplashScreenState extends State<SplashScreen>
       //  if (prefs.getString('user') != null) {
       //     Navigator.pushReplacementNamed(context, Routes.mainRoute);
       //   } else {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Routes.loginRoute,
-        ModalRoute.withName(Routes.initialRoute),
-      );
+      context.go(Routes.loginRoute);
       //   }
     } else {
-      Navigator.pushReplacementNamed(context, Routes.onboardingPageScreenRoute);
+      context.go(Routes.onboardingPageScreenRoute);
     }
   }
 

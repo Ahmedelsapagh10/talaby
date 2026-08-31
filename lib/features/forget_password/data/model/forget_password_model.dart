@@ -12,16 +12,10 @@ class VerifyCodeRequest {
   final String email;
   final String code;
 
-  VerifyCodeRequest({
-    required this.email,
-    required this.code,
-  });
+  VerifyCodeRequest({required this.email, required this.code});
 
   Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'code': code,
-    };
+    return {'email': email, 'code': code};
   }
 }
 
@@ -52,27 +46,22 @@ class ForgotPasswordResetArgs {
   final String email;
   final String code;
 
-  ForgotPasswordResetArgs({
-    required this.email,
-    required this.code,
-  });
+  const ForgotPasswordResetArgs({required this.email, required this.code});
 }
 
 class ForgetPasswordResponse {
   final bool success;
   final String message;
 
-  ForgetPasswordResponse({
-    required this.success,
-    required this.message,
-  });
+  ForgetPasswordResponse({required this.success, required this.message});
 
   factory ForgetPasswordResponse.fromJson(Map<String, dynamic> json) {
-    final String resolvedMessage = (json['message'] ??
-            json['msg'] ??
-            json['error'] ??
-            'Something went wrong.')
-        .toString();
+    final String resolvedMessage =
+        (json['message'] ??
+                json['msg'] ??
+                json['error'] ??
+                'Something went wrong.')
+            .toString();
 
     return ForgetPasswordResponse(
       success: json['success'] ?? false,

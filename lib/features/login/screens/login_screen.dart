@@ -2,7 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:new_strucuture/core/exports.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/core/widgets/custom_button.dart';
+import 'package:go_router/go_router.dart';
 import '../../../config/routes/app_routes.dart';
+import '../../auth/cubit/auth_cubit.dart';
+import '../../auth/cubit/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,52 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Simulate authentication delay
-      await Future.delayed(const Duration(milliseconds: 1200));
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        // Show a brief success toast
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'welcome_back_redirecting'.tr(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: AppColors.success59,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            duration: const Duration(seconds: 1),
-          ),
-        );
-
-        // Navigate to the main screen
-        Navigator.pushReplacementNamed(context, Routes.mainRoute);
-      }
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    final authCubit = context.read<AuthCubit>();
+    await authCubit.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (authCubit.state.status == AuthStatus.failure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authCubit.state.message ?? 'Unable to sign in.'),
+          backgroundColor: AppColors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
@@ -310,10 +284,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.forgotPasswordEmailRoute,
-                          );
+                          context.push(Routes.forgotPasswordEmailRoute);
                         },
                         child: Text(
                           "forgot_password".tr(),
