@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:new_strucuture/core/utils/assets_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -75,17 +75,30 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: const Color(0xFF191B1A),
       body: Stack(
         alignment: Alignment.center,
         children: [
           Center(
             child: Hero(
               tag: 'logo',
-              child: Lottie.asset(
-                ImageAssets.splashAnimation,
-                fit: BoxFit.contain,
-                repeat: true,
+              child: DefaultTextStyle(
+                style: const TextStyle(
+                  fontFamily: 'MajorMonoDisplay',
+                  fontSize: 48.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                child: AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText(
+                      'Talaby',
+                      speed: const Duration(milliseconds: 200),
+                    ),
+                  ],
+                  totalRepeatCount: 1,
+                  displayFullTextOnTap: true,
+                ),
               ),
             ),
           ),

@@ -1,4 +1,4 @@
-package net.elsapagh.flutter
+package net.octopusteam.talaby
 
 import io.flutter.embedding.android.FlutterActivity
 

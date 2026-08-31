@@ -228,7 +228,7 @@ flutter run
 Replace these template values:
 
 - Package name: `new_strucuture` (the spelling is inherited throughout Dart imports).
-- Android namespace/application ID: `net.elsapagh.flutter`.
+- Android namespace/application ID: `net.octopusteam.talaby`.
 - iOS bundle identifier and display name in the Xcode project.
 - App title, icon, splash animation, colors, translations, API URL, and notification channel.
 - Debug signing configuration in `android/app/build.gradle` with a release keystore.
