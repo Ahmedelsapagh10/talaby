@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '',
-    appId: '',
-    messagingSenderId: '',
-    projectId: '',
-    storageBucket: '',
+    apiKey: 'AIzaSyBdC516ePPMd3SB3ej9J1mHs7nzbiS_LC0',
+    appId: '1:71941644517:android:dade2ef918bb54bba8f40c',
+    messagingSenderId: '71941644517',
+    projectId: 'talabyx',
+    storageBucket: 'talabyx.firebasestorage.app',
+  );
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAPyNAo_TcbaD-sMrK08n65a9UFdcu2qhA',
+    appId: '1:71941644517:ios:32f024577d226983a8f40c',
+    messagingSenderId: '71941644517',
+    projectId: 'talabyx',
+    storageBucket: 'talabyx.firebasestorage.app',
+    iosClientId: '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
+    iosBundleId: 'net.octopusteam.talaby',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDIQaLuiXkMmNC9DOCulA19AhDi4ZHTgJ0',
+    appId: '1:71941644517:web:147b7ca7228ef702a8f40c',
+    messagingSenderId: '71941644517',
+    projectId: 'talabyx',
+    authDomain: 'talabyx.firebaseapp.com',
+    storageBucket: 'talabyx.firebasestorage.app',
+    measurementId: 'G-R1PJV7GZBD',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: '',
-    appId: '',
-    messagingSenderId: '',
-    projectId: '',
-    storageBucket: '',
-    iosBundleId: '',
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAPyNAo_TcbaD-sMrK08n65a9UFdcu2qhA',
+    appId: '1:71941644517:ios:32f024577d226983a8f40c',
+    messagingSenderId: '71941644517',
+    projectId: 'talabyx',
+    storageBucket: 'talabyx.firebasestorage.app',
+    iosClientId: '71941644517-ccce263ipohodqsdfm7ut8pet4bdbpiq.apps.googleusercontent.com',
+    iosBundleId: 'net.octopusteam.talaby',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDIQaLuiXkMmNC9DOCulA19AhDi4ZHTgJ0',
+    appId: '1:71941644517:web:4d9abe14c7ed9266a8f40c',
+    messagingSenderId: '71941644517',
+    projectId: 'talabyx',
+    authDomain: 'talabyx.firebaseapp.com',
+    storageBucket: 'talabyx.firebasestorage.app',
+    measurementId: 'G-SB4F9CP5GN',
   );
 }

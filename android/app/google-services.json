@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71941644517",
+    "project_id": "talabyx",
+    "storage_bucket": "talabyx.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71941644517:android:dade2ef918bb54bba8f40c",
+        "android_client_info": {
+          "package_name": "net.octopusteam.talaby"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71941644517-abkc74ltgb78hbpp2ovf9etbnrr2mbir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdC516ePPMd3SB3ej9J1mHs7nzbiS_LC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71941644517-abkc74ltgb78hbpp2ovf9etbnrr2mbir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
