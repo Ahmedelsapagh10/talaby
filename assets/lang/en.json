@@ -64,5 +64,11 @@
   "onboarding_two_title": "A clear architecture your team can trust",
   "onboarding_two_description": "Features, state, networking, storage, localization, and themes follow one consistent pattern that stays easy to understand and maintain.",
   "onboarding_three_title": "Ready for your idea—and ready to grow",
-  "onboarding_three_description": "Customize the structure, connect your services, and ship confidently with a foundation designed to evolve alongside your application."
+  "onboarding_three_description": "Customize the structure, connect your services, and ship confidently with a foundation designed to evolve alongside your application.",
+  "auth_required_title": "Sign in to continue",
+  "auth_required_message": "Sign in with Google or Apple to add favorites and place your order.",
+  "continue_with_google": "Continue with Google",
+  "continue_with_apple": "Continue with Apple",
+  "auth_sign_in_failed": "We couldn't sign you in. Please try again.",
+  "cancel": "Cancel"
 }

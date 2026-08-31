@@ -9,6 +9,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final int maxLines;
+  final FormFieldValidator<String>? validator;
 
   const AppTextField({
     super.key,
@@ -18,6 +19,7 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.validator,
   });
 
   @override
@@ -38,6 +40,7 @@ class AppTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           maxLines: maxLines,
+          validator: validator,
           style: AppTypography.bodyMedium,
           decoration: InputDecoration(
             hintText: hint,

@@ -44,7 +44,6 @@ class ProductRepository {
     Query<Map<String, dynamic>> query = _firestore
         .collection(FirestorePaths.products)
         .where('active', isEqualTo: true)
-        .orderBy('createdAt', descending: true)
         .limit(limit);
     if (categoryId != null) {
       query = query.where('categoryId', isEqualTo: categoryId);

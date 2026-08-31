@@ -9,7 +9,9 @@ import 'package:new_strucuture/features/splash/cubit/cubit.dart';
 import 'package:new_strucuture/features/forget_password/cubit/cubit.dart';
 import 'package:new_strucuture/features/forget_password/data/forget_password_repo.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/config/app_config.dart';
 import 'core/api/app_interceptors.dart';
 import 'core/api/base_api_consumer.dart';
 import 'core/api/dio_consumer.dart';
@@ -28,6 +30,7 @@ import 'features/auth/data/auth_repository.dart';
 import 'features/cart/cubit/cart_cubit.dart';
 import 'features/cart/data/cart_local_data_source.dart';
 import 'features/cart/data/cart_repository.dart';
+import 'features/cart/data/models/cart_item.dart';
 import 'features/catalog/cubit/products_cubit.dart';
 import 'features/catalog/cubit/product_details_cubit.dart';
 import 'features/catalog/cubit/categories_cubit.dart';
@@ -138,6 +141,9 @@ Future<void> setupDependencyInjection() async {
   await serviceLocator.reset();
   final sharedPreferences = await SharedPreferences.getInstance();
   serviceLocator.registerLazySingleton(() => sharedPreferences);
+  serviceLocator.registerLazySingleton<Box<CartItem>>(
+    () => Hive.box<CartItem>('cart_${AppConfig.ownerId}'),
+  );
   serviceLocator.registerLazySingleton(() => FirebaseAuth.instance);
   serviceLocator.registerLazySingleton(() => FirebaseFirestore.instance);
   serviceLocator.registerLazySingleton<TemplateImagePicker>(

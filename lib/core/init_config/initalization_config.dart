@@ -6,6 +6,10 @@ import 'package:new_strucuture/core/utils/system_ui.dart';
 import 'package:new_strucuture/firebase_options.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../../features/cart/data/models/cart_item.dart';
+import '../config/app_config.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:new_strucuture/injector.dart' as injector;
@@ -39,7 +43,6 @@ Future<void> initializationClass() async {
     debugPrint("Firebase is not configured or setup. Skipping initialization.");
   }
 
-  NotificationService notificationService = NotificationService();
   await EasyLocalization.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
 
@@ -55,7 +58,14 @@ Future<void> initializationClass() async {
     aOptions: getAndroidOptions(),
     iOptions: getIOSOptions(),
   );
-  await notificationService.initialize();
+  if (!kIsWeb) {
+    await NotificationService().initialize();
+  }
+
+  // Initialize Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(CartItemAdapter());
+  await Hive.openBox<CartItem>('cart_${AppConfig.ownerId}');
 
   await injector.setupDependencyInjection();
   await injector.setupCubit();

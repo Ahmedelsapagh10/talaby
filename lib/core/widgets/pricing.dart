@@ -37,18 +37,21 @@ class DiscountPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.end,
+      spacing: AppTokens.s8,
       children: [
         PriceText(price: discountedPrice, currency: currency, isLarge: true),
-        const SizedBox(width: AppTokens.s8),
-        Text(
-          '${originalPrice.toStringAsFixed(2)} $currency',
-          style: AppTypography.bodyMedium.copyWith(
-            color: Colors.grey.shade500,
-            decoration: TextDecoration.lineThrough,
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: 2,
+          ), // small adjustment for baseline alignment visually
+          child: Text(
+            '${originalPrice.toStringAsFixed(2)} $currency',
+            style: AppTypography.bodyMedium.copyWith(
+              color: Colors.grey.shade500,
+              decoration: TextDecoration.lineThrough,
+            ),
           ),
         ),
       ],

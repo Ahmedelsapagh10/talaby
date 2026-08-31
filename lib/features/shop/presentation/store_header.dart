@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../../../../config/routes/app_routes.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
+import '../../cart/cubit/cart_cubit.dart';
+import '../../cart/cubit/cart_state.dart';
 
 class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuPressed;
@@ -44,18 +50,30 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildMobile(BuildContext context) {
+    final bool canPop = context.canPop() && GoRouterState.of(context).uri.path != Routes.initialRoute;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconActionButton(icon: Icons.menu, onPressed: onMenuPressed),
-        Text('TALABY', style: AppTypography.h3),
         Row(
           children: [
+            if (canPop)
+              IconActionButton(
+                icon: Icons.arrow_back,
+                onPressed: () => context.pop(),
+              )
+            else
+              IconActionButton(icon: Icons.menu, onPressed: onMenuPressed),
+          ],
+        ),
+        GestureDetector(
+          onTap: () => context.go(Routes.initialRoute),
+          child: Text('TALABY', style: AppTypography.brandTitle),
+        ),
+        Row(
+          children: [
+            _buildLanguageButton(context),
             IconActionButton(icon: Icons.search, onPressed: onSearchPressed),
-            IconActionButton(
-              icon: Icons.shopping_bag_outlined,
-              onPressed: onCartPressed,
-            ),
+            _buildCartButton(context),
           ],
         ),
       ],
@@ -63,12 +81,23 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildDesktop(BuildContext context) {
+    final bool canPop = context.canPop() && GoRouterState.of(context).uri.path != Routes.initialRoute;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
-            Text('TALABY', style: AppTypography.h3),
+            if (canPop) ...[
+              IconActionButton(
+                icon: Icons.arrow_back,
+                onPressed: () => context.pop(),
+              ),
+              const SizedBox(width: AppTokens.s16),
+            ],
+            GestureDetector(
+              onTap: () => context.go(Routes.initialRoute),
+              child: Text('TALABY', style: AppTypography.brandTitle),
+            ),
             const SizedBox(width: AppTokens.s32),
             TextButton(
               onPressed: () {},
@@ -82,6 +111,8 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
         Row(
           children: [
+            _buildLanguageButton(context),
+            const SizedBox(width: AppTokens.s8),
             IconActionButton(icon: Icons.search, onPressed: onSearchPressed),
             const SizedBox(width: AppTokens.s8),
             IconActionButton(
@@ -91,13 +122,44 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: AppTokens.s8),
             IconActionButton(icon: Icons.favorite_border, onPressed: () {}),
             const SizedBox(width: AppTokens.s8),
-            IconActionButton(
-              icon: Icons.shopping_bag_outlined,
-              onPressed: onCartPressed,
-            ),
+            _buildCartButton(context),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildCartButton(BuildContext context) {
+    return BlocBuilder<CartCubit, CartState>(
+      builder: (context, state) {
+        return Badge(
+          isLabelVisible: state.itemCount > 0,
+          label: Text(state.itemCount.toString()),
+          backgroundColor: Colors.red,
+          child: IconActionButton(
+            icon: Icons.shopping_bag_outlined,
+            onPressed: () {
+              if (onCartPressed != null) {
+                onCartPressed!();
+              } else {
+                context.push(Routes.cartRoute);
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageButton(BuildContext context) {
+    return IconActionButton(
+      icon: Icons.language,
+      onPressed: () {
+        final newLocale = context.locale.languageCode == 'ar'
+            ? const Locale('en')
+            : const Locale('ar');
+        context.setLocale(newLocale);
+      },
     );
   }
 

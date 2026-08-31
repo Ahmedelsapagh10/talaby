@@ -1,3 +1,4 @@
+import 'package:hive/hive.dart';
 import '../../../../core/utils/money_calculator.dart';
 
 class CartItem {
@@ -67,6 +68,56 @@ class CartItem {
     'imageUrl': imageUrl,
     'quantity': quantity,
     'unitPrice': unitPrice,
-    'discountPerUnit': discountPerUnit,
   };
+}
+
+class CartItemAdapter extends TypeAdapter<CartItem> {
+  @override
+  final int typeId = 0;
+
+  @override
+  CartItem read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return CartItem(
+      productId: fields[0] as String,
+      productName: fields[1] as String,
+      quantity: fields[2] as int,
+      unitPrice: fields[3] as int,
+      discountPerUnit: fields[4] as int,
+      variantId: fields[5] as String?,
+      colorId: fields[6] as String?,
+      colorName: fields[7] as String?,
+      sizeId: fields[8] as String?,
+      imageUrl: fields[9] as String?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, CartItem obj) {
+    writer
+      ..writeByte(10)
+      ..writeByte(0)
+      ..write(obj.productId)
+      ..writeByte(1)
+      ..write(obj.productName)
+      ..writeByte(2)
+      ..write(obj.quantity)
+      ..writeByte(3)
+      ..write(obj.unitPrice)
+      ..writeByte(4)
+      ..write(obj.discountPerUnit)
+      ..writeByte(5)
+      ..write(obj.variantId)
+      ..writeByte(6)
+      ..write(obj.colorId)
+      ..writeByte(7)
+      ..write(obj.colorName)
+      ..writeByte(8)
+      ..write(obj.sizeId)
+      ..writeByte(9)
+      ..write(obj.imageUrl);
+  }
 }

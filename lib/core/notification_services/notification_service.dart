@@ -35,6 +35,8 @@ class NotificationService {
 
   /// **Initialize Notifications**
   Future<void> initialize() async {
+    if (kIsWeb) return;
+
     if (isFirebaseInitialized) {
       await _initializeFirebaseMessaging();
     } else {

@@ -45,21 +45,24 @@ class _ProductCardState extends State<ProductCard> {
             Expanded(
               child: Stack(
                 children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(AppTokens.r8),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: AnimatedScale(
-                      scale: _isHovered ? 1.05 : 1.0,
-                      duration: AppTokens.animNormal,
-                      child: CachedNetworkImage(
-                        imageUrl: widget.imageUrl,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.broken_image, color: Colors.grey),
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(AppTokens.r8),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: AnimatedScale(
+                        scale: _isHovered ? 1.05 : 1.0,
+                        duration: AppTokens.animNormal,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.imageUrl,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
                     ),
                   ),

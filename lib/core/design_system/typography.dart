@@ -32,6 +32,14 @@ class AppTypography {
   static TextStyle get h4 =>
       _base.copyWith(fontSize: 20, fontWeight: FontWeight.w600, height: 1.4);
 
+  static TextStyle get brandTitle => _base.copyWith(
+    fontFamily: titleFontFamily,
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+    height: 1,
+    letterSpacing: 1.2,
+  );
+
   // Body
   static TextStyle get bodyLarge =>
       _base.copyWith(fontSize: 18, fontWeight: FontWeight.w400, height: 1.5);

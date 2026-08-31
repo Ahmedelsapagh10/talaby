@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/product_ui.dart';
+import '../../auth/presentation/widgets/social_sign_in_dialog.dart';
+import '../../catalog/cubit/products_cubit.dart';
+import '../../catalog/cubit/products_state.dart';
+import '../../catalog/data/models/product.dart';
 import 'store_header.dart';
 
 class ShopPage extends StatelessWidget {
@@ -13,45 +20,54 @@ class ShopPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const StoreHeader(),
-      body: SingleChildScrollView(
-        child: ResponsiveContentWidth(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Hero Section
-              Container(
-                width: double.infinity,
-                height: 400,
-                color: Colors.grey.shade100,
-                child: Center(
-                  child: Text('Minimal Hero Area', style: AppTypography.h2),
+      body: BlocBuilder<ProductsCubit, ProductsState>(
+        builder: (context, state) {
+          if (state.status == ProductsStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final products = state.products.where(_hasVisibleData).toList();
+          if (products.isEmpty) return const SizedBox.shrink();
+          return SingleChildScrollView(
+            child: ResponsiveContentWidth(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppTokens.s16,
+                  AppTokens.s48,
+                  AppTokens.s16,
+                  AppTokens.s64,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Featured Products', style: AppTypography.h3),
+                    const SizedBox(height: AppTokens.s24),
+                    ResponsiveLayout(
+                      mobile: _buildProductGrid(context, products, 2),
+                      tablet: _buildProductGrid(context, products, 3),
+                      desktop: _buildProductGrid(context, products, 4),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppTokens.s48),
-
-              // Featured Products
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTokens.s16),
-                child: Text('Featured Products', style: AppTypography.h3),
-              ),
-              const SizedBox(height: AppTokens.s24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppTokens.s16),
-                child: ResponsiveLayout(
-                  mobile: _buildProductGrid(context, 2),
-                  tablet: _buildProductGrid(context, 3),
-                  desktop: _buildProductGrid(context, 4),
-                ),
-              ),
-              const SizedBox(height: AppTokens.s64),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProductGrid(BuildContext context, int crossAxisCount) {
+  bool _hasVisibleData(Product product) {
+    return product.id.isNotEmpty &&
+        product.name.trim().isNotEmpty &&
+        product.finalPrice > 0 &&
+        product.images.any((image) => image.trim().isNotEmpty);
+  }
+
+  Widget _buildProductGrid(
+    BuildContext context,
+    List<Product> products,
+    int crossAxisCount,
+  ) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -59,19 +75,32 @@ class ShopPage extends StatelessWidget {
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: AppTokens.s32,
         crossAxisSpacing: AppTokens.s24,
-        childAspectRatio: 0.65, // Adjust based on product card height
+        childAspectRatio: 0.65,
       ),
-      itemCount: 8,
+      itemCount: products.length,
       itemBuilder: (context, index) {
+        final product = products[index];
+        final originalPrice = _originalPrice(product);
         return ProductCard(
-          imageUrl: 'https://via.placeholder.com/300x400',
-          name: 'Premium Cotton T-Shirt ${index + 1}',
-          price: 299.00,
-          originalPrice: index % 3 == 0 ? 399.00 : null,
-          onTap: () {},
-          onFavoriteToggle: () {},
+          imageUrl: product.images.firstWhere(
+            (image) => image.trim().isNotEmpty,
+          ),
+          name: product.name,
+          price: product.finalPrice / 100,
+          originalPrice: originalPrice == null ? null : originalPrice / 100,
+          onTap: () => context.push('/product/${product.id}'),
+          onFavoriteToggle: () async {
+            await requireSocialSignIn(context);
+          },
         );
       },
     );
+  }
+
+  int? _originalPrice(Product product) {
+    if (product.oldPrice != null && product.oldPrice! > product.finalPrice) {
+      return product.oldPrice;
+    }
+    return product.basePrice > product.finalPrice ? product.basePrice : null;
   }
 }

@@ -21,6 +21,7 @@ import '../../features/on_boarding/screen/onboarding_screen.dart';
 import '../../features/order_tracking/presentation/order_tracking_page.dart';
 import '../../features/orders/cubit/order_tracking_cubit.dart';
 import '../../features/orders/cubit/customer_orders_cubit.dart';
+import '../../features/orders/presentation/customer_orders_page.dart';
 import '../../features/product_details/presentation/product_details_page.dart';
 import '../../features/reviews/cubit/reviews_cubit.dart';
 import '../../features/shop/presentation/shop_page.dart';
@@ -91,8 +92,7 @@ class AppRoutes {
           builder: (_, _) => MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (_) =>
-                    serviceLocator<ProductsCubit>()..load(featured: true),
+                create: (_) => serviceLocator<ProductsCubit>()..load(),
               ),
               BlocProvider(
                 create: (_) => serviceLocator<CategoriesCubit>()..load(),
@@ -156,7 +156,7 @@ class AppRoutes {
             create: (_) =>
                 serviceLocator<CustomerOrdersCubit>()
                   ..load(authCubit.state.session!.uid),
-            child: const RoutePlaceholderPage(title: 'Account'),
+            child: const CustomerOrdersPage(),
           ),
         ),
         ...buildAdminRoutes(),
