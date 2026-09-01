@@ -50,6 +50,7 @@ class OrderCheckoutDataSource {
 
       final resolvedItems = <Map<String, dynamic>>[];
       final productUpdates = <String, Map<String, dynamic>>{};
+      final stockMutations = <String, List<Map<String, int>>>{};
       var subtotal = 0;
       var discountAmount = 0;
       for (final requested in items) {
@@ -60,7 +61,30 @@ class OrderCheckoutDataSource {
         subtotal += (resolved.item['unitPrice'] as int) * requested.quantity;
         discountAmount += resolved.item['discountAmount'] as int;
         if (resolved.stockUpdate != null) {
-          productUpdates[requested.productId] = resolved.stockUpdate!;
+          productUpdates.update(
+            requested.productId,
+            (current) => {...current, ...resolved.stockUpdate!},
+            ifAbsent: () => resolved.stockUpdate!,
+          );
+          final mutations = stockMutations.putIfAbsent(
+            requested.productId,
+            () => [],
+          );
+          final existing = mutations.indexWhere(
+            (mutation) => mutation['variantIndex'] == resolved.variantIndex,
+          );
+          if (existing < 0) {
+            mutations.add({
+              'variantIndex': resolved.variantIndex,
+              'quantity': requested.quantity,
+            });
+          } else {
+            mutations[existing]['quantity'] =
+                mutations[existing]['quantity']! + requested.quantity;
+            if (mutations[existing]['quantity']! > 99) {
+              throw StateError('Order item quantity is invalid.');
+            }
+          }
         }
       }
 
@@ -74,8 +98,23 @@ class OrderCheckoutDataSource {
         'updatedAt': now,
       }, SetOptions(merge: true));
       for (final update in productUpdates.entries) {
+        final mutations = stockMutations[update.key]!
+          ..sort(
+            (first, second) =>
+                first['variantIndex']!.compareTo(second['variantIndex']!),
+          );
+        if (mutations.length > 5) {
+          throw StateError('Too many variants from one product in one order.');
+        }
         transaction.update(_firestore.doc(FirestorePaths.product(update.key)), {
           ...update.value,
+          'stockMutation': {
+            'orderId': orderRef.id,
+            'orderItemIndex': resolvedItems.indexWhere(
+              (item) => item['productId'] == update.key,
+            ),
+            'items': mutations,
+          },
           'updatedAt': now,
         });
       }
@@ -121,6 +160,7 @@ class OrderCheckoutDataSource {
         'searchPhone': SearchNormalizer.normalizePhone(customer['mobile']!),
         'orderCount': FieldValue.increment(1),
         'lastOrderAt': now,
+        'lastOrderId': orderRef.id,
         'updatedAt': now,
         if (!customerSnapshot.exists) 'createdAt': now,
       }, SetOptions(merge: true));

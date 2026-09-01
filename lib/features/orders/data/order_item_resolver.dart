@@ -1,10 +1,15 @@
 import '../../cart/data/models/cart_item.dart';
 
 class ResolvedOrderItem {
-  const ResolvedOrderItem({required this.item, this.stockUpdate});
+  const ResolvedOrderItem({
+    required this.item,
+    required this.variantIndex,
+    this.stockUpdate,
+  });
 
   final Map<String, dynamic> item;
   final Map<String, dynamic>? stockUpdate;
+  final int variantIndex;
 }
 
 class OrderItemResolver {
@@ -67,6 +72,7 @@ class OrderItemResolver {
 
     return ResolvedOrderItem(
       stockUpdate: stockUpdate,
+      variantIndex: variantIndex,
       item: {
         'productId': requested.productId,
         'productName': product['name']?.toString() ?? requested.productName,

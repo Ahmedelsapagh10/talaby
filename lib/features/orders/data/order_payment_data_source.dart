@@ -31,6 +31,10 @@ class OrderPaymentDataSource {
         throw StateError('Order was not found.');
       }
       final payments = orderRecordMaps(order?['payments']);
+      final remaining = (order?['remainingAmount'] as num?)?.toInt() ?? 0;
+      if (remaining <= 0 || claimedAmount > remaining) {
+        throw StateError('Payment amount exceeds the remaining order total.');
+      }
       payments.add({
         'id': paymentId,
         'proofUrl': proofUrl,

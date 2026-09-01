@@ -19,6 +19,296 @@ service cloud.firestore {
       return member(ownerId) && memberRole(ownerId) in ['admin', 'staff'];
     }
 
+    function validVariantStockChange(change) {
+      let index = change.variantIndex;
+      let quantity = change.quantity;
+      return index is int
+        && quantity is int
+        && index >= 0
+        && index < resource.data.variants.size()
+        && quantity >= 1
+        && quantity <= 99
+        && request.resource.data.variants[index]
+          .diff(resource.data.variants[index]).affectedKeys().hasOnly(['stock'])
+        && request.resource.data.variants[index].stock
+          == resource.data.variants[index].stock - quantity
+        && request.resource.data.variants[index].stock >= 0;
+    }
+
+    function validVariantStockMutations(changes) {
+      let before = resource.data.variants;
+      let after = request.resource.data.variants;
+      return before is list
+        && after is list
+        && before.size() == after.size()
+        && request.resource.data.stock == resource.data.stock
+        && (
+          (changes.size() == 1
+            && validVariantStockChange(changes[0])
+            && after.removeAll([after[changes[0].variantIndex]])
+              == before.removeAll([before[changes[0].variantIndex]]))
+          || (changes.size() == 2
+            && changes[0].variantIndex < changes[1].variantIndex
+            && validVariantStockChange(changes[0])
+            && validVariantStockChange(changes[1])
+            && after.removeAll([
+              after[changes[0].variantIndex], after[changes[1].variantIndex]
+            ]) == before.removeAll([
+              before[changes[0].variantIndex], before[changes[1].variantIndex]
+            ]))
+          || (changes.size() == 3
+            && changes[0].variantIndex < changes[1].variantIndex
+            && changes[1].variantIndex < changes[2].variantIndex
+            && validVariantStockChange(changes[0])
+            && validVariantStockChange(changes[1])
+            && validVariantStockChange(changes[2])
+            && after.removeAll([
+              after[changes[0].variantIndex], after[changes[1].variantIndex],
+              after[changes[2].variantIndex]
+            ]) == before.removeAll([
+              before[changes[0].variantIndex], before[changes[1].variantIndex],
+              before[changes[2].variantIndex]
+            ]))
+          || (changes.size() == 4
+            && changes[0].variantIndex < changes[1].variantIndex
+            && changes[1].variantIndex < changes[2].variantIndex
+            && changes[2].variantIndex < changes[3].variantIndex
+            && validVariantStockChange(changes[0])
+            && validVariantStockChange(changes[1])
+            && validVariantStockChange(changes[2])
+            && validVariantStockChange(changes[3])
+            && after.removeAll([
+              after[changes[0].variantIndex], after[changes[1].variantIndex],
+              after[changes[2].variantIndex], after[changes[3].variantIndex]
+            ]) == before.removeAll([
+              before[changes[0].variantIndex], before[changes[1].variantIndex],
+              before[changes[2].variantIndex], before[changes[3].variantIndex]
+            ]))
+          || (changes.size() == 5
+            && changes[0].variantIndex < changes[1].variantIndex
+            && changes[1].variantIndex < changes[2].variantIndex
+            && changes[2].variantIndex < changes[3].variantIndex
+            && changes[3].variantIndex < changes[4].variantIndex
+            && validVariantStockChange(changes[0])
+            && validVariantStockChange(changes[1])
+            && validVariantStockChange(changes[2])
+            && validVariantStockChange(changes[3])
+            && validVariantStockChange(changes[4])
+            && after.removeAll([
+              after[changes[0].variantIndex], after[changes[1].variantIndex],
+              after[changes[2].variantIndex], after[changes[3].variantIndex],
+              after[changes[4].variantIndex]
+            ]) == before.removeAll([
+              before[changes[0].variantIndex], before[changes[1].variantIndex],
+              before[changes[2].variantIndex], before[changes[3].variantIndex],
+              before[changes[4].variantIndex]
+            ]))
+        );
+    }
+
+    function validCheckoutStockUpdate(productId) {
+      let mutation = request.resource.data.stockMutation;
+      let changes = mutation.items;
+      let order = getAfter(/databases/$(database)/documents/owners/$(resource.data.ownerId)/orders/$(mutation.orderId)).data;
+      return signedIn()
+        && mutation is map
+        && changes is list
+        && mutation.keys().hasOnly(['orderId', 'orderItemIndex', 'items'])
+        && mutation.orderId is string
+        && mutation.orderItemIndex is int
+        && changes.size() >= 1
+        && changes.size() <= 5
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.updatedAt is timestamp
+        && order.customerId == request.auth.uid
+        && order.createdAt == request.time
+        && order.items is list
+        && mutation.orderItemIndex >= 0
+        && mutation.orderItemIndex < order.items.size()
+        && order.items[mutation.orderItemIndex].productId == productId
+        && (order.items.size() != 1
+          || (changes.size() == 1
+            && changes[0].quantity == order.items[0].quantity))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'stock', 'variants', 'stockMutation', 'updatedAt'
+        ])
+        && (
+          (changes.size() == 1
+            && changes[0].variantIndex == -1
+            && changes[0].quantity is int
+            && changes[0].quantity >= 1
+            && changes[0].quantity <= 99
+            && request.resource.data.variants == resource.data.variants
+            && request.resource.data.stock
+              == resource.data.stock - changes[0].quantity
+            && request.resource.data.stock >= 0)
+          || validVariantStockMutations(changes)
+        );
+    }
+
+    function validOrderCreate(ownerId) {
+      return request.resource.data.keys().hasOnly([
+          'readableOrderNumber', 'ownerId', 'customerId', 'customerName',
+          'phone', 'email', 'defaultCity', 'defaultAddress', 'searchName',
+          'searchPhone', 'searchPrefixes', 'city', 'address', 'notes', 'items',
+          'subtotal', 'discountAmount', 'deliveryFee', 'total', 'paidAmount',
+          'remainingAmount', 'paymentStatus', 'orderStatus', 'payments',
+          'events', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.ownerId == ownerId
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.readableOrderNumber is string
+        && request.resource.data.customerName is string
+        && request.resource.data.phone is string
+        && request.resource.data.city is string
+        && request.resource.data.address is string
+        && request.resource.data.searchPrefixes is list
+        && request.resource.data.items is list
+        && request.resource.data.items.size() >= 1
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.items[0] is map
+        && request.resource.data.items[0].productId is string
+        && request.resource.data.items[0].quantity is int
+        && request.resource.data.items[0].quantity >= 1
+        && request.resource.data.items[0].quantity <= 99
+        && request.resource.data.items[0].unitPrice is int
+        && request.resource.data.items[0].unitPrice > 0
+        && request.resource.data.items[0].discountAmount is int
+        && request.resource.data.items[0].discountAmount >= 0
+        && request.resource.data.items[0].lineTotal
+          == request.resource.data.items[0].unitPrice
+            * request.resource.data.items[0].quantity
+            - request.resource.data.items[0].discountAmount
+        && request.resource.data.subtotal is int
+        && request.resource.data.discountAmount is int
+        && request.resource.data.total is int
+        && request.resource.data.subtotal > 0
+        && request.resource.data.discountAmount >= 0
+        && request.resource.data.discountAmount <= request.resource.data.subtotal
+        && request.resource.data.deliveryFee == null
+        && request.resource.data.total
+          == request.resource.data.subtotal - request.resource.data.discountAmount
+        && request.resource.data.paidAmount == 0
+        && request.resource.data.remainingAmount == request.resource.data.total
+        && request.resource.data.paymentStatus == 'unpaid'
+        && request.resource.data.orderStatus == 'pending'
+        && request.resource.data.payments is list
+        && request.resource.data.payments.size() == 0
+        && request.resource.data.events is list
+        && request.resource.data.events.size() == 1
+        && request.resource.data.events[0].keys().hasOnly([
+          'type', 'timestamp', 'customerVisible', 'metadata'
+        ])
+        && request.resource.data.events[0].type == 'orderCreated'
+        && request.resource.data.events[0].customerVisible == true
+        && request.resource.data.events[0].timestamp is timestamp
+        && request.resource.data.events[0].metadata is map
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function validPaymentProofUpdate() {
+      let oldPayments = resource.data.payments;
+      let newPayments = request.resource.data.payments;
+      let oldEvents = resource.data.events;
+      let newEvents = request.resource.data.events;
+      let added = newPayments.size() > 0
+        ? newPayments[newPayments.size() - 1] : {};
+      let addedEvent = newEvents.size() > 0
+        ? newEvents[newEvents.size() - 1] : {};
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'payments', 'paidAmount', 'remainingAmount', 'paymentStatus',
+          'events', 'updatedAt'
+        ])
+        && oldPayments is list
+        && newPayments is list
+        && newPayments.size() == oldPayments.size() + 1
+        && newPayments.removeAll([added]) == oldPayments
+        && added is map
+        && added.keys().hasOnly([
+          'id', 'proofUrl', 'claimedAmount', 'confirmedAmount', 'status',
+          'createdAt', 'reviewedAt', 'reviewedBy'
+        ])
+        && added.id is string
+        && added.proofUrl is string
+        && added.proofUrl.size() <= 2048
+        && added.proofUrl.matches('https://.*')
+        && added.claimedAmount is int
+        && added.claimedAmount > 0
+        && added.claimedAmount <= resource.data.remainingAmount
+        && added.confirmedAmount == null
+        && added.status == 'proofSubmitted'
+        && added.createdAt is timestamp
+        && added.reviewedAt == null
+        && added.reviewedBy == null
+        && request.resource.data.paidAmount == resource.data.paidAmount
+        && request.resource.data.remainingAmount == resource.data.remainingAmount
+        && request.resource.data.paymentStatus
+          == (resource.data.paidAmount > 0
+            ? resource.data.paymentStatus : 'proofSubmitted')
+        && oldEvents is list
+        && newEvents is list
+        && newEvents.size() == oldEvents.size() + 1
+        && newEvents.removeAll([addedEvent]) == oldEvents
+        && addedEvent.keys().hasOnly([
+          'type', 'timestamp', 'customerVisible', 'metadata'
+        ])
+        && addedEvent.type == 'paymentProofSubmitted'
+        && addedEvent.customerVisible == true
+        && addedEvent.timestamp is timestamp
+        && addedEvent.metadata is map
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function validCustomerCreate(ownerId, customerId) {
+      let data = request.resource.data;
+      let lastOrderId = data.get('lastOrderId', null);
+      return data.keys().hasOnly([
+          'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
+          'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
+          'lastOrderId', 'createdAt', 'updatedAt'
+        ])
+        && data.orderCount is int
+        && data.orderCount >= 0
+        && data.orderCount <= 1
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && ((data.orderCount == 0
+            && data.lastOrderAt == null
+            && lastOrderId == null)
+          || (data.orderCount == 1
+            && data.lastOrderAt == request.time
+            && lastOrderId is string
+            && getAfter(/databases/$(database)/documents/owners/$(ownerId)/orders/$(lastOrderId)).data.customerId
+              == customerId
+            && getAfter(/databases/$(database)/documents/owners/$(ownerId)/orders/$(lastOrderId)).data.createdAt
+              == request.time));
+    }
+
+    function validCustomerUpdate(ownerId, customerId) {
+      let data = request.resource.data;
+      let oldLastOrderId = resource.data.get('lastOrderId', null);
+      let newLastOrderId = data.get('lastOrderId', null);
+      return data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
+          'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
+          'lastOrderId', 'updatedAt'
+        ])
+        && data.orderCount is int
+        && data.updatedAt is timestamp
+        && ((data.orderCount == resource.data.orderCount
+            && data.lastOrderAt == resource.data.lastOrderAt
+            && newLastOrderId == oldLastOrderId)
+          || (data.orderCount == resource.data.orderCount + 1
+            && data.lastOrderAt == request.time
+            && newLastOrderId is string
+            && newLastOrderId != oldLastOrderId
+            && getAfter(/databases/$(database)/documents/owners/$(ownerId)/orders/$(newLastOrderId)).data.customerId
+              == customerId
+            && getAfter(/databases/$(database)/documents/owners/$(ownerId)/orders/$(newLastOrderId)).data.createdAt
+              == request.time));
+    }
+
     match /users/{uid} {
       allow read, create, update: if signedIn() && request.auth.uid == uid;
       allow delete: if false;
@@ -27,7 +317,14 @@ service cloud.firestore {
         allow read: if signedIn() && request.auth.uid == uid;
         allow create, update: if signedIn()
           && request.auth.uid == uid
-          && request.resource.data.productId == productId;
+          && request.resource.data.keys().hasOnly([
+            'productId', 'ownerId', 'createdAt'
+          ])
+          && request.resource.data.productId == productId
+          && request.resource.data.ownerId is string
+          && request.resource.data.createdAt is timestamp
+          && exists(/databases/$(database)/documents/owners/$(request.resource.data.ownerId)/products/$(productId))
+          && get(/databases/$(database)/documents/owners/$(request.resource.data.ownerId)/products/$(productId)).data.active == true;
         allow delete: if signedIn() && request.auth.uid == uid;
       }
     }
@@ -53,11 +350,7 @@ service cloud.firestore {
           && request.resource.data.ownerId == ownerId;
         allow update: if (managesStore(ownerId)
           && request.resource.data.ownerId == ownerId)
-          || (signedIn()
-            && request.resource.data.ownerId == resource.data.ownerId
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-              'stock', 'variants', 'updatedAt'
-            ]));
+          || validCheckoutStockUpdate(productId);
         allow delete: if managesStore(ownerId)
           && resource.data.ownerId == ownerId;
       }
@@ -76,21 +369,34 @@ service cloud.firestore {
       match /orders/{orderId} {
         allow read: if managesStore(ownerId)
           || (signedIn() && resource.data.customerId == request.auth.uid);
-        allow create: if signedIn()
-          && request.resource.data.customerId == request.auth.uid;
+        allow create: if signedIn() && validOrderCreate(ownerId);
         allow update: if managesStore(ownerId)
           || (signedIn()
             && resource.data.customerId == request.auth.uid
             && request.resource.data.customerId == request.auth.uid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-              'payments', 'paidAmount', 'remainingAmount', 'paymentStatus',
-              'events', 'updatedAt'
-            ]));
+            && validPaymentProofUpdate());
         allow delete: if false;
 
         match /adminEvents/{eventId} {
           allow read: if managesStore(ownerId);
-          allow create: if signedIn();
+          allow create: if signedIn()
+            && request.resource.data.keys().hasOnly([
+              'type', 'performedBy', 'metadata', 'timestamp'
+            ])
+            && request.resource.data.type is string
+            && request.resource.data.performedBy == request.auth.uid
+            && request.resource.data.metadata is map
+            && request.resource.data.timestamp is timestamp
+            && ((managesStore(ownerId)
+                && request.resource.data.type in [
+                  'orderCreated', 'paymentProofSubmitted', 'paymentApproved',
+                  'paymentRejected', 'statusUpdated'
+                ])
+              || (request.resource.data.type in [
+                  'orderCreated', 'paymentProofSubmitted'
+                ]
+                && get(/databases/$(database)/documents/owners/$(ownerId)/orders/$(orderId)).data.customerId
+                  == request.auth.uid));
           allow update, delete: if false;
         }
       }
@@ -101,27 +407,31 @@ service cloud.firestore {
         allow create: if managesStore(ownerId)
           || (signedIn()
             && customerId == request.auth.uid
-            && request.resource.data.keys().hasOnly([
-              'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
-              'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
-              'createdAt', 'updatedAt'
-            ]));
+            && validCustomerCreate(ownerId, customerId));
         allow update: if managesStore(ownerId)
           || (signedIn()
             && customerId == request.auth.uid
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-              'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
-              'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
-              'updatedAt'
-            ]));
+            && validCustomerUpdate(ownerId, customerId));
         allow delete: if false;
       }
 
       match /reviews/{reviewId} {
         allow read: if resource.data.approved == true || managesStore(ownerId);
         allow create: if signedIn()
+          && request.resource.data.keys().hasOnly([
+            'productId', 'productName', 'customerId', 'displayName',
+            'rating', 'feedback', 'approved', 'createdAt'
+          ])
           && request.resource.data.customerId == request.auth.uid
+          && request.resource.data.productId is string
+          && request.resource.data.productName is string
+          && request.resource.data.productName.size() <= 200
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() <= 120
+          && request.resource.data.feedback is string
+          && request.resource.data.feedback.size() <= 2000
           && request.resource.data.approved == false
+          && request.resource.data.createdAt is timestamp
           && exists(/databases/$(database)/documents/owners/$(ownerId)/products/$(request.resource.data.productId))
           && get(/databases/$(database)/documents/owners/$(ownerId)/products/$(request.resource.data.productId)).data.active == true
           && request.resource.data.rating is int
@@ -131,7 +441,20 @@ service cloud.firestore {
       }
 
       match /counters/{counterId} {
-        allow read, create, update: if signedIn();
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.keys().hasOnly(['value', 'updatedAt'])
+          && request.resource.data.value is int
+          && request.resource.data.value == 10452
+          && request.resource.data.updatedAt is timestamp;
+        allow update: if signedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'value', 'updatedAt'
+          ])
+          && request.resource.data.value is int
+          && resource.data.value is int
+          && request.resource.data.value == resource.data.value + 1
+          && request.resource.data.updatedAt is timestamp;
         allow delete: if false;
       }
     }
