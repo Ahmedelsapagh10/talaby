@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/widgets/product_ui.dart';
@@ -8,6 +8,7 @@ import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';
 import '../../../catalog/data/models/product.dart';
 import '../../../wishlist/cubit/wishlist_cubit.dart';
 import '../../../wishlist/cubit/wishlist_state.dart';
+import '../../../product_details/presentation/widgets/product_quick_view_dialog.dart';
 
 class ShopProductGrid extends StatelessWidget {
   const ShopProductGrid({
@@ -41,7 +42,7 @@ class ShopProductGrid extends StatelessWidget {
             price: product.finalPrice / 100,
             originalPrice: originalPrice == null ? null : originalPrice / 100,
             isFavorite: wishlist.contains(product.id),
-            onTap: () => context.push('/product/${product.id}'),
+            onTap: () => ProductQuickViewDialog.show(context, product),
             onFavoriteToggle: () => _toggle(context, product.id),
           );
         },

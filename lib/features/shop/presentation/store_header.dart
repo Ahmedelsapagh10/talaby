@@ -8,6 +8,7 @@ import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../cart/cubit/cart_state.dart';
+import '../../cart/presentation/widgets/cart_checkout_dialog.dart';
 import 'widgets/store_header_menu.dart';
 
 class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -154,7 +155,7 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
               if (onCartPressed != null) {
                 onCartPressed!();
               } else {
-                context.push(Routes.cartRoute);
+                CartCheckoutDialog.show(context);
               }
             },
           ),

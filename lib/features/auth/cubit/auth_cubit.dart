@@ -45,6 +45,9 @@ class AuthCubit extends Cubit<AuthState> {
       _authenticate(_repository.signInWithGoogle);
   Future<void> signInWithApple() => _authenticate(_repository.signInWithApple);
 
+  Future<void> startGuestCheckout() =>
+      _authenticate(_repository.startGuestCheckout);
+
   Future<void> forgotPassword(String email) async {
     emit(const AuthState(status: AuthStatus.loading));
     try {

@@ -62,6 +62,13 @@ class AuthRepository {
     return (await loadSession(credential.user))!;
   }
 
+  Future<AuthSession> startGuestCheckout() async {
+    final current = _auth.currentUser;
+    if (current != null) return (await loadSession(current))!;
+    final credential = await _auth.signInAnonymously();
+    return (await loadSession(credential.user))!;
+  }
+
   Future<AuthSession> signInWithGoogle() async {
     UserCredential credential;
     if (kIsWeb) {

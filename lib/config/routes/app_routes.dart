@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+
 import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/auth/cubit/auth_state.dart';
-import '../../features/cart/presentation/cart_page.dart';
 import '../../features/catalog/cubit/products_cubit.dart';
-import '../../features/catalog/cubit/product_details_cubit.dart';
-import '../../features/checkout/cubit/checkout_cubit.dart';
-import '../../features/checkout/presentation/checkout_page.dart';
 import '../../features/forget_password/screens/forgot_password_email_screen.dart';
 import '../../features/forget_password/screens/forgot_password_otp_screen.dart';
 import '../../features/forget_password/screens/forgot_password_reset_screen.dart';
@@ -22,7 +19,7 @@ import '../../features/order_tracking/presentation/order_tracking_page.dart';
 import '../../features/orders/cubit/order_tracking_cubit.dart';
 import '../../features/orders/cubit/customer_orders_cubit.dart';
 import '../../features/orders/presentation/customer_orders_page.dart';
-import '../../features/product_details/presentation/product_details_page.dart';
+
 import '../../features/profile/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/reviews/cubit/reviews_cubit.dart';
@@ -39,9 +36,7 @@ class Routes {
 
   static const initialRoute = '/';
   static const productsRoute = '/products';
-  static const productRoute = '/product/:id';
-  static const cartRoute = '/cart';
-  static const checkoutRoute = '/checkout';
+
   static const orderRoute = '/orders/:id';
   static const accountRoute = '/account';
   static const profileRoute = '/profile';
@@ -114,24 +109,6 @@ class AppRoutes {
           ),
         ),
         GoRoute(
-          path: Routes.productRoute,
-          builder: (_, state) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) =>
-                    serviceLocator<ProductDetailsCubit>()
-                      ..watch(state.pathParameters['id']!),
-              ),
-              BlocProvider(
-                create: (_) =>
-                    serviceLocator<ReviewsCubit>()
-                      ..load(state.pathParameters['id']!),
-              ),
-            ],
-            child: const ProductDetailsPage(),
-          ),
-        ),
-        GoRoute(
           path: Routes.searchRoute,
           builder: (_, state) => BlocProvider(
             create: (_) => serviceLocator<ProductsCubit>(),
@@ -151,16 +128,6 @@ class AppRoutes {
                 serviceLocator<ProfileCubit>()
                   ..load(authCubit.state.session!.uid),
             child: const ProfilePage(),
-          ),
-        ),
-        GoRoute(path: Routes.cartRoute, builder: (_, _) => const CartPage()),
-        GoRoute(
-          path: Routes.checkoutRoute,
-          builder: (_, _) => BlocProvider(
-            create: (_) =>
-                serviceLocator<CheckoutCubit>()
-                  ..loadProfile(authCubit.state.session!.uid),
-            child: const CheckoutPage(),
           ),
         ),
         GoRoute(
@@ -200,7 +167,6 @@ class AppRoutes {
     final isAdminLogin = path == Routes.adminLoginRoute;
     final isAdminPath = path == '/admin' || path.startsWith('/admin/');
     final requiresCustomerAuth =
-        path == Routes.checkoutRoute ||
         path == Routes.accountRoute ||
         path == Routes.profileRoute ||
         path == Routes.wishlistRoute ||
