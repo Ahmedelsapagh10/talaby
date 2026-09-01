@@ -107,6 +107,33 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     }
   }
 
+  Future<String?> uploadBannerImage() async {
+    emit(
+      AdminSettingsState(
+        status: AdminSettingsStatus.uploading,
+        owner: state.owner,
+        settings: state.settings,
+      ),
+    );
+    try {
+      final urls = await _imageUploads.pickAndUpload(
+        purpose: ImageUploadPurpose.storeBanner,
+        maxFiles: 1,
+      );
+      emit(
+        AdminSettingsState(
+          status: AdminSettingsStatus.ready,
+          owner: state.owner,
+          settings: state.settings,
+        ),
+      );
+      return urls.firstOrNull;
+    } catch (error) {
+      _emitFailure(error);
+      return null;
+    }
+  }
+
   void _emitFailure(Object error, {Owner? owner, StoreSettings? settings}) {
     emit(
       AdminSettingsState(

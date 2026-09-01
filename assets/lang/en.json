@@ -12,6 +12,8 @@
   "men_clothing": "Men's Clothing",
   "women_clothing": "Women's Clothing",
   "try_again": "Try Again",
+  "generic_error_title": "Something went wrong",
+  "change_language": "Change language",
   "add_to_cart": "Add to Shopping Cart",
   "about_item": "About this item",
   "load_failed": "Failed to load products. Please try again.",
@@ -260,5 +262,15 @@
   "product_not_found": "Product not found",
   "checkout_failed": "Checkout failed.",
   "cart_empty": "Your cart is empty.",
-  "review_submit_failed": "Unable to submit review."
+  "review_submit_failed": "Unable to submit review.",
+  "shop_banner_title": "Everything you love, in one place",
+  "shop_banner_subtitle": "Discover our selected products and shop with ease.",
+  "banner_settings": "Main banner",
+  "show_banner": "Show banner in the store",
+  "upload_banner_image": "Upload banner image",
+  "remove_banner_image": "Remove banner image",
+  "banner_title_ar": "Arabic title",
+  "banner_title_en": "English title",
+  "banner_subtitle_ar": "Arabic description",
+  "banner_subtitle_en": "English description"
 }

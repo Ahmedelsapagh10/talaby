@@ -9,6 +9,7 @@ import '../../../../core/widgets/ux_states.dart';
 import '../../store/data/models/store_settings.dart';
 import '../cubit/admin_settings_cubit.dart';
 import '../cubit/admin_settings_state.dart';
+import 'widgets/admin_banner_settings_form.dart';
 import 'widgets/admin_settings_form.dart';
 
 class AdminSettingsPage extends StatefulWidget {
@@ -20,16 +21,20 @@ class AdminSettingsPage extends StatefulWidget {
 
 class _AdminSettingsPageState extends State<AdminSettingsPage> {
   final fields = OwnerFormFields();
+  final bannerFields = BannerFormFields();
   bool _initialized = false;
   bool _dirty = false;
   String _currency = 'EGP';
   bool _stockControl = true;
   bool _manualPayment = true;
   bool _cashOnDelivery = true;
+  bool _bannerEnabled = true;
+  String? _bannerImageUrl;
 
   @override
   void dispose() {
     fields.dispose();
+    bannerFields.dispose();
     super.dispose();
   }
 
@@ -50,7 +55,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
         }
         if (state.status == AdminSettingsStatus.failure && !_initialized) {
           return ErrorState(
-            message: state.message ?? 'load_settings_failed'.tr(),
+            message: 'load_settings_failed'.tr(),
             onRetry: context.read<AdminSettingsCubit>().load,
           );
         }
@@ -84,6 +89,22 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
                     onUploadLogo: context
                         .read<AdminSettingsCubit>()
                         .uploadAndSaveLogo,
+                  ),
+                  const SizedBox(height: AppTokens.s24),
+                  AdminBannerSettingsForm(
+                    fields: bannerFields,
+                    enabled: _bannerEnabled,
+                    imageUrl: _bannerImageUrl,
+                    busy: busy,
+                    onEnabledChanged: (value) => setState(() {
+                      _bannerEnabled = value;
+                      _dirty = true;
+                    }),
+                    onUploadImage: _uploadBannerImage,
+                    onRemoveImage: () => setState(() {
+                      _bannerImageUrl = null;
+                      _dirty = true;
+                    }),
                   ),
                   const SizedBox(height: AppTokens.s24),
                   StoreBehaviorForm(
@@ -132,6 +153,9 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
     _stockControl = settings.stockControlEnabled;
     _manualPayment = settings.manualPaymentEnabled;
     _cashOnDelivery = settings.cashOnDeliveryEnabled;
+    _bannerEnabled = settings.bannerEnabled;
+    _bannerImageUrl = settings.bannerImageUrl;
+    bannerFields.fill(settings);
   }
 
   Future<void> _save() async {
@@ -145,8 +169,23 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
         stockControlEnabled: _stockControl,
         manualPaymentEnabled: _manualPayment,
         cashOnDeliveryEnabled: _cashOnDelivery,
+        bannerEnabled: _bannerEnabled,
+        bannerTitleAr: bannerFields.titleAr.text.trim(),
+        bannerTitleEn: bannerFields.titleEn.text.trim(),
+        bannerSubtitleAr: bannerFields.subtitleAr.text.trim(),
+        bannerSubtitleEn: bannerFields.subtitleEn.text.trim(),
+        bannerImageUrl: _bannerImageUrl,
       ),
     );
+  }
+
+  Future<void> _uploadBannerImage() async {
+    final url = await context.read<AdminSettingsCubit>().uploadBannerImage();
+    if (!mounted || url == null) return;
+    setState(() {
+      _bannerImageUrl = url;
+      _dirty = true;
+    });
   }
 
   void _showUnsavedMessage() {

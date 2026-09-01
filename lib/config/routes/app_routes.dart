@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/auth/cubit/auth_state.dart';
 import '../../features/cart/presentation/cart_page.dart';
-import '../../features/catalog/cubit/categories_cubit.dart';
 import '../../features/catalog/cubit/products_cubit.dart';
 import '../../features/catalog/cubit/product_details_cubit.dart';
 import '../../features/checkout/cubit/checkout_cubit.dart';
@@ -96,29 +95,15 @@ class AppRoutes {
         ),
         GoRoute(
           path: Routes.initialRoute,
-          builder: (_, _) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => serviceLocator<ProductsCubit>()..load(),
-              ),
-              BlocProvider(
-                create: (_) => serviceLocator<CategoriesCubit>()..load(),
-              ),
-            ],
+          builder: (_, _) => BlocProvider(
+            create: (_) => serviceLocator<ProductsCubit>()..load(),
             child: const ShopPage(),
           ),
         ),
         GoRoute(
           path: Routes.productsRoute,
-          builder: (_, _) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => serviceLocator<ProductsCubit>()..load(),
-              ),
-              BlocProvider(
-                create: (_) => serviceLocator<CategoriesCubit>()..load(),
-              ),
-            ],
+          builder: (_, _) => BlocProvider(
+            create: (_) => serviceLocator<ProductsCubit>()..load(),
             child: const ShopPage(),
           ),
         ),

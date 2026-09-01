@@ -24,7 +24,7 @@ class AdminOverviewPage extends StatelessWidget {
         }
         if (state.status == AdminOrderStatus.failure && state.orders.isEmpty) {
           return ErrorState(
-            message: state.message ?? 'load_failed'.tr(),
+            message: 'load_failed'.tr(),
             onRetry: context.read<AdminOrderCubit>().load,
           );
         }

@@ -38,7 +38,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           }
           if (state.status == ProductDetailsStatus.failure) {
             return ErrorState(
-              message: state.message ?? 'load_product_failed'.tr(),
+              message: 'load_product_failed'.tr(),
               onRetry: () {},
             );
           }

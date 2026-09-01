@@ -17,8 +17,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onCartPressed;
   final VoidCallback? onAccountPressed;
   final VoidCallback? onWishlistPressed;
-  final VoidCallback? onCategoriesPressed;
-  final VoidCallback? onNewArrivalsPressed;
 
   const StoreHeader({
     super.key,
@@ -27,8 +25,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
     this.onCartPressed,
     this.onAccountPressed,
     this.onWishlistPressed,
-    this.onCategoriesPressed,
-    this.onNewArrivalsPressed,
   });
 
   @override
@@ -116,15 +112,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
               onTap: () => context.go(Routes.initialRoute),
               child: Text('TALABY', style: AppTypography.brandTitle),
             ),
-            const SizedBox(width: AppTokens.s32),
-            TextButton(
-              onPressed: onCategoriesPressed,
-              child: Text('categories'.tr(), style: AppTypography.buttonText),
-            ),
-            TextButton(
-              onPressed: onNewArrivalsPressed,
-              child: Text('new_arrivals'.tr(), style: AppTypography.buttonText),
-            ),
           ],
         ),
         Row(
@@ -183,11 +170,12 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildLanguageButton(BuildContext context) {
     return IconActionButton(
       icon: Icons.language,
-      onPressed: () {
+      tooltip: 'change_language'.tr(),
+      onPressed: () async {
         final newLocale = context.locale.languageCode == 'ar'
             ? const Locale('en')
             : const Locale('ar');
-        context.setLocale(newLocale);
+        await context.setLocale(newLocale);
       },
     );
   }

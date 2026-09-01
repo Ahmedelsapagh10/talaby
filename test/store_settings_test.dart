@@ -1,0 +1,22 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:new_strucuture/features/store/data/models/store_settings.dart';
+
+void main() {
+  test('store settings serialize admin banner configuration', () {
+    const settings = StoreSettings(
+      bannerEnabled: false,
+      bannerTitleAr: 'عنوان',
+      bannerTitleEn: 'Title',
+      bannerSubtitleAr: 'وصف',
+      bannerSubtitleEn: 'Description',
+      bannerImageUrl: 'https://example.com/banner.jpg',
+    );
+
+    expect(settings.toMap(), containsPair('bannerEnabled', false));
+    expect(settings.toMap(), containsPair('bannerTitleAr', 'عنوان'));
+    expect(
+      settings.toMap(),
+      containsPair('bannerImageUrl', 'https://example.com/banner.jpg'),
+    );
+  });
+}

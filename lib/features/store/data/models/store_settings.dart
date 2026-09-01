@@ -7,6 +7,12 @@ class StoreSettings {
     this.stockControlEnabled = true,
     this.manualPaymentEnabled = true,
     this.cashOnDeliveryEnabled = true,
+    this.bannerEnabled = true,
+    this.bannerTitleAr = '',
+    this.bannerTitleEn = '',
+    this.bannerSubtitleAr = '',
+    this.bannerSubtitleEn = '',
+    this.bannerImageUrl,
   });
 
   final String currencyCode;
@@ -14,6 +20,12 @@ class StoreSettings {
   final bool stockControlEnabled;
   final bool manualPaymentEnabled;
   final bool cashOnDeliveryEnabled;
+  final bool bannerEnabled;
+  final String bannerTitleAr;
+  final String bannerTitleEn;
+  final String bannerSubtitleAr;
+  final String bannerSubtitleEn;
+  final String? bannerImageUrl;
 
   factory StoreSettings.fromDocument(
     DocumentSnapshot<Map<String, dynamic>> doc,
@@ -25,6 +37,12 @@ class StoreSettings {
       stockControlEnabled: map['stockControlEnabled'] as bool? ?? true,
       manualPaymentEnabled: map['manualPaymentEnabled'] as bool? ?? true,
       cashOnDeliveryEnabled: map['cashOnDeliveryEnabled'] as bool? ?? true,
+      bannerEnabled: map['bannerEnabled'] as bool? ?? true,
+      bannerTitleAr: map['bannerTitleAr']?.toString() ?? '',
+      bannerTitleEn: map['bannerTitleEn']?.toString() ?? '',
+      bannerSubtitleAr: map['bannerSubtitleAr']?.toString() ?? '',
+      bannerSubtitleEn: map['bannerSubtitleEn']?.toString() ?? '',
+      bannerImageUrl: map['bannerImageUrl']?.toString(),
     );
   }
 
@@ -34,6 +52,12 @@ class StoreSettings {
     'stockControlEnabled': stockControlEnabled,
     'manualPaymentEnabled': manualPaymentEnabled,
     'cashOnDeliveryEnabled': cashOnDeliveryEnabled,
+    'bannerEnabled': bannerEnabled,
+    'bannerTitleAr': bannerTitleAr,
+    'bannerTitleEn': bannerTitleEn,
+    'bannerSubtitleAr': bannerSubtitleAr,
+    'bannerSubtitleEn': bannerSubtitleEn,
+    'bannerImageUrl': bannerImageUrl,
     'public': true,
   };
 }

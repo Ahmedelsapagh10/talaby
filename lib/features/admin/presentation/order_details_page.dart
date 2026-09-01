@@ -35,7 +35,7 @@ class OrderDetailsPage extends StatelessWidget {
           }
           if (state.status == OrderTrackingStatus.failure) {
             return ErrorState(
-              message: state.message ?? 'load_order_failed'.tr(),
+              message: 'load_order_failed'.tr(),
               onRetry: () {},
             );
           }

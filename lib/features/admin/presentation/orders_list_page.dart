@@ -46,7 +46,7 @@ class OrdersListPage extends StatelessWidget {
       return SizedBox(
         height: 360,
         child: ErrorState(
-          message: state.message ?? 'load_orders_failed'.tr(),
+          message: 'load_orders_failed'.tr(),
           onRetry: context.read<AdminOrderCubit>().load,
         ),
       );

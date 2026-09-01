@@ -94,7 +94,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       return SizedBox(
         height: 340,
         child: ErrorState(
-          message: state.message ?? 'load_products_failed'.tr(),
+          message: 'load_products_failed'.tr(),
           onRetry: context.read<AdminProductsCubit>().load,
         ),
       );

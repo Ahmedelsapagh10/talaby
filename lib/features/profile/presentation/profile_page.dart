@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           if (state.status == ProfileStatus.failure && state.profile == null) {
             return ErrorState(
-              message: state.message ?? 'profile_load_failed'.tr(),
+              message: 'profile_load_failed'.tr(),
               onRetry: () => context.read<ProfileCubit>().load(
                 context.read<AuthCubit>().state.session!.uid,
               ),

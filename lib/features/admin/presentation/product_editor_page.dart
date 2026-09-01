@@ -51,7 +51,7 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
         }
         if (state.status == ProductEditorStatus.failure && !_initialized) {
           return ErrorState(
-            message: state.message ?? 'load_product_failed'.tr(),
+            message: 'load_product_failed'.tr(),
             onRetry: context.read<ProductEditorCubit>().load,
           );
         }

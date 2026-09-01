@@ -10,11 +10,11 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('ar', ''), Locale('en', '')],
+      supportedLocales: const [Locale('ar'), Locale('en')],
       path: 'assets/lang',
       saveLocale: true,
-      startLocale: const Locale('ar', ''),
-      fallbackLocale: const Locale('ar', ''),
+      startLocale: const Locale('ar'),
+      fallbackLocale: const Locale('ar'),
       child: HotRestartController(
         child: ScreenUtilInit(
           designSize: const Size(360, 690),

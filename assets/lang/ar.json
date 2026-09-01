@@ -12,6 +12,8 @@
   "men_clothing": "ملابس رجالية",
   "women_clothing": "ملابس نسائية",
   "try_again": "أعد المحاولة",
+  "generic_error_title": "حدث خطأ ما",
+  "change_language": "تغيير اللغة",
   "add_to_cart": "إضافة إلى سلة التسوق",
   "about_item": "حول هذه السلعة",
   "load_failed": "فشل تحميل المنتجات. يرجى المحاولة مرة أخرى.",
@@ -260,5 +262,15 @@
   "product_not_found": "المنتج غير موجود",
   "checkout_failed": "تعذر إتمام الطلب.",
   "cart_empty": "سلة التسوق فارغة.",
-  "review_submit_failed": "تعذر إرسال التقييم."
+  "review_submit_failed": "تعذر إرسال التقييم.",
+  "shop_banner_title": "كل اللي بتحبه، في مكان واحد",
+  "shop_banner_subtitle": "اكتشف منتجاتنا المختارة وتسوق بسهولة.",
+  "banner_settings": "البانر الرئيسي",
+  "show_banner": "إظهار البانر في المتجر",
+  "upload_banner_image": "رفع صورة البانر",
+  "remove_banner_image": "حذف صورة البانر",
+  "banner_title_ar": "العنوان بالعربية",
+  "banner_title_en": "العنوان بالإنجليزية",
+  "banner_subtitle_ar": "الوصف بالعربية",
+  "banner_subtitle_en": "الوصف بالإنجليزية"
 }

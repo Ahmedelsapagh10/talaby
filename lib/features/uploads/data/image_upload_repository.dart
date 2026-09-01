@@ -5,6 +5,7 @@ enum ImageUploadPurpose {
   product,
   productColor,
   storeLogo,
+  storeBanner,
   paymentProof,
   review,
 }

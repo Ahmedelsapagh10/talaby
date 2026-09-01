@@ -64,7 +64,7 @@ class AdminReviewsPage extends StatelessWidget {
       return SizedBox(
         height: 340,
         child: ErrorState(
-          message: state.message ?? 'load_reviews_failed'.tr(),
+          message: 'load_reviews_failed'.tr(),
           onRetry: () => context.read<AdminReviewsCubit>().load(
             approved: state.approvedFilter,
           ),

@@ -81,7 +81,7 @@ class _SearchPageState extends State<SearchPage> {
     if (state.status == ProductsStatus.loading) return const LoadingState();
     if (state.status == ProductsStatus.failure) {
       return ErrorState(
-        message: state.message ?? 'search_failed'.tr(),
+        message: 'search_failed'.tr(),
         onRetry: () => _search(_controller.text),
       );
     }

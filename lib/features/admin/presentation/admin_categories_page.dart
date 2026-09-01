@@ -59,7 +59,7 @@ class AdminCategoriesPage extends StatelessWidget {
       return SizedBox(
         height: 340,
         child: ErrorState(
-          message: state.message ?? 'load_categories_failed'.tr(),
+          message: 'load_categories_failed'.tr(),
           onRetry: context.read<AdminCategoriesCubit>().load,
         ),
       );

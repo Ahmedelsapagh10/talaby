@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import '../design_system/tokens.dart';
 import '../design_system/typography.dart';
 import 'app_buttons.dart';
@@ -76,9 +78,9 @@ class ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyState(
       icon: Icons.error_outline,
-      title: 'Oops, something went wrong',
+      title: 'generic_error_title'.tr(),
       subtitle: message,
-      actionLabel: 'Try Again',
+      actionLabel: 'try_again'.tr(),
       onAction: onRetry,
     );
   }

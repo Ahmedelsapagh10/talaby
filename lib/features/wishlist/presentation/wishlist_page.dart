@@ -28,7 +28,7 @@ class WishlistPage extends StatelessWidget {
           if (state.status == WishlistStatus.failure &&
               state.products.isEmpty) {
             return ErrorState(
-              message: state.message ?? 'wishlist_load_failed'.tr(),
+              message: 'wishlist_load_failed'.tr(),
               onRetry: () {},
             );
           }
