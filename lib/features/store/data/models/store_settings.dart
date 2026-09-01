@@ -9,9 +9,7 @@ class StoreSettings {
     this.cashOnDeliveryEnabled = true,
     this.bannerEnabled = true,
     this.bannerTitleAr = '',
-    this.bannerTitleEn = '',
     this.bannerSubtitleAr = '',
-    this.bannerSubtitleEn = '',
     this.bannerImageUrl,
   });
 
@@ -22,9 +20,7 @@ class StoreSettings {
   final bool cashOnDeliveryEnabled;
   final bool bannerEnabled;
   final String bannerTitleAr;
-  final String bannerTitleEn;
   final String bannerSubtitleAr;
-  final String bannerSubtitleEn;
   final String? bannerImageUrl;
 
   factory StoreSettings.fromDocument(
@@ -39,9 +35,7 @@ class StoreSettings {
       cashOnDeliveryEnabled: map['cashOnDeliveryEnabled'] as bool? ?? true,
       bannerEnabled: map['bannerEnabled'] as bool? ?? true,
       bannerTitleAr: map['bannerTitleAr']?.toString() ?? '',
-      bannerTitleEn: map['bannerTitleEn']?.toString() ?? '',
       bannerSubtitleAr: map['bannerSubtitleAr']?.toString() ?? '',
-      bannerSubtitleEn: map['bannerSubtitleEn']?.toString() ?? '',
       bannerImageUrl: map['bannerImageUrl']?.toString(),
     );
   }
@@ -54,9 +48,7 @@ class StoreSettings {
     'cashOnDeliveryEnabled': cashOnDeliveryEnabled,
     'bannerEnabled': bannerEnabled,
     'bannerTitleAr': bannerTitleAr,
-    'bannerTitleEn': bannerTitleEn,
     'bannerSubtitleAr': bannerSubtitleAr,
-    'bannerSubtitleEn': bannerSubtitleEn,
     'bannerImageUrl': bannerImageUrl,
     'public': true,
   };

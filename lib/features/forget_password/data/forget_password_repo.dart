@@ -25,7 +25,7 @@ class ForgetPasswordRepo {
       return Right(
         ForgetPasswordResponse(
           success: true,
-          message: 'Verification code sent to $email successfully.',
+          message: 'تم إرسال رمز التحقق إلى $email بنجاح.',
         ),
       );
     }
@@ -46,7 +46,7 @@ class ForgetPasswordRepo {
         return Right(
           ForgetPasswordResponse(
             success: true,
-            message: 'Code verified successfully.',
+            message: 'تم التحقق من الرمز بنجاح.',
           ),
         );
       } else {
@@ -79,7 +79,7 @@ class ForgetPasswordRepo {
       return Right(
         ForgetPasswordResponse(
           success: true,
-          message: 'Password reset successfully.',
+          message: 'تمت إعادة تعيين كلمة المرور بنجاح.',
         ),
       );
     }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +48,7 @@ class Routes {
   static const wishlistRoute = '/wishlist';
   static const searchRoute = '/search';
   static const loginRoute = '/login';
+  static const adminLoginRoute = '/admin/login';
   static const splashRoute = '/splash';
   static const onboardingPageScreenRoute = '/onboarding';
   static const mainRoute = productsRoute;
@@ -62,7 +64,7 @@ class AppRoutes {
     return GoRouter(
       initialLocation: Routes.initialRoute,
       refreshListenable: CubitRouterRefresh(authCubit),
-      redirect: (context, state) => _redirect(authCubit.state, state),
+      redirect: (context, state) => resolveRedirect(authCubit.state, state.uri),
       routes: [
         GoRoute(
           path: Routes.splashRoute,
@@ -75,6 +77,10 @@ class AppRoutes {
         GoRoute(
           path: Routes.loginRoute,
           builder: (_, _) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: Routes.adminLoginRoute,
+          builder: (_, _) => const LoginScreen(adminOnly: true),
         ),
         GoRoute(
           path: Routes.forgotPasswordEmailRoute,
@@ -178,31 +184,45 @@ class AppRoutes {
         ...buildAdminRoutes(),
       ],
       errorBuilder: (_, state) => RoutePlaceholderPage(
-        title: 'Page not found',
+        title: 'page_not_found'.tr(),
         message: state.error?.toString(),
       ),
     );
   }
 
-  static String? _redirect(AuthState auth, GoRouterState route) {
+  @visibleForTesting
+  static String? resolveRedirect(AuthState auth, Uri uri) {
     if (auth.status == AuthStatus.initial ||
         auth.status == AuthStatus.loading) {
       return null;
     }
-    final path = route.uri.path;
-    final requiresAuth =
+    final path = uri.path;
+    final isAdminLogin = path == Routes.adminLoginRoute;
+    final isAdminPath = path == '/admin' || path.startsWith('/admin/');
+    final requiresCustomerAuth =
         path == Routes.checkoutRoute ||
         path == Routes.accountRoute ||
         path == Routes.profileRoute ||
         path == Routes.wishlistRoute ||
-        path.startsWith('/orders/') ||
-        path.startsWith('/admin');
-    if (requiresAuth && !auth.isAuthenticated) {
-      return '${Routes.loginRoute}?redirect=${Uri.encodeComponent(route.uri.toString())}';
+        path.startsWith('/orders/');
+    if (isAdminLogin) {
+      if (!auth.isAuthenticated || !auth.isAdmin) return null;
+      final requested = uri.queryParameters['redirect'];
+      return requested != null &&
+              requested != Routes.adminLoginRoute &&
+              (requested == '/admin' || requested.startsWith('/admin/'))
+          ? requested
+          : '/admin';
     }
-    if (path.startsWith('/admin') && !auth.isAdmin) return Routes.initialRoute;
+    if (isAdminPath && !auth.isAuthenticated) {
+      return '${Routes.adminLoginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
+    }
+    if (requiresCustomerAuth && !auth.isAuthenticated) {
+      return '${Routes.loginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
+    }
+    if (isAdminPath && !auth.isAdmin) return Routes.initialRoute;
     if (path == Routes.loginRoute && auth.isAuthenticated) {
-      final requested = route.uri.queryParameters['redirect'];
+      final requested = uri.queryParameters['redirect'];
       if (auth.isAdmin) {
         return requested?.startsWith('/admin') == true ? requested : '/admin';
       }

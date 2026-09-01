@@ -39,18 +39,6 @@ class Preferences {
     return true;
   }
 
-  /// Save app language using SharedPreferences
-  Future<void> savedLang(String local) async {
-    await prefs.setString(AppStrings.locale, local);
-  }
-
-  /// Get app language using SharedPreferences
-  Future<String> getSavedLang() async {
-    return prefs.getString(AppStrings.locale) ?? 'ar'; // Default to 'ar'
-  }
-
-  /// Save app language using SharedPreferences
-
   /// Clear all data from secure storage and shared preferences
   Future<void> clearAll() async {
     await secureStorage.deleteAll(); // Clear secure storage

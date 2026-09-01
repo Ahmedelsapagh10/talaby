@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/responsive.dart';
@@ -79,7 +78,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
         Row(
           children: [
-            _buildLanguageButton(context),
             IconActionButton(
               icon: Icons.search,
               onPressed:
@@ -116,8 +114,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
         Row(
           children: [
-            _buildLanguageButton(context),
-            const SizedBox(width: AppTokens.s8),
             IconActionButton(
               icon: Icons.search,
               onPressed:
@@ -163,19 +159,6 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
         );
-      },
-    );
-  }
-
-  Widget _buildLanguageButton(BuildContext context) {
-    return IconActionButton(
-      icon: Icons.language,
-      tooltip: 'change_language'.tr(),
-      onPressed: () async {
-        final newLocale = context.locale.languageCode == 'ar'
-            ? const Locale('en')
-            : const Locale('ar');
-        await context.setLocale(newLocale);
       },
     );
   }

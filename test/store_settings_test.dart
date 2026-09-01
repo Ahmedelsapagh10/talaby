@@ -6,9 +6,7 @@ void main() {
     const settings = StoreSettings(
       bannerEnabled: false,
       bannerTitleAr: 'عنوان',
-      bannerTitleEn: 'Title',
       bannerSubtitleAr: 'وصف',
-      bannerSubtitleEn: 'Description',
       bannerImageUrl: 'https://example.com/banner.jpg',
     );
 

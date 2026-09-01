@@ -158,7 +158,7 @@ assets/
 ├── fonts/                            # Alexandria font family (100–900)
 ├── icons/                            # SVG icons
 ├── images/                           # App icon, onboarding photos, images, and Lottie JSON
-└── lang/                             # ar.json and en.json
+└── lang/                             # Arabic interface strings
 ```
 
 ## 🧰 Technology stack
@@ -391,7 +391,6 @@ Then verify:
 Translations live in:
 
 - `assets/lang/ar.json`
-- `assets/lang/en.json`
 
 Use keys in widgets:
 
@@ -399,7 +398,7 @@ Use keys in widgets:
 Text('welcome_back'.tr())
 ```
 
-When adding a key, add it to **both** locale files. The app starts in Arabic and supports Arabic and English. The main screen provides a language toggle.
+When adding a key, add it to the Arabic locale file. The app is Arabic-only and uses RTL throughout.
 
 Theme files live under `lib/config/themes/`. `ThemeCubit` switches between light and dark mode and persists the choice using secure storage. Use `ThemeHelper.colorsOf(context)` rather than hard-coded colors in feature UI when a semantic theme color exists.
 

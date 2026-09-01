@@ -8,23 +8,17 @@ import '../../../../../core/widgets/app_text_fields.dart';
 import '../../../store/data/models/store_settings.dart';
 
 class BannerFormFields {
-  final titleAr = TextEditingController();
-  final titleEn = TextEditingController();
-  final subtitleAr = TextEditingController();
-  final subtitleEn = TextEditingController();
+  final title = TextEditingController();
+  final subtitle = TextEditingController();
 
   void fill(StoreSettings settings) {
-    titleAr.text = settings.bannerTitleAr;
-    titleEn.text = settings.bannerTitleEn;
-    subtitleAr.text = settings.bannerSubtitleAr;
-    subtitleEn.text = settings.bannerSubtitleEn;
+    title.text = settings.bannerTitleAr;
+    subtitle.text = settings.bannerSubtitleAr;
   }
 
   void dispose() {
-    titleAr.dispose();
-    titleEn.dispose();
-    subtitleAr.dispose();
-    subtitleEn.dispose();
+    title.dispose();
+    subtitle.dispose();
   }
 }
 
@@ -102,25 +96,11 @@ class AdminBannerSettingsForm extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppTokens.s16),
-          AppTextField(
-            label: 'banner_title_ar'.tr(),
-            controller: fields.titleAr,
-          ),
-          const SizedBox(height: AppTokens.s12),
-          AppTextField(
-            label: 'banner_title_en'.tr(),
-            controller: fields.titleEn,
-          ),
+          AppTextField(label: 'banner_title_ar'.tr(), controller: fields.title),
           const SizedBox(height: AppTokens.s12),
           AppTextField(
             label: 'banner_subtitle_ar'.tr(),
-            controller: fields.subtitleAr,
-            maxLines: 2,
-          ),
-          const SizedBox(height: AppTokens.s12),
-          AppTextField(
-            label: 'banner_subtitle_en'.tr(),
-            controller: fields.subtitleEn,
+            controller: fields.subtitle,
             maxLines: 2,
           ),
         ],

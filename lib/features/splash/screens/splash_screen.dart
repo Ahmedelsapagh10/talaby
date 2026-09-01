@@ -122,7 +122,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     child: const Text(
-                      'Connect',
+                      'تواصل معنا',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,

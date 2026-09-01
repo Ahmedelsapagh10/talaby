@@ -6,6 +6,7 @@ import '../../../core/utils/search_normalizer.dart';
 import 'models/catalog_query.dart';
 import 'models/category.dart';
 import 'models/product.dart';
+import 'product_search_data_source.dart';
 
 class ProductPage {
   const ProductPage({required this.products, this.nextCursor});
@@ -16,9 +17,12 @@ class ProductPage {
 }
 
 class ProductRepository {
-  ProductRepository(this._firestore);
+  ProductRepository(FirebaseFirestore firestore)
+    : _firestore = firestore,
+      _searchDataSource = ProductSearchDataSource(firestore);
 
   final FirebaseFirestore _firestore;
+  final ProductSearchDataSource _searchDataSource;
 
   Future<List<Category>> getActiveCategories() async {
     final snapshot = await _firestore
@@ -42,24 +46,34 @@ class ProductRepository {
     CatalogQuery query = const CatalogQuery(),
     DocumentSnapshot<Map<String, dynamic>>? after,
   }) async {
+    final search = SearchNormalizer.normalize(query.searchQuery ?? '');
+    if (search.length >= 2) {
+      final result = await _searchDataSource.searchActive(
+        search: search,
+        limit: limit,
+        categoryId: query.categoryId,
+        featured: query.featured,
+        after: after,
+      );
+      return ProductPage(
+        products: result.documents.map(Product.fromDocument).toList(),
+        nextCursor: result.nextCursor,
+      );
+    }
     Query<Map<String, dynamic>> request = _firestore
         .collection(FirestorePaths.products)
-        .where('active', isEqualTo: true)
-        .limit(limit);
+        .where('active', isEqualTo: true);
     if (query.categoryId != null) {
       request = request.where('categoryId', isEqualTo: query.categoryId);
     }
     if (query.featured != null) {
       request = request.where('featured', isEqualTo: query.featured);
     }
-    final search = SearchNormalizer.normalize(query.searchQuery ?? '');
-    if (search.length >= 2) {
-      request = request.where('searchPrefixes', arrayContains: search);
-    } else if (query.sort == ProductSort.newest) {
+    if (query.sort == ProductSort.newest) {
       request = request.orderBy('createdAt', descending: true);
     }
     if (after != null) request = request.startAfterDocument(after);
-    final snapshot = await request.get();
+    final snapshot = await request.limit(limit).get();
     return ProductPage(
       products: snapshot.docs.map(Product.fromDocument).toList(),
       nextCursor: snapshot.docs.length == limit ? snapshot.docs.last : null,
@@ -155,36 +169,6 @@ class ProductRepository {
     return _firestore.doc(FirestorePaths.product(productId)).delete();
   }
 
-  Future<void> backfillSearchPrefixes() async {
-    final marker = _firestore.doc(FirestorePaths.searchBackfillSettings);
-    if ((await marker.get()).data()?['productsV1'] == true) return;
-    DocumentSnapshot<Map<String, dynamic>>? cursor;
-    while (true) {
-      Query<Map<String, dynamic>> request = _firestore
-          .collection(FirestorePaths.products)
-          .orderBy(FieldPath.documentId)
-          .limit(400);
-      if (cursor != null) request = request.startAfterDocument(cursor);
-      final snapshot = await request.get();
-      if (snapshot.docs.isEmpty) break;
-      final batch = _firestore.batch();
-      var changed = false;
-      for (final document in snapshot.docs) {
-        if (document.data()['searchPrefixes'] is List) continue;
-        batch.update(document.reference, {
-          'searchPrefixes': SearchNormalizer.prefixes(
-            document.data()['name']?.toString() ?? '',
-          ),
-        });
-        changed = true;
-      }
-      if (changed) await batch.commit();
-      cursor = snapshot.docs.last;
-      if (snapshot.docs.length < 400) break;
-    }
-    await marker.set({
-      'productsV1': true,
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-  }
+  Future<void> backfillSearchPrefixes() =>
+      _searchDataSource.backfillSearchPrefixes();
 }

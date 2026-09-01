@@ -170,10 +170,8 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
         manualPaymentEnabled: _manualPayment,
         cashOnDeliveryEnabled: _cashOnDelivery,
         bannerEnabled: _bannerEnabled,
-        bannerTitleAr: bannerFields.titleAr.text.trim(),
-        bannerTitleEn: bannerFields.titleEn.text.trim(),
-        bannerSubtitleAr: bannerFields.subtitleAr.text.trim(),
-        bannerSubtitleEn: bannerFields.subtitleEn.text.trim(),
+        bannerTitleAr: bannerFields.title.text.trim(),
+        bannerSubtitleAr: bannerFields.subtitle.text.trim(),
         bannerImageUrl: _bannerImageUrl,
       ),
     );

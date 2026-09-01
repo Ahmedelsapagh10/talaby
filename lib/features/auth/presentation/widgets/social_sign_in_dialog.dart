@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../config/routes/app_routes.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
@@ -118,6 +120,13 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
                         ? null
                         : () => _signIn(_SignInProvider.apple),
                   ),
+                  const SizedBox(height: AppTokens.s12),
+                  AppButton(
+                    text: 'admin_sign_in'.tr(),
+                    icon: Icons.admin_panel_settings_outlined,
+                    isPrimary: false,
+                    onPressed: isLoading ? null : _openAdminLogin,
+                  ),
                   const SizedBox(height: AppTokens.s8),
                   TextButton(
                     onPressed: isLoading
@@ -132,5 +141,11 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
         );
       },
     );
+  }
+
+  void _openAdminLogin() {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop(false);
+    router.go(Routes.adminLoginRoute);
   }
 }

@@ -22,7 +22,6 @@ class MySecureStorage {
   static const String token = "token";
   static const String nationalId = "nationalId";
   static const String gridView = "gridView";
-  static const String language = "language";
   static const String notification = "notification";
   static const String isDark = "isDark";
   static const String showHomeTutorial = "showHomeTutorial";
@@ -159,10 +158,7 @@ class MySecureStorage {
   static Future<void> setImage(String value) async =>
       await _secureStorage.write(key: image, value: value);
 
-  static Future<String> getLanguage() async =>
-      await _secureStorage.read(key: language) ?? "ar";
-  static Future<void> setLanguage(String value) async =>
-      await _secureStorage.write(key: language, value: value);
+  static Future<String> getLanguage() async => 'ar';
 
   static Future<bool> getIsDark() async {
     String? value = await _secureStorage.read(key: isDark);

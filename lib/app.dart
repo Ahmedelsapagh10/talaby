@@ -70,8 +70,8 @@ class _MyAppState extends State<MyApp> {
         child: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
             return MaterialApp.router(
-              supportedLocales: context.supportedLocales,
-              locale: context.locale,
+              supportedLocales: const [Locale('ar')],
+              locale: const Locale('ar'),
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: themeMode,

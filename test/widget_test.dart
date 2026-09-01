@@ -13,6 +13,22 @@ void main() {
     expect(find.byType(LoginScreen), findsOneWidget);
     expect(find.byType(TextFormField), findsNWidgets(2));
     expect(find.byType(ElevatedButton), findsOneWidget);
+    expect(find.text('admin_sign_in'), findsOneWidget);
+  });
+
+  testWidgets('admin login uses the dedicated email entry mode', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: const LoginScreen(adminOnly: true),
+      ),
+    );
+
+    expect(find.text('admin_login_title'), findsOneWidget);
+    expect(find.text('admin_sign_in'), findsOneWidget);
+    expect(find.text('customer_sign_in'), findsOneWidget);
   });
 
   testWidgets('custom button keeps long Arabic text visible', (

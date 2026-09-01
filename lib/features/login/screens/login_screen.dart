@@ -8,7 +8,9 @@ import '../../auth/cubit/auth_cubit.dart';
 import '../../auth/cubit/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.adminOnly = false});
+
+  final bool adminOnly;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -28,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() async {
+  Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     final authCubit = context.read<AuthCubit>();
@@ -37,16 +39,27 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
     if (!mounted) return;
-    setState(() => _isLoading = false);
     if (authCubit.state.status == AuthStatus.failure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(authCubit.state.message ?? 'Unable to sign in.'),
-          backgroundColor: AppColors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      setState(() => _isLoading = false);
+      _showError(authCubit.state.message ?? 'auth_sign_in_failed'.tr());
+      return;
     }
+    if (widget.adminOnly && !authCubit.state.isAdmin) {
+      await authCubit.logout();
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showError('admin_access_denied'.tr());
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -114,7 +127,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Welcome Text
                     Center(
                       child: Text(
-                        "welcome_back".tr(),
+                        (widget.adminOnly
+                                ? 'admin_login_title'
+                                : 'welcome_back')
+                            .tr(),
                         style: getBoldStyle(
                           fontSize: 22.0,
                           color: primaryTextColor,
@@ -124,7 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 6),
                     Center(
                       child: Text(
-                        "sign_in_subtitle".tr(),
+                        (widget.adminOnly
+                                ? 'admin_login_subtitle'
+                                : 'sign_in_subtitle')
+                            .tr(),
                         style: getRegularStyle(
                           fontSize: 13.0,
                           color: AppColors.greya8,
@@ -135,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Username/Email Field
                     Text(
-                      "username_email".tr(),
+                      (widget.adminOnly ? 'email' : 'username_email').tr(),
                       style: getBoldStyle(
                         fontSize: 13.0,
                         color: primaryTextColor,
@@ -144,9 +163,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 6),
                     TextFormField(
                       controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
                       style: TextStyle(fontSize: 14, color: textColor),
                       decoration: InputDecoration(
-                        hintText: "enter_username_email".tr(),
+                        hintText:
+                            (widget.adminOnly
+                                    ? 'enter_email'
+                                    : 'enter_username_email')
+                                .tr(),
                         hintStyle: const TextStyle(
                           fontSize: 13,
                           color: AppColors.greya8,
@@ -190,7 +215,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "username_email_required".tr();
+                          return (widget.adminOnly
+                                  ? 'email_required'
+                                  : 'username_email_required')
+                              .tr();
+                        }
+                        if (widget.adminOnly &&
+                            !RegExp(
+                              r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                            ).hasMatch(value.trim())) {
+                          return 'email_invalid'.tr();
                         }
                         return null;
                       },
@@ -209,6 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_showPassword,
+                      autofillHints: const [AutofillHints.password],
                       style: TextStyle(fontSize: 14, color: textColor),
                       decoration: InputDecoration(
                         hintText: "enter_password".tr(),
@@ -300,9 +335,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Login Button
                     CustomButton(
-                      title: "sign_in".tr(),
+                      title: (widget.adminOnly ? 'admin_sign_in' : 'sign_in')
+                          .tr(),
                       onTap: _handleLogin,
                       isLoading: _isLoading,
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton.icon(
+                      onPressed: _isLoading
+                          ? null
+                          : () => context.go(
+                              widget.adminOnly
+                                  ? Routes.loginRoute
+                                  : Routes.adminLoginRoute,
+                            ),
+                      icon: Icon(
+                        widget.adminOnly
+                            ? Icons.storefront_outlined
+                            : Icons.admin_panel_settings_outlined,
+                      ),
+                      label: Text(
+                        (widget.adminOnly
+                                ? 'customer_sign_in'
+                                : 'admin_sign_in')
+                            .tr(),
+                      ),
                     ),
                   ],
                 ),

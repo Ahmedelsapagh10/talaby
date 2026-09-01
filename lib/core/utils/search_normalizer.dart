@@ -31,4 +31,10 @@ class SearchNormalizer {
     }
     return result.toList()..sort();
   }
+
+  static bool matchesPrefix(String value, String query) {
+    final search = normalize(query);
+    if (search.length < 2) return false;
+    return prefixes(value).contains(search);
+  }
 }

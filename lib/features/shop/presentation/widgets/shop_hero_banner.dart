@@ -131,16 +131,12 @@ class _BannerContent extends StatelessWidget {
   }
 
   String _title(BuildContext context) {
-    final value = Localizations.localeOf(context).languageCode == 'ar'
-        ? settings.bannerTitleAr
-        : settings.bannerTitleEn;
+    final value = settings.bannerTitleAr;
     return value.trim().isEmpty ? 'shop_banner_title'.tr() : value;
   }
 
   String _subtitle(BuildContext context) {
-    final value = Localizations.localeOf(context).languageCode == 'ar'
-        ? settings.bannerSubtitleAr
-        : settings.bannerSubtitleEn;
+    final value = settings.bannerSubtitleAr;
     return value.trim().isEmpty ? 'shop_banner_subtitle'.tr() : value;
   }
 

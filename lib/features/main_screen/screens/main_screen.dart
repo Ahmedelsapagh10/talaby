@@ -5,7 +5,6 @@ import 'package:new_strucuture/features/main_screen/cubit/cubit.dart';
 import 'package:new_strucuture/features/main_screen/cubit/state.dart';
 import 'package:new_strucuture/config/themes/theme_cubit.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
-import 'package:new_strucuture/core/utils/restart_app_class.dart';
 import '../data/model/product_model.dart';
 import '../widget/horizontal_product_card.dart';
 import '../widget/staggered_product_card.dart';
@@ -87,27 +86,6 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         actions: [
-          // Language Switcher Toggle
-          TextButton(
-            onPressed: () async {
-              if (context.locale.languageCode == 'ar') {
-                await context.setLocale(const Locale('en', ''));
-              } else {
-                await context.setLocale(const Locale('ar', ''));
-              }
-              if (context.mounted) {
-                HotRestartController.performHotRestart(context);
-              }
-            },
-            child: Text(
-              context.locale.languageCode == 'ar' ? 'EN' : 'عربي',
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ),
           // Theme Switcher Toggle Icon
           IconButton(
             icon: Icon(

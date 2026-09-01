@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -32,7 +33,7 @@ class CartPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppTokens.s24),
-                Text('Shopping Cart', style: AppTypography.h2),
+                Text('shopping_cart'.tr(), style: AppTypography.h2),
                 const SizedBox(height: AppTokens.s32),
                 BlocBuilder<CartCubit, CartState>(
                   builder: (context, state) {
@@ -76,7 +77,7 @@ class CartPage extends StatelessWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 48),
-          child: Text('Your cart is empty', style: AppTypography.bodyLarge),
+          child: Text('cart_empty_hint'.tr(), style: AppTypography.bodyLarge),
         ),
       );
     }
@@ -136,14 +137,14 @@ class CartPage extends StatelessWidget {
                   const SizedBox(height: AppTokens.s4),
                   if (item.colorName != null)
                     Text(
-                      'Color: ${item.colorName}',
+                      '${'color'.tr()}: ${item.colorName}',
                       style: AppTypography.bodySmall.copyWith(
                         color: Colors.grey.shade600,
                       ),
                     ),
                   if (item.sizeId != null)
                     Text(
-                      'Size: ${item.sizeId}',
+                      '${'size'.tr()}: ${item.sizeId}',
                       style: AppTypography.bodySmall.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -181,20 +182,24 @@ class CartPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Order Summary', style: AppTypography.h4),
+          Text('order_summary'.tr(), style: AppTypography.h4),
           const SizedBox(height: AppTokens.s24),
           _buildSummaryRow(
-            'Subtotal',
+            'subtotal'.tr(),
             '${(state.subtotal / 100).toStringAsFixed(2)} EGP',
           ),
           const SizedBox(height: AppTokens.s12),
-          _buildSummaryRow('Delivery', 'To be confirmed', isMuted: true),
+          _buildSummaryRow(
+            'delivery'.tr(),
+            'delivery_to_be_confirmed'.tr(),
+            isMuted: true,
+          ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: AppTokens.s16),
             child: Divider(),
           ),
           _buildSummaryRow(
-            'Total',
+            'total'.tr(),
             '${(state.subtotal / 100).toStringAsFixed(2)} EGP',
             isBold: true,
           ),
@@ -202,7 +207,7 @@ class CartPage extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: AppButton(
-              text: 'PROCEED TO CHECKOUT',
+              text: 'proceed_to_checkout'.tr(),
               onPressed: state.isEmpty
                   ? null
                   : () async {

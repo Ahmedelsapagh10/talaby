@@ -66,11 +66,11 @@ void main() {
     expect(find.byIcon(Icons.shopping_bag_outlined), findsNothing);
 
     storeCubit.update(
-      const StoreSettings(bannerTitleEn: 'Admin controlled banner'),
+      const StoreSettings(bannerTitleAr: 'بانر من لوحة التحكم'),
     );
     await tester.pump();
 
-    expect(find.text('Admin controlled banner'), findsOneWidget);
+    expect(find.text('بانر من لوحة التحكم'), findsOneWidget);
   });
 }
 

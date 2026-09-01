@@ -132,14 +132,13 @@ class DioConsumer implements BaseApiConsumer {
 
   Future<Options> _getOptions() async {
     final token = await _getToken();
-    final lang = await Preferences.instance.getSavedLang();
     log('myToken=>$token');
     return Options(
       headers: {
         'Authorization': ?token,
         'Connection': 'keep-alive',
         'Accept': '*/*',
-        'Accept-Language': lang,
+        'Accept-Language': 'ar',
       },
     );
   }

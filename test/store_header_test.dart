@@ -27,6 +27,7 @@ void main() {
 
     final title = tester.widget<Text>(find.text('TALABY'));
     expect(title.style?.fontFamily, 'MajorMonoDisplay');
+    expect(find.byIcon(Icons.language), findsNothing);
   });
 }
 

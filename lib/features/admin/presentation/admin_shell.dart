@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
+import '../../auth/cubit/auth_cubit.dart';
 import 'admin_section.dart';
 
 class AdminShell extends StatelessWidget {
@@ -82,19 +84,28 @@ class _MobileAdminLayout extends StatelessWidget {
       builder: (sheetContext) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: AdminSection.values.where((item) => item.isMore).map((
-            item,
-          ) {
-            return ListTile(
-              leading: Icon(_iconFor(item)),
-              title: Text(_labelFor(item)),
-              selected: item == section,
+          children: [
+            ...AdminSection.values.where((item) => item.isMore).map((item) {
+              return ListTile(
+                leading: Icon(_iconFor(item)),
+                title: Text(_labelFor(item)),
+                selected: item == section,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  context.go(item.route);
+                },
+              );
+            }),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: Text('sign_out'.tr()),
               onTap: () {
+                final authCubit = context.read<AuthCubit>();
                 Navigator.pop(sheetContext);
-                context.go(item.route);
+                authCubit.logout();
               },
-            );
-          }).toList(),
+            ),
+          ],
         ),
       ),
     );
@@ -134,6 +145,15 @@ class _AdminSidebar extends StatelessWidget {
             ),
           ),
           const Spacer(),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: Text('sign_out'.tr()),
+            onTap: () => context.read<AuthCubit>().logout(),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.s24,
+            ),
+          ),
+          const SizedBox(height: AppTokens.s16),
         ],
       ),
     );

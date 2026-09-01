@@ -20,6 +20,12 @@ void main() {
       expect(SearchNormalizer.prefixes('a'), isEmpty);
     });
 
+    test('matches prefixes from any product name word', () {
+      expect(SearchNormalizer.matchesPrefix('Fresh Cola', 'cola'), isTrue);
+      expect(SearchNormalizer.matchesPrefix('Fresh Cola', 'col'), isTrue);
+      expect(SearchNormalizer.matchesPrefix('Fresh Cola', 'ola'), isFalse);
+    });
+
     test('normalizes phone formatting without losing country prefix', () {
       expect(SearchNormalizer.normalizePhone('010 123-4567'), '0101234567');
       expect(SearchNormalizer.normalizePhone('+20 (10) 123'), '+2010123');
