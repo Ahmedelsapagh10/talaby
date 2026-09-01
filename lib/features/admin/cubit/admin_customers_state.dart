@@ -9,14 +9,16 @@ class AdminCustomersState extends Equatable {
     this.status = AdminCustomersStatus.initial,
     this.customers = const [],
     this.hasMore = false,
+    this.query = '',
     this.message,
   });
 
   final AdminCustomersStatus status;
   final List<Customer> customers;
   final bool hasMore;
+  final String query;
   final String? message;
 
   @override
-  List<Object?> get props => [status, customers, hasMore, message];
+  List<Object?> get props => [status, customers, hasMore, query, message];
 }

@@ -12,8 +12,10 @@ import 'package:new_strucuture/injector.dart' as injector;
 import 'features/login/cubit/cubit.dart';
 import 'features/splash/cubit/cubit.dart';
 import 'features/auth/cubit/auth_cubit.dart';
+import 'features/auth/cubit/auth_state.dart';
 import 'features/cart/cubit/cart_cubit.dart';
 import 'features/store/cubit/store_cubit.dart';
+import 'features/wishlist/cubit/wishlist_cubit.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -25,6 +27,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late final AuthCubit _authCubit;
   late final CartCubit _cartCubit;
+  late final WishlistCubit _wishlistCubit;
   late final GoRouter _router;
 
   @override
@@ -32,12 +35,15 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _authCubit = injector.serviceLocator<AuthCubit>();
     _cartCubit = injector.serviceLocator<CartCubit>();
+    _wishlistCubit = injector.serviceLocator<WishlistCubit>();
+    _wishlistCubit.bind(_authCubit.state.session?.uid);
     _router = AppRoutes.createRouter(_authCubit);
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _wishlistCubit.close();
     super.dispose();
   }
 
@@ -54,24 +60,28 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider.value(value: _authCubit),
         BlocProvider.value(value: _cartCubit),
+        BlocProvider.value(value: _wishlistCubit),
         BlocProvider(
           create: (_) => injector.serviceLocator<StoreCubit>()..watch(),
         ),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (context, themeMode) {
-          return MaterialApp.router(
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
-            localizationsDelegates: context.localizationDelegates,
-            debugShowCheckedModeBanner: false,
-            title: AppStrings.appName,
-            routerConfig: _router,
-          );
-        },
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (_, state) => _wishlistCubit.bind(state.session?.uid),
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return MaterialApp.router(
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              localizationsDelegates: context.localizationDelegates,
+              debugShowCheckedModeBanner: false,
+              title: AppStrings.appName,
+              routerConfig: _router,
+            );
+          },
+        ),
       ),
     );
   }

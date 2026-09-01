@@ -80,7 +80,7 @@ class CartPage extends StatelessWidget {
         ),
       );
     }
-    
+
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -104,7 +104,8 @@ class CartPage extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: item.imageUrl!,
                       fit: BoxFit.cover,
-                      errorWidget: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                      errorWidget: (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image),
                     )
                   : const Icon(Icons.image, color: Colors.grey),
             ),
@@ -126,8 +127,9 @@ class CartPage extends StatelessWidget {
                         ),
                       ),
                       IconActionButton(
-                        icon: Icons.close, 
-                        onPressed: () => context.read<CartCubit>().remove(item.key),
+                        icon: Icons.close,
+                        onPressed: () =>
+                            context.read<CartCubit>().remove(item.key),
                       ),
                     ],
                   ),
@@ -151,8 +153,10 @@ class CartPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       QuantitySelector(
-                        quantity: item.quantity, 
-                        onQuantityChanged: (q) => context.read<CartCubit>().updateQuantity(item.key, q),
+                        quantity: item.quantity,
+                        onQuantityChanged: (q) => context
+                            .read<CartCubit>()
+                            .updateQuantity(item.key, q),
                       ),
                       PriceText(price: item.lineTotal / 100),
                     ],
@@ -179,25 +183,34 @@ class CartPage extends StatelessWidget {
         children: [
           Text('Order Summary', style: AppTypography.h4),
           const SizedBox(height: AppTokens.s24),
-          _buildSummaryRow('Subtotal', '${(state.subtotal / 100).toStringAsFixed(2)} EGP'),
+          _buildSummaryRow(
+            'Subtotal',
+            '${(state.subtotal / 100).toStringAsFixed(2)} EGP',
+          ),
           const SizedBox(height: AppTokens.s12),
           _buildSummaryRow('Delivery', 'To be confirmed', isMuted: true),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: AppTokens.s16),
             child: Divider(),
           ),
-          _buildSummaryRow('Total', '${(state.subtotal / 100).toStringAsFixed(2)} EGP', isBold: true),
+          _buildSummaryRow(
+            'Total',
+            '${(state.subtotal / 100).toStringAsFixed(2)} EGP',
+            isBold: true,
+          ),
           const SizedBox(height: AppTokens.s32),
           SizedBox(
             width: double.infinity,
             child: AppButton(
               text: 'PROCEED TO CHECKOUT',
-              onPressed: state.isEmpty ? null : () async {
-                final signedIn = await requireSocialSignIn(context);
-                if (signedIn && context.mounted) {
-                  context.push(Routes.checkoutRoute);
-                }
-              },
+              onPressed: state.isEmpty
+                  ? null
+                  : () async {
+                      final signedIn = await requireSocialSignIn(context);
+                      if (signedIn && context.mounted) {
+                        context.push(Routes.checkoutRoute);
+                      }
+                    },
             ),
           ),
         ],

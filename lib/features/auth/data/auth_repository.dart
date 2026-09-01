@@ -10,6 +10,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/firebase/firestore_paths.dart';
+import '../../../core/utils/search_normalizer.dart';
 import 'models/auth_session.dart';
 import 'models/user_role.dart';
 
@@ -123,6 +124,22 @@ class AuthRepository {
     };
     if (!snapshot.exists) data['createdAt'] = FieldValue.serverTimestamp();
     await reference.set(data, SetOptions(merge: true));
+    final customerReference = _firestore.doc(FirestorePaths.customer(user.uid));
+    final customerSnapshot = await customerReference.get();
+    final name = displayName ?? user.displayName ?? '';
+    await customerReference.set({
+      'name': name,
+      'email': user.email,
+      'phone': '',
+      'searchName': SearchNormalizer.normalize(name),
+      'searchPhone': SearchNormalizer.normalizePhone(''),
+      'updatedAt': FieldValue.serverTimestamp(),
+      if (!customerSnapshot.exists) ...{
+        'orderCount': 0,
+        'lastOrderAt': null,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
+    }, SetOptions(merge: true));
   }
 
   static String _randomNonce([int length = 32]) {

@@ -66,3 +66,19 @@ flutter build web \
 
 `OWNER_ID` is the tenant selector used by application repositories. Use a
 separate build for each subscribed business.
+
+## 6. Search backfill and local rules verification
+
+The first administrator visit to products, customers, and orders fills the
+normalized search fields in batches. Completion is recorded in
+`owners/{OWNER_ID}/settings/searchBackfills`, so each backfill runs only once.
+New records always write their search fields directly.
+
+Run the local authorization smoke tests before deploying rule changes:
+
+```sh
+firebase emulators:exec --only auth,firestore --project demo-talaby \
+  "zsh firebase_tests/firestore_rules_smoke.sh"
+```
+
+The test uses only the local emulators and never connects to production data.

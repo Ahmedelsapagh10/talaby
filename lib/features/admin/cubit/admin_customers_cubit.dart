@@ -10,11 +10,23 @@ class AdminCustomersCubit extends Cubit<AdminCustomersState> {
   final CustomerRepository _repository;
   DocumentSnapshot<Map<String, dynamic>>? _cursor;
   bool _loadingMore = false;
+  bool _searchPrepared = false;
 
-  Future<void> load() async {
-    emit(const AdminCustomersState(status: AdminCustomersStatus.loading));
+  Future<void> load({String? query}) async {
+    final searchQuery = query ?? state.query;
+    emit(
+      AdminCustomersState(
+        status: AdminCustomersStatus.loading,
+        customers: state.customers,
+        query: searchQuery,
+      ),
+    );
     try {
-      final page = await _repository.getCustomers();
+      if (!_searchPrepared) {
+        await _repository.backfillSearchFields();
+        _searchPrepared = true;
+      }
+      final page = await _repository.getCustomers(searchQuery: searchQuery);
       _cursor = page.nextCursor;
       emit(
         AdminCustomersState(
@@ -23,6 +35,7 @@ class AdminCustomersCubit extends Cubit<AdminCustomersState> {
               : AdminCustomersStatus.success,
           customers: page.customers,
           hasMore: page.hasMore,
+          query: searchQuery,
         ),
       );
     } catch (error) {
@@ -34,13 +47,17 @@ class AdminCustomersCubit extends Cubit<AdminCustomersState> {
     if (_loadingMore || _cursor == null) return;
     _loadingMore = true;
     try {
-      final page = await _repository.getCustomers(after: _cursor);
+      final page = await _repository.getCustomers(
+        searchQuery: state.query,
+        after: _cursor,
+      );
       _cursor = page.nextCursor;
       emit(
         AdminCustomersState(
           status: AdminCustomersStatus.success,
           customers: [...state.customers, ...page.customers],
           hasMore: page.hasMore,
+          query: state.query,
         ),
       );
     } catch (error) {
@@ -56,6 +73,7 @@ class AdminCustomersCubit extends Cubit<AdminCustomersState> {
         status: AdminCustomersStatus.failure,
         customers: state.customers,
         hasMore: state.hasMore,
+        query: state.query,
         message: error.toString(),
       ),
     );

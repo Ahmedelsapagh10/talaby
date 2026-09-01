@@ -23,9 +23,13 @@ import '../../features/orders/cubit/order_tracking_cubit.dart';
 import '../../features/orders/cubit/customer_orders_cubit.dart';
 import '../../features/orders/presentation/customer_orders_page.dart';
 import '../../features/product_details/presentation/product_details_page.dart';
+import '../../features/profile/cubit/profile_cubit.dart';
+import '../../features/profile/presentation/profile_page.dart';
 import '../../features/reviews/cubit/reviews_cubit.dart';
 import '../../features/shop/presentation/shop_page.dart';
+import '../../features/shop/presentation/search_page.dart';
 import '../../features/splash/screens/splash_screen.dart';
+import '../../features/wishlist/presentation/wishlist_page.dart';
 import '../../injector.dart';
 import 'admin_routes.dart';
 import 'route_placeholder_page.dart';
@@ -40,6 +44,9 @@ class Routes {
   static const checkoutRoute = '/checkout';
   static const orderRoute = '/orders/:id';
   static const accountRoute = '/account';
+  static const profileRoute = '/profile';
+  static const wishlistRoute = '/wishlist';
+  static const searchRoute = '/search';
   static const loginRoute = '/login';
   static const splashRoute = '/splash';
   static const onboardingPageScreenRoute = '/onboarding';
@@ -133,11 +140,35 @@ class AppRoutes {
             child: const ProductDetailsPage(),
           ),
         ),
+        GoRoute(
+          path: Routes.searchRoute,
+          builder: (_, state) => BlocProvider(
+            create: (_) => serviceLocator<ProductsCubit>(),
+            child: SearchPage(
+              initialQuery: state.uri.queryParameters['q'] ?? '',
+            ),
+          ),
+        ),
+        GoRoute(
+          path: Routes.wishlistRoute,
+          builder: (_, _) => const WishlistPage(),
+        ),
+        GoRoute(
+          path: Routes.profileRoute,
+          builder: (_, _) => BlocProvider(
+            create: (_) =>
+                serviceLocator<ProfileCubit>()
+                  ..load(authCubit.state.session!.uid),
+            child: const ProfilePage(),
+          ),
+        ),
         GoRoute(path: Routes.cartRoute, builder: (_, _) => const CartPage()),
         GoRoute(
           path: Routes.checkoutRoute,
           builder: (_, _) => BlocProvider(
-            create: (_) => serviceLocator<CheckoutCubit>(),
+            create: (_) =>
+                serviceLocator<CheckoutCubit>()
+                  ..loadProfile(authCubit.state.session!.uid),
             child: const CheckoutPage(),
           ),
         ),
@@ -177,6 +208,8 @@ class AppRoutes {
     final requiresAuth =
         path == Routes.checkoutRoute ||
         path == Routes.accountRoute ||
+        path == Routes.profileRoute ||
+        path == Routes.wishlistRoute ||
         path.startsWith('/orders/') ||
         path.startsWith('/admin');
     if (requiresAuth && !auth.isAuthenticated) {
@@ -184,7 +217,13 @@ class AppRoutes {
     }
     if (path.startsWith('/admin') && !auth.isAdmin) return Routes.initialRoute;
     if (path == Routes.loginRoute && auth.isAuthenticated) {
-      return route.uri.queryParameters['redirect'] ?? Routes.initialRoute;
+      final requested = route.uri.queryParameters['redirect'];
+      if (auth.isAdmin) {
+        return requested?.startsWith('/admin') == true ? requested : '/admin';
+      }
+      return requested?.startsWith('/admin') == true
+          ? Routes.initialRoute
+          : requested ?? Routes.initialRoute;
     }
     return null;
   }

@@ -4,6 +4,7 @@ class Review {
   const Review({
     required this.id,
     required this.productId,
+    this.productName,
     required this.rating,
     required this.feedback,
     required this.displayName,
@@ -14,6 +15,7 @@ class Review {
 
   final String id;
   final String productId;
+  final String? productName;
   final String? customerId;
   final int rating;
   final String feedback;
@@ -26,6 +28,7 @@ class Review {
     return Review(
       id: doc.id,
       productId: map['productId']?.toString() ?? '',
+      productName: map['productName']?.toString(),
       customerId: map['customerId']?.toString(),
       rating: (map['rating'] as num?)?.toInt() ?? 0,
       feedback: map['feedback']?.toString() ?? '',

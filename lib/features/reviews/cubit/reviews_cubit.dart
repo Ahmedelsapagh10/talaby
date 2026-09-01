@@ -27,6 +27,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
 
   Future<void> submit({
     required String productId,
+    required String productName,
     required String customerId,
     required String displayName,
     required int rating,
@@ -38,6 +39,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     try {
       await _repository.submit(
         productId: productId,
+        productName: productName,
         customerId: customerId,
         displayName: displayName,
         rating: rating,

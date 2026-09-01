@@ -13,7 +13,11 @@ class FirestorePaths {
   static String get settings => '$owner/settings';
   static String get orderCounter => '$owner/counters/orders';
   static String get generalSettings => '$settings/general';
+  static String get searchBackfillSettings => '$settings/searchBackfills';
   static String user(String uid) => 'users/$uid';
+  static String userWishlist(String uid) => '${user(uid)}/wishlist';
+  static String wishlistItem(String uid, String productId) =>
+      '${userWishlist(uid)}/$productId';
   static String member(String uid) => '$members/$uid';
   static String product(String id) => '$products/$id';
   static String order(String id) => '$orders/$id';

@@ -50,6 +50,10 @@ import 'features/reviews/cubit/reviews_cubit.dart';
 import 'features/store/data/store_repository.dart';
 import 'features/store/cubit/store_cubit.dart';
 import 'features/uploads/data/image_upload_repository.dart';
+import 'features/profile/cubit/profile_cubit.dart';
+import 'features/profile/data/profile_repository.dart';
+import 'features/wishlist/cubit/wishlist_cubit.dart';
+import 'features/wishlist/data/wishlist_repository.dart';
 
 final serviceLocator = GetIt.instance;
 Future<void> setupCubit() async {
@@ -68,14 +72,16 @@ Future<void> setupCubit() async {
     () => CartCubit(serviceLocator())..load(),
   );
   serviceLocator.registerFactory(
-    () => CheckoutCubit(serviceLocator(), serviceLocator()),
+    () => CheckoutCubit(serviceLocator(), serviceLocator(), serviceLocator()),
   );
   serviceLocator.registerFactory(() => OrderTrackingCubit(serviceLocator()));
   serviceLocator.registerFactory(() => CustomerOrdersCubit(serviceLocator()));
   serviceLocator.registerFactory(() => ReviewsCubit(serviceLocator()));
   serviceLocator.registerFactory(() => AdminOrderCubit(serviceLocator()));
   serviceLocator.registerFactory(() => AdminCategoriesCubit(serviceLocator()));
-  serviceLocator.registerFactory(() => AdminProductsCubit(serviceLocator()));
+  serviceLocator.registerFactory(
+    () => AdminProductsCubit(serviceLocator(), serviceLocator()),
+  );
   serviceLocator.registerFactory(
     () => ProductEditorCubit(serviceLocator(), serviceLocator()),
   );
@@ -84,6 +90,8 @@ Future<void> setupCubit() async {
   serviceLocator.registerFactory(
     () => AdminSettingsCubit(serviceLocator(), serviceLocator()),
   );
+  serviceLocator.registerFactory(() => ProfileCubit(serviceLocator()));
+  serviceLocator.registerLazySingleton(() => WishlistCubit(serviceLocator()));
 }
 
 Future<void> setupRepo() async {
@@ -134,6 +142,12 @@ Future<void> setupRepo() async {
   );
   serviceLocator.registerLazySingleton(
     () => CustomerRepository(serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => ProfileRepository(serviceLocator(), serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => WishlistRepository(serviceLocator(), serviceLocator()),
   );
 }
 

@@ -22,6 +22,14 @@ service cloud.firestore {
     match /users/{uid} {
       allow read, create, update: if signedIn() && request.auth.uid == uid;
       allow delete: if false;
+
+      match /wishlist/{productId} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow create, update: if signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.productId == productId;
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
     }
 
     match /owners/{ownerId} {
@@ -50,7 +58,8 @@ service cloud.firestore {
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
               'stock', 'variants', 'updatedAt'
             ]));
-        allow delete: if false;
+        allow delete: if managesStore(ownerId)
+          && resource.data.ownerId == ownerId;
       }
 
       match /categories/{categoryId} {
@@ -89,8 +98,22 @@ service cloud.firestore {
       match /customers/{customerId} {
         allow read: if managesStore(ownerId)
           || (signedIn() && customerId == request.auth.uid);
-        allow create, update: if signedIn()
-          && customerId == request.auth.uid;
+        allow create: if managesStore(ownerId)
+          || (signedIn()
+            && customerId == request.auth.uid
+            && request.resource.data.keys().hasOnly([
+              'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
+              'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
+              'createdAt', 'updatedAt'
+            ]));
+        allow update: if managesStore(ownerId)
+          || (signedIn()
+            && customerId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'name', 'phone', 'email', 'defaultCity', 'defaultAddress',
+              'searchName', 'searchPhone', 'orderCount', 'lastOrderAt',
+              'updatedAt'
+            ]));
         allow delete: if false;
       }
 
@@ -99,6 +122,8 @@ service cloud.firestore {
         allow create: if signedIn()
           && request.resource.data.customerId == request.auth.uid
           && request.resource.data.approved == false
+          && exists(/databases/$(database)/documents/owners/$(ownerId)/products/$(request.resource.data.productId))
+          && get(/databases/$(database)/documents/owners/$(ownerId)/products/$(request.resource.data.productId)).data.active == true
           && request.resource.data.rating is int
           && request.resource.data.rating >= 1
           && request.resource.data.rating <= 5;

@@ -1,95 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
-import '../../../../core/widgets/badges.dart';
-import '../../../../core/widgets/pricing.dart';
+import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
+import '../../../../core/widgets/ux_states.dart';
+import '../../orders/data/models/order_status.dart';
+import '../cubit/admin_order_cubit.dart';
+import '../cubit/admin_order_state.dart';
+import 'widgets/admin_order_list.dart';
 
 class OrdersListPage extends StatelessWidget {
   const OrdersListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTokens.s24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Orders', style: AppTypography.h2),
-          const SizedBox(height: AppTokens.s32),
-          Row(
+    return BlocBuilder<AdminOrderCubit, AdminOrderState>(
+      builder: (context, state) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(AppTokens.s24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Expanded(
-                flex: 2,
-                child: AppTextField(
-                  label: '',
-                  hint: 'Search by order number or customer...',
-                ),
-              ),
-              const SizedBox(width: AppTokens.s16),
-              Expanded(
-                flex: 1,
-                child: AppDropdown<String>(
-                  label: '',
-                  value: 'All',
-                  items: const [
-                    DropdownMenuItem(value: 'All', child: Text('All Statuses')),
-                    DropdownMenuItem(value: 'Pending', child: Text('Pending')),
-                  ],
-                ),
-              ),
+              Text('orders'.tr(), style: AppTypography.h2),
+              const SizedBox(height: AppTokens.s24),
+              _OrderFilters(state: state),
+              const SizedBox(height: AppTokens.s24),
+              _content(context, state),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _content(BuildContext context, AdminOrderState state) {
+    if (state.status == AdminOrderStatus.loading && state.orders.isEmpty) {
+      return const SizedBox(height: 360, child: LoadingState());
+    }
+    if (state.status == AdminOrderStatus.failure && state.orders.isEmpty) {
+      return SizedBox(
+        height: 360,
+        child: ErrorState(
+          message: state.message ?? 'load_orders_failed'.tr(),
+          onRetry: context.read<AdminOrderCubit>().load,
+        ),
+      );
+    }
+    if (state.visibleOrders.isEmpty) {
+      return SizedBox(
+        height: 320,
+        child: EmptyState(
+          icon: Icons.shopping_bag_outlined,
+          title: 'no_orders_found'.tr(),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        ResponsiveLayout(
+          mobile: AdminOrderCards(
+            orders: state.visibleOrders,
+            onOpen: (id) => context.push('/admin/orders/$id'),
+          ),
+          desktop: AdminOrdersTable(
+            orders: state.visibleOrders,
+            onOpen: (id) => context.push('/admin/orders/$id'),
+          ),
+        ),
+        if (state.hasMore) ...[
           const SizedBox(height: AppTokens.s24),
-          _buildDesktopTable(),
+          AppButton(
+            text: 'load_more'.tr(),
+            isPrimary: false,
+            onPressed: context.read<AdminOrderCubit>().loadMore,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _OrderFilters extends StatelessWidget {
+  const _OrderFilters({required this.state});
+
+  final AdminOrderState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      mobile: Column(
+        children: [
+          _search(context),
+          const SizedBox(height: AppTokens.s12),
+          _status(context),
+        ],
+      ),
+      desktop: Row(
+        children: [
+          Expanded(flex: 2, child: _search(context)),
+          const SizedBox(width: AppTokens.s16),
+          Expanded(child: _status(context)),
         ],
       ),
     );
   }
 
-  Widget _buildDesktopTable() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(AppTokens.r8),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingTextStyle: AppTypography.bodySmall.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade600,
-          ),
-          dataTextStyle: AppTypography.bodyMedium,
-          columns: const [
-            DataColumn(label: Text('Order')),
-            DataColumn(label: Text('Customer')),
-            DataColumn(label: Text('Total')),
-            DataColumn(label: Text('Order Status')),
-            DataColumn(label: Text('Payment')),
-            DataColumn(label: Text('Date')),
-          ],
-          rows: List.generate(10, (index) {
-            return DataRow(
-              cells: [
-                DataCell(
-                  Text(
-                    '#ORD-1045$index',
-                    style: AppTypography.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const DataCell(Text('Ahmed Elsapagh\n01012345678')),
-                const DataCell(PriceText(price: 598.00)),
-                DataCell(StatusBadge.warning('Pending')),
-                DataCell(StatusBadge.error('Unpaid')),
-                const DataCell(Text('Oct 24, 2026')),
-              ],
-            );
-          }),
+  Widget _search(BuildContext context) => AppTextField(
+    label: '',
+    hint: 'search_orders'.tr(),
+    onChanged: context.read<AdminOrderCubit>().setQuery,
+  );
+
+  Widget _status(BuildContext context) => AppDropdown<OrderStatus?>(
+    label: '',
+    value: state.statusFilter,
+    onChanged: context.read<AdminOrderCubit>().setStatusFilter,
+    items: [
+      DropdownMenuItem(value: null, child: Text('all_statuses'.tr())),
+      ...OrderStatus.values.map(
+        (status) => DropdownMenuItem(
+          value: status,
+          child: Text(orderStatusLabel(status)),
         ),
       ),
-    );
-  }
+    ],
+  );
 }

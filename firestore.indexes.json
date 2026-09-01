@@ -13,6 +13,14 @@
       "queryScope": "COLLECTION",
       "fields": [
         {"fieldPath": "active", "order": "ASCENDING"},
+        {"fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS"}
+      ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "active", "order": "ASCENDING"},
         {"fieldPath": "createdAt", "order": "DESCENDING"}
       ]
     },
@@ -49,6 +57,22 @@
       "fields": [
         {"fieldPath": "approved", "order": "ASCENDING"},
         {"fieldPath": "createdAt", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "orderStatus", "order": "ASCENDING"},
+        {"fieldPath": "createdAt", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "searchPrefixes", "arrayConfig": "CONTAINS"},
+        {"fieldPath": "orderStatus", "order": "ASCENDING"}
       ]
     },
     {

@@ -18,7 +18,8 @@ class OrderTrackingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderTrackingCubit, OrderTrackingState>(
       builder: (context, state) {
-        if (state.status == OrderTrackingStatus.loading || state.status == OrderTrackingStatus.initial) {
+        if (state.status == OrderTrackingStatus.loading ||
+            state.status == OrderTrackingStatus.initial) {
           return const Scaffold(
             backgroundColor: Colors.white,
             appBar: StoreHeader(),
@@ -27,7 +28,9 @@ class OrderTrackingPage extends StatelessWidget {
         }
 
         final order = state.order;
-        if (order == null || state.status == OrderTrackingStatus.empty || state.status == OrderTrackingStatus.failure) {
+        if (order == null ||
+            state.status == OrderTrackingStatus.empty ||
+            state.status == OrderTrackingStatus.failure) {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: const StoreHeader(),
@@ -51,10 +54,13 @@ class OrderTrackingPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: AppTokens.s24),
-                    Text('Order #${order.readableOrderNumber}', style: AppTypography.h2),
+                    Text(
+                      'Order #${order.readableOrderNumber}',
+                      style: AppTypography.h2,
+                    ),
                     const SizedBox(height: AppTokens.s8),
                     Text(
-                      order.createdAt != null 
+                      order.createdAt != null
                           ? 'Placed on ${DateFormat('MMM dd, yyyy - hh:mm a').format(order.createdAt!)}'
                           : 'Unknown Date',
                       style: AppTypography.bodyMedium.copyWith(
@@ -99,9 +105,15 @@ class OrderTrackingPage extends StatelessWidget {
 
   Widget _buildTimeline(CommerceOrder order) {
     // Generate the timeline based on events
-    final events = order.customerTimeline.isNotEmpty 
-        ? order.customerTimeline 
-        : [OrderEvent(type: OrderEventType.orderCreated, customerVisible: true, timestamp: order.createdAt)];
+    final events = order.customerTimeline.isNotEmpty
+        ? order.customerTimeline
+        : [
+            OrderEvent(
+              type: OrderEventType.orderCreated,
+              customerVisible: true,
+              timestamp: order.createdAt,
+            ),
+          ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,10 +124,12 @@ class OrderTrackingPage extends StatelessWidget {
           final index = entry.key;
           final event = entry.value;
           final isLast = index == events.length - 1;
-          
+
           return _buildTimelineStep(
             _formatEventName(event.type),
-            event.timestamp != null ? DateFormat('MMM dd, hh:mm a').format(event.timestamp!) : '',
+            event.timestamp != null
+                ? DateFormat('MMM dd, hh:mm a').format(event.timestamp!)
+                : '',
             isCompleted: !isLast || order.orderStatus.name == 'delivered',
             isCurrent: isLast && order.orderStatus.name != 'delivered',
             isLast: isLast,
@@ -127,14 +141,22 @@ class OrderTrackingPage extends StatelessWidget {
 
   String _formatEventName(OrderEventType type) {
     switch (type) {
-      case OrderEventType.orderCreated: return 'Order Created';
-      case OrderEventType.orderConfirmed: return 'Order Confirmed';
-      case OrderEventType.preparing: return 'Preparing';
-      case OrderEventType.ready: return 'Ready for Pickup / Shipping';
-      case OrderEventType.outForDelivery: return 'Out for Delivery';
-      case OrderEventType.delivered: return 'Delivered';
-      case OrderEventType.cancelled: return 'Cancelled';
-      default: return type.name;
+      case OrderEventType.orderCreated:
+        return 'Order Created';
+      case OrderEventType.orderConfirmed:
+        return 'Order Confirmed';
+      case OrderEventType.preparing:
+        return 'Preparing';
+      case OrderEventType.ready:
+        return 'Ready for Pickup / Shipping';
+      case OrderEventType.outForDelivery:
+        return 'Out for Delivery';
+      case OrderEventType.delivered:
+        return 'Delivered';
+      case OrderEventType.cancelled:
+        return 'Cancelled';
+      default:
+        return type.name;
     }
   }
 
@@ -212,7 +234,9 @@ class OrderTrackingPage extends StatelessWidget {
   Widget _buildPaymentSummary(CommerceOrder order) {
     final statusBadge = order.paymentStatus.name == 'paid'
         ? StatusBadge.success('Paid')
-        : (order.paymentStatus.name == 'partiallyPaid' ? StatusBadge.warning('Partially Paid') : StatusBadge.error('Pending'));
+        : (order.paymentStatus.name == 'partiallyPaid'
+              ? StatusBadge.warning('Partially Paid')
+              : StatusBadge.error('Pending'));
 
     return Container(
       padding: const EdgeInsets.all(AppTokens.s24),
@@ -232,11 +256,21 @@ class OrderTrackingPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppTokens.s24),
-          _buildSummaryRow('Total', '${(order.total / 100).toStringAsFixed(2)} EGP'),
+          _buildSummaryRow(
+            'Total',
+            '${(order.total / 100).toStringAsFixed(2)} EGP',
+          ),
           const SizedBox(height: AppTokens.s12),
-          _buildSummaryRow('Paid', '${(order.paidAmount / 100).toStringAsFixed(2)} EGP'),
+          _buildSummaryRow(
+            'Paid',
+            '${(order.paidAmount / 100).toStringAsFixed(2)} EGP',
+          ),
           const SizedBox(height: AppTokens.s12),
-          _buildSummaryRow('Remaining', '${(order.remainingAmount / 100).toStringAsFixed(2)} EGP', isBold: true),
+          _buildSummaryRow(
+            'Remaining',
+            '${(order.remainingAmount / 100).toStringAsFixed(2)} EGP',
+            isBold: true,
+          ),
         ],
       ),
     );

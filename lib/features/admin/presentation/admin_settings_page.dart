@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../core/design_system/tokens.dart';
+import '../../../../core/design_system/typography.dart';
+import '../../../../core/widgets/app_buttons.dart';
+import '../../../../core/widgets/ux_states.dart';
+import '../../store/data/models/store_settings.dart';
+import '../cubit/admin_settings_cubit.dart';
+import '../cubit/admin_settings_state.dart';
+import 'widgets/admin_settings_form.dart';
+
+class AdminSettingsPage extends StatefulWidget {
+  const AdminSettingsPage({super.key});
+
+  @override
+  State<AdminSettingsPage> createState() => _AdminSettingsPageState();
+}
+
+class _AdminSettingsPageState extends State<AdminSettingsPage> {
+  final fields = OwnerFormFields();
+  bool _initialized = false;
+  bool _dirty = false;
+  String _currency = 'EGP';
+  bool _stockControl = true;
+  bool _manualPayment = true;
+  bool _cashOnDelivery = true;
+
+  @override
+  void dispose() {
+    fields.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<AdminSettingsCubit, AdminSettingsState>(
+      listener: (context, state) {
+        if (state.status == AdminSettingsStatus.success) {
+          setState(() => _dirty = false);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('settings_saved'.tr())));
+        }
+      },
+      builder: (context, state) {
+        if (state.status == AdminSettingsStatus.loading) {
+          return const LoadingState();
+        }
+        if (state.status == AdminSettingsStatus.failure && !_initialized) {
+          return ErrorState(
+            message: state.message ?? 'load_settings_failed'.tr(),
+            onRetry: context.read<AdminSettingsCubit>().load,
+          );
+        }
+        if (state.owner == null) {
+          return EmptyState(
+            icon: Icons.store_outlined,
+            title: 'store_not_configured'.tr(),
+          );
+        }
+        _initialize(state);
+        final busy =
+            state.status == AdminSettingsStatus.saving ||
+            state.status == AdminSettingsStatus.uploading;
+        return PopScope(
+          canPop: !_dirty,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop && _dirty) _showUnsavedMessage();
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTokens.s24),
+            child: Form(
+              onChanged: () => setState(() => _dirty = true),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('store_settings'.tr(), style: AppTypography.h2),
+                  const SizedBox(height: AppTokens.s24),
+                  OwnerSettingsForm(
+                    fields: fields,
+                    logoUrl: state.owner!.logoUrl,
+                    onUploadLogo: context
+                        .read<AdminSettingsCubit>()
+                        .uploadAndSaveLogo,
+                  ),
+                  const SizedBox(height: AppTokens.s24),
+                  StoreBehaviorForm(
+                    currency: _currency,
+                    stockControl: _stockControl,
+                    manualPayment: _manualPayment,
+                    cashOnDelivery: _cashOnDelivery,
+                    onCurrencyChanged: (value) => setState(() {
+                      _currency = value;
+                      _dirty = true;
+                    }),
+                    onStockControlChanged: (value) => setState(() {
+                      _stockControl = value;
+                      _dirty = true;
+                    }),
+                    onManualPaymentChanged: (value) => setState(() {
+                      _manualPayment = value;
+                      _dirty = true;
+                    }),
+                    onCashOnDeliveryChanged: (value) => setState(() {
+                      _cashOnDelivery = value;
+                      _dirty = true;
+                    }),
+                  ),
+                  const SizedBox(height: AppTokens.s32),
+                  AppButton(
+                    text: 'save_settings'.tr(),
+                    isLoading: busy,
+                    onPressed: busy ? null : _save,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _initialize(AdminSettingsState state) {
+    if (_initialized) return;
+    _initialized = true;
+    fields.fill(state.owner!);
+    final settings = state.settings ?? const StoreSettings();
+    _currency = settings.currencyCode;
+    _stockControl = settings.stockControlEnabled;
+    _manualPayment = settings.manualPaymentEnabled;
+    _cashOnDelivery = settings.cashOnDeliveryEnabled;
+  }
+
+  Future<void> _save() async {
+    final cubit = context.read<AdminSettingsCubit>();
+    final owner = cubit.state.owner!;
+    await cubit.saveOwner(fields.toOwner(owner));
+    if (!mounted || cubit.state.status == AdminSettingsStatus.failure) return;
+    await cubit.save(
+      StoreSettings(
+        currencyCode: _currency.trim().toUpperCase(),
+        stockControlEnabled: _stockControl,
+        manualPaymentEnabled: _manualPayment,
+        cashOnDeliveryEnabled: _cashOnDelivery,
+      ),
+    );
+  }
+
+  void _showUnsavedMessage() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('unsaved_changes'.tr())));
+  }
+}

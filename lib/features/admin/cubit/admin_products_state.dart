@@ -10,6 +10,7 @@ class AdminProductsState extends Equatable {
     this.products = const [],
     this.hasMore = false,
     this.isUpdating = false,
+    this.query = '',
     this.message,
   });
 
@@ -17,6 +18,7 @@ class AdminProductsState extends Equatable {
   final List<Product> products;
   final bool hasMore;
   final bool isUpdating;
+  final String query;
   final String? message;
 
   AdminProductsState copyWith({
@@ -24,15 +26,24 @@ class AdminProductsState extends Equatable {
     List<Product>? products,
     bool? hasMore,
     bool? isUpdating,
+    String? query,
     String? message,
   }) => AdminProductsState(
     status: status ?? this.status,
     products: products ?? this.products,
     hasMore: hasMore ?? this.hasMore,
     isUpdating: isUpdating ?? this.isUpdating,
+    query: query ?? this.query,
     message: message,
   );
 
   @override
-  List<Object?> get props => [status, products, hasMore, isUpdating, message];
+  List<Object?> get props => [
+    status,
+    products,
+    hasMore,
+    isUpdating,
+    query,
+    message,
+  ];
 }

@@ -9,12 +9,16 @@ import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../cart/cubit/cart_state.dart';
+import 'widgets/store_header_menu.dart';
 
 class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuPressed;
   final VoidCallback? onSearchPressed;
   final VoidCallback? onCartPressed;
   final VoidCallback? onAccountPressed;
+  final VoidCallback? onWishlistPressed;
+  final VoidCallback? onCategoriesPressed;
+  final VoidCallback? onNewArrivalsPressed;
 
   const StoreHeader({
     super.key,
@@ -22,6 +26,9 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
     this.onSearchPressed,
     this.onCartPressed,
     this.onAccountPressed,
+    this.onWishlistPressed,
+    this.onCategoriesPressed,
+    this.onNewArrivalsPressed,
   });
 
   @override
@@ -50,7 +57,9 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildMobile(BuildContext context) {
-    final bool canPop = context.canPop() && GoRouterState.of(context).uri.path != Routes.initialRoute;
+    final bool canPop =
+        context.canPop() &&
+        GoRouterState.of(context).uri.path != Routes.initialRoute;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -62,7 +71,10 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: () => context.pop(),
               )
             else
-              IconActionButton(icon: Icons.menu, onPressed: onMenuPressed),
+              IconActionButton(
+                icon: Icons.menu,
+                onPressed: onMenuPressed ?? () => showStoreMenu(context),
+              ),
           ],
         ),
         GestureDetector(
@@ -72,7 +84,11 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
         Row(
           children: [
             _buildLanguageButton(context),
-            IconActionButton(icon: Icons.search, onPressed: onSearchPressed),
+            IconActionButton(
+              icon: Icons.search,
+              onPressed:
+                  onSearchPressed ?? () => context.push(Routes.searchRoute),
+            ),
             _buildCartButton(context),
           ],
         ),
@@ -81,7 +97,9 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildDesktop(BuildContext context) {
-    final bool canPop = context.canPop() && GoRouterState.of(context).uri.path != Routes.initialRoute;
+    final bool canPop =
+        context.canPop() &&
+        GoRouterState.of(context).uri.path != Routes.initialRoute;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -100,12 +118,12 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: AppTokens.s32),
             TextButton(
-              onPressed: () {},
-              child: Text('Categories', style: AppTypography.buttonText),
+              onPressed: onCategoriesPressed,
+              child: Text('categories'.tr(), style: AppTypography.buttonText),
             ),
             TextButton(
-              onPressed: () {},
-              child: Text('New Arrivals', style: AppTypography.buttonText),
+              onPressed: onNewArrivalsPressed,
+              child: Text('new_arrivals'.tr(), style: AppTypography.buttonText),
             ),
           ],
         ),
@@ -113,14 +131,25 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
           children: [
             _buildLanguageButton(context),
             const SizedBox(width: AppTokens.s8),
-            IconActionButton(icon: Icons.search, onPressed: onSearchPressed),
+            IconActionButton(
+              icon: Icons.search,
+              onPressed:
+                  onSearchPressed ?? () => context.push(Routes.searchRoute),
+            ),
             const SizedBox(width: AppTokens.s8),
             IconActionButton(
               icon: Icons.person_outline,
-              onPressed: onAccountPressed,
+              onPressed:
+                  onAccountPressed ??
+                  () => openProtectedStoreRoute(context, Routes.profileRoute),
             ),
             const SizedBox(width: AppTokens.s8),
-            IconActionButton(icon: Icons.favorite_border, onPressed: () {}),
+            IconActionButton(
+              icon: Icons.favorite_border,
+              onPressed:
+                  onWishlistPressed ??
+                  () => openProtectedStoreRoute(context, Routes.wishlistRoute),
+            ),
             const SizedBox(width: AppTokens.s8),
             _buildCartButton(context),
           ],

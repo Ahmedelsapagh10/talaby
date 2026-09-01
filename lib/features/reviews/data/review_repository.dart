@@ -52,6 +52,7 @@ class ReviewRepository {
 
   Future<String> submit({
     required String productId,
+    required String productName,
     required String customerId,
     required String displayName,
     required int rating,
@@ -63,6 +64,7 @@ class ReviewRepository {
     final document = _firestore.collection(FirestorePaths.reviews).doc();
     await document.set({
       'productId': productId,
+      'productName': productName.trim(),
       'customerId': customerId,
       'displayName': displayName.trim(),
       'rating': rating,
@@ -131,6 +133,22 @@ class ReviewRepository {
         );
       }
     });
+  }
+
+  Future<void> deleteForProduct(String productId) async {
+    while (true) {
+      final snapshot = await _firestore
+          .collection(FirestorePaths.reviews)
+          .where('productId', isEqualTo: productId)
+          .limit(400)
+          .get();
+      if (snapshot.docs.isEmpty) return;
+      final batch = _firestore.batch();
+      for (final document in snapshot.docs) {
+        batch.delete(document.reference);
+      }
+      await batch.commit();
+    }
   }
 
   void _updateRating(

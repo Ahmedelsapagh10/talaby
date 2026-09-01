@@ -10,6 +10,8 @@ class AppTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final int maxLines;
   final FormFieldValidator<String>? validator;
+  final ValueChanged<String>? onChanged;
+  final bool enabled;
 
   const AppTextField({
     super.key,
@@ -20,6 +22,8 @@ class AppTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
     this.validator,
+    this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -41,6 +45,8 @@ class AppTextField extends StatelessWidget {
           keyboardType: keyboardType,
           maxLines: maxLines,
           validator: validator,
+          onChanged: onChanged,
+          enabled: enabled,
           style: AppTypography.bodyMedium,
           decoration: InputDecoration(
             hintText: hint,

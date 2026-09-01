@@ -36,11 +36,14 @@ class CustomerOrdersPage extends StatelessWidget {
             );
           }
 
-          if (state.orders.isEmpty || state.status == CustomerOrdersStatus.empty) {
+          if (state.orders.isEmpty ||
+              state.status == CustomerOrdersStatus.empty) {
             return Center(
               child: Text(
                 'You have no orders yet.',
-                style: AppTypography.bodyLarge.copyWith(color: Colors.grey.shade600),
+                style: AppTypography.bodyLarge.copyWith(
+                  color: Colors.grey.shade600,
+                ),
               ),
             );
           }
@@ -70,7 +73,11 @@ class CustomerOrdersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderList(BuildContext context, List<CommerceOrder> orders, int crossAxisCount) {
+  Widget _buildOrderList(
+    BuildContext context,
+    List<CommerceOrder> orders,
+    int crossAxisCount,
+  ) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -91,7 +98,9 @@ class CustomerOrdersPage extends StatelessWidget {
   Widget _buildOrderCard(BuildContext context, CommerceOrder order) {
     final statusBadge = order.orderStatus.name == 'delivered'
         ? StatusBadge.success('Delivered')
-        : (order.orderStatus.name == 'cancelled' ? StatusBadge.error('Cancelled') : StatusBadge.warning('Processing'));
+        : (order.orderStatus.name == 'cancelled'
+              ? StatusBadge.error('Cancelled')
+              : StatusBadge.warning('Processing'));
 
     return GestureDetector(
       onTap: () => context.push(Routes.orderRoute.replaceAll(':id', order.id)),
@@ -126,9 +135,13 @@ class CustomerOrdersPage extends StatelessWidget {
             const SizedBox(height: AppTokens.s8),
             Text(
               order.createdAt != null
-                  ? DateFormat('MMM dd, yyyy - hh:mm a').format(order.createdAt!)
+                  ? DateFormat(
+                      'MMM dd, yyyy - hh:mm a',
+                    ).format(order.createdAt!)
                   : 'Unknown Date',
-              style: AppTypography.bodySmall.copyWith(color: Colors.grey.shade500),
+              style: AppTypography.bodySmall.copyWith(
+                color: Colors.grey.shade500,
+              ),
             ),
             const Spacer(),
             Row(
@@ -140,7 +153,9 @@ class CustomerOrdersPage extends StatelessWidget {
                 ),
                 Text(
                   '${(order.total / 100).toStringAsFixed(2)} EGP',
-                  style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w700),
+                  style: AppTypography.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),

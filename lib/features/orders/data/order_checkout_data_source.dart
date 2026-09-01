@@ -7,6 +7,7 @@ import '../../cart/data/models/cart_item.dart';
 import '../../checkout/data/models/checkout_details.dart';
 import 'order_item_resolver.dart';
 import 'order_record_utils.dart';
+import '../../../core/utils/search_normalizer.dart';
 
 class OrderCheckoutDataSource {
   OrderCheckoutDataSource(this._firestore, this._auth, this._itemResolver);
@@ -84,6 +85,15 @@ class OrderCheckoutDataSource {
         'customerId': userId,
         'customerName': customer['name'],
         'phone': customer['mobile'],
+        'email': _auth.currentUser?.email,
+        'defaultCity': customer['city'],
+        'defaultAddress': customer['address'],
+        'searchName': SearchNormalizer.normalize(customer['name']!),
+        'searchPhone': SearchNormalizer.normalizePhone(customer['mobile']!),
+        'searchPrefixes': SearchNormalizer.prefixes(
+          'ORD-$sequence ${customer['name']} ${customer['mobile']} '
+          '${SearchNormalizer.normalizePhone(customer['mobile']!)}',
+        ),
         'city': customer['city'],
         'address': customer['address'],
         'notes': customer['notes'],
@@ -104,6 +114,11 @@ class OrderCheckoutDataSource {
       transaction.set(customerRef, {
         'name': customer['name'],
         'phone': customer['mobile'],
+        'email': _auth.currentUser?.email,
+        'defaultCity': customer['city'],
+        'defaultAddress': customer['address'],
+        'searchName': SearchNormalizer.normalize(customer['name']!),
+        'searchPhone': SearchNormalizer.normalizePhone(customer['mobile']!),
         'orderCount': FieldValue.increment(1),
         'lastOrderAt': now,
         'updatedAt': now,

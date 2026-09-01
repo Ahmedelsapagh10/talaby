@@ -1,52 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
+
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
+import 'admin_section.dart';
 
 class AdminShell extends StatelessWidget {
-  final Widget child;
-  final int selectedIndex;
+  const AdminShell({
+    super.key,
+    required this.child,
+    this.section = AdminSection.overview,
+  });
 
-  const AdminShell({super.key, required this.child, this.selectedIndex = 0});
+  final Widget child;
+  final AdminSection section;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: ResponsiveLayout(
-        mobile: _buildMobileLayout(),
-        desktop: _buildDesktopLayout(),
+        mobile: _MobileAdminLayout(section: section, child: child),
+        desktop: Row(
+          children: [
+            _AdminSidebar(section: section),
+            Expanded(child: child),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildMobileLayout() {
+class _MobileAdminLayout extends StatelessWidget {
+  const _MobileAdminLayout({required this.child, required this.section});
+
+  final Widget child;
+  final AdminSection section;
+
+  @override
+  Widget build(BuildContext context) {
+    final index = section.isMore ? 3 : section.index.clamp(0, 2);
     return Column(
       children: [
         Expanded(child: child),
-        BottomNavigationBar(
-          currentIndex: selectedIndex,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF191B1A),
-          unselectedItemColor: Colors.grey.shade400,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              label: 'Overview',
+        NavigationBar(
+          selectedIndex: index,
+          onDestinationSelected: (value) => _onSelected(context, value),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.dashboard_outlined),
+              label: 'overview'.tr(),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined),
-              label: 'Orders',
+            NavigationDestination(
+              icon: const Icon(Icons.shopping_bag_outlined),
+              label: 'orders'.tr(),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2_outlined),
-              label: 'Products',
+            NavigationDestination(
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: 'products'.tr(),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people_outline),
-              label: 'Customers',
+            NavigationDestination(
+              icon: const Icon(Icons.more_horiz),
+              label: 'more'.tr(),
             ),
           ],
         ),
@@ -54,16 +72,42 @@ class AdminShell extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopLayout() {
-    return Row(
-      children: [
-        _buildSidebar(),
-        Expanded(child: child),
-      ],
+  void _onSelected(BuildContext context, int value) {
+    if (value < 3) {
+      context.go(AdminSection.values[value].route);
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AdminSection.values.where((item) => item.isMore).map((
+            item,
+          ) {
+            return ListTile(
+              leading: Icon(_iconFor(item)),
+              title: Text(_labelFor(item)),
+              selected: item == section,
+              onTap: () {
+                Navigator.pop(sheetContext);
+                context.go(item.route);
+              },
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildSidebar() {
+class _AdminSidebar extends StatelessWidget {
+  const _AdminSidebar({required this.section});
+
+  final AdminSection section;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: 250,
       decoration: BoxDecoration(
@@ -75,60 +119,43 @@ class AdminShell extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(AppTokens.s24),
-            child: Text('TALABY ADMIN', style: AppTypography.h4),
+            child: Text('admin_title'.tr(), style: AppTypography.h4),
           ),
-          const SizedBox(height: AppTokens.s32),
-          _buildSidebarItem(
-            Icons.dashboard_outlined,
-            'Overview',
-            selectedIndex == 0,
+          ...AdminSection.values.map(
+            (item) => ListTile(
+              leading: Icon(_iconFor(item)),
+              title: Text(_labelFor(item)),
+              selected: section == item,
+              selectedTileColor: Colors.grey.shade200,
+              onTap: () => context.go(item.route),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.s24,
+              ),
+            ),
           ),
-          _buildSidebarItem(
-            Icons.shopping_bag_outlined,
-            'Orders',
-            selectedIndex == 1,
-          ),
-          _buildSidebarItem(
-            Icons.inventory_2_outlined,
-            'Products',
-            selectedIndex == 2,
-          ),
-          _buildSidebarItem(
-            Icons.people_outline,
-            'Customers',
-            selectedIndex == 3,
-          ),
-          _buildSidebarItem(Icons.star_outline, 'Reviews', selectedIndex == 4),
           const Spacer(),
-          _buildSidebarItem(
-            Icons.settings_outlined,
-            'Settings',
-            selectedIndex == 5,
-          ),
-          const SizedBox(height: AppTokens.s24),
         ],
       ),
     );
   }
-
-  Widget _buildSidebarItem(IconData icon, String label, bool isSelected) {
-    return Container(
-      color: isSelected ? Colors.grey.shade200 : Colors.transparent,
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected ? const Color(0xFF191B1A) : Colors.grey.shade600,
-        ),
-        title: Text(
-          label,
-          style: AppTypography.bodyMedium.copyWith(
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? const Color(0xFF191B1A) : Colors.grey.shade700,
-          ),
-        ),
-        onTap: () {},
-        contentPadding: const EdgeInsets.symmetric(horizontal: AppTokens.s24),
-      ),
-    );
-  }
 }
+
+String _labelFor(AdminSection section) => switch (section) {
+  AdminSection.overview => 'overview',
+  AdminSection.orders => 'orders',
+  AdminSection.products => 'products',
+  AdminSection.categories => 'categories',
+  AdminSection.customers => 'customers',
+  AdminSection.reviews => 'reviews',
+  AdminSection.settings => 'settings',
+}.tr();
+
+IconData _iconFor(AdminSection section) => switch (section) {
+  AdminSection.overview => Icons.dashboard_outlined,
+  AdminSection.orders => Icons.shopping_bag_outlined,
+  AdminSection.products => Icons.inventory_2_outlined,
+  AdminSection.categories => Icons.category_outlined,
+  AdminSection.customers => Icons.people_outline,
+  AdminSection.reviews => Icons.star_outline,
+  AdminSection.settings => Icons.settings_outlined,
+};

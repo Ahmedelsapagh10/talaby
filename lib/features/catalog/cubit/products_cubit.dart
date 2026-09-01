@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/product_repository.dart';
+import '../data/models/catalog_query.dart';
 import 'products_state.dart';
 
 class ProductsCubit extends Cubit<ProductsState> {
@@ -10,19 +11,14 @@ class ProductsCubit extends Cubit<ProductsState> {
   final ProductRepository _repository;
   DocumentSnapshot<Map<String, dynamic>>? _cursor;
   bool _loadingMore = false;
-  String? _categoryId;
-  bool? _featured;
+  CatalogQuery _query = const CatalogQuery();
 
-  Future<void> load({String? categoryId, bool? featured}) async {
+  Future<void> load({CatalogQuery query = const CatalogQuery()}) async {
     emit(const ProductsState(status: ProductsStatus.loading));
     _cursor = null;
-    _categoryId = categoryId;
-    _featured = featured;
+    _query = query;
     try {
-      final page = await _repository.getActiveProducts(
-        categoryId: categoryId,
-        featured: featured,
-      );
+      final page = await _repository.getActiveProducts(query: query);
       _cursor = page.nextCursor;
       emit(
         ProductsState(
@@ -48,8 +44,7 @@ class ProductsCubit extends Cubit<ProductsState> {
     _loadingMore = true;
     try {
       final page = await _repository.getActiveProducts(
-        categoryId: _categoryId,
-        featured: _featured,
+        query: _query,
         after: _cursor,
       );
       _cursor = page.nextCursor;

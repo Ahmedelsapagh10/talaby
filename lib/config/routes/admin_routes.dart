@@ -9,23 +9,35 @@ import '../../features/admin/cubit/admin_reviews_cubit.dart';
 import '../../features/admin/cubit/admin_settings_cubit.dart';
 import '../../features/admin/cubit/product_editor_cubit.dart';
 import '../../features/admin/presentation/admin_overview_page.dart';
+import '../../features/admin/presentation/admin_categories_page.dart';
+import '../../features/admin/presentation/admin_customers_page.dart';
+import '../../features/admin/presentation/admin_products_page.dart';
+import '../../features/admin/presentation/admin_reviews_page.dart';
+import '../../features/admin/presentation/admin_settings_page.dart';
 import '../../features/admin/presentation/admin_shell.dart';
+import '../../features/admin/presentation/admin_section.dart';
 import '../../features/admin/presentation/order_details_page.dart';
 import '../../features/admin/presentation/orders_list_page.dart';
+import '../../features/admin/presentation/product_editor_page.dart';
 import '../../features/orders/cubit/order_tracking_cubit.dart';
 import '../../injector.dart';
-import 'route_placeholder_page.dart';
 
 List<RouteBase> buildAdminRoutes() => [
   GoRoute(
     path: '/admin',
-    builder: (_, _) => const AdminShell(child: AdminOverviewPage()),
+    builder: (_, _) => BlocProvider(
+      create: (_) => serviceLocator<AdminOrderCubit>()..load(),
+      child: const AdminShell(child: AdminOverviewPage()),
+    ),
   ),
   GoRoute(
     path: '/admin/orders',
     builder: (_, _) => BlocProvider(
       create: (_) => serviceLocator<AdminOrderCubit>()..load(),
-      child: const AdminShell(selectedIndex: 1, child: OrdersListPage()),
+      child: const AdminShell(
+        section: AdminSection.orders,
+        child: OrdersListPage(),
+      ),
     ),
   ),
   GoRoute(
@@ -39,7 +51,10 @@ List<RouteBase> buildAdminRoutes() => [
                 ..watch(state.pathParameters['id']!),
         ),
       ],
-      child: const AdminShell(selectedIndex: 1, child: OrderDetailsPage()),
+      child: const AdminShell(
+        section: AdminSection.orders,
+        child: OrderDetailsPage(),
+      ),
     ),
   ),
   GoRoute(
@@ -54,8 +69,8 @@ List<RouteBase> buildAdminRoutes() => [
         ),
       ],
       child: const AdminShell(
-        selectedIndex: 2,
-        child: RoutePlaceholderPage(title: 'Products'),
+        section: AdminSection.products,
+        child: AdminProductsPage(),
       ),
     ),
   ),
@@ -64,8 +79,8 @@ List<RouteBase> buildAdminRoutes() => [
     builder: (_, _) => BlocProvider(
       create: (_) => serviceLocator<ProductEditorCubit>()..load(),
       child: const AdminShell(
-        selectedIndex: 2,
-        child: RoutePlaceholderPage(title: 'New product'),
+        section: AdminSection.products,
+        child: ProductEditorPage(),
       ),
     ),
   ),
@@ -76,8 +91,18 @@ List<RouteBase> buildAdminRoutes() => [
           serviceLocator<ProductEditorCubit>()
             ..load(productId: state.pathParameters['id']!),
       child: const AdminShell(
-        selectedIndex: 2,
-        child: RoutePlaceholderPage(title: 'Edit product'),
+        section: AdminSection.products,
+        child: ProductEditorPage(),
+      ),
+    ),
+  ),
+  GoRoute(
+    path: '/admin/categories',
+    builder: (_, _) => BlocProvider(
+      create: (_) => serviceLocator<AdminCategoriesCubit>()..load(),
+      child: const AdminShell(
+        section: AdminSection.categories,
+        child: AdminCategoriesPage(),
       ),
     ),
   ),
@@ -86,8 +111,8 @@ List<RouteBase> buildAdminRoutes() => [
     builder: (_, _) => BlocProvider(
       create: (_) => serviceLocator<AdminCustomersCubit>()..load(),
       child: const AdminShell(
-        selectedIndex: 3,
-        child: RoutePlaceholderPage(title: 'Customers'),
+        section: AdminSection.customers,
+        child: AdminCustomersPage(),
       ),
     ),
   ),
@@ -96,8 +121,8 @@ List<RouteBase> buildAdminRoutes() => [
     builder: (_, _) => BlocProvider(
       create: (_) => serviceLocator<AdminReviewsCubit>()..load(),
       child: const AdminShell(
-        selectedIndex: 4,
-        child: RoutePlaceholderPage(title: 'Reviews'),
+        section: AdminSection.reviews,
+        child: AdminReviewsPage(),
       ),
     ),
   ),
@@ -106,8 +131,8 @@ List<RouteBase> buildAdminRoutes() => [
     builder: (_, _) => BlocProvider(
       create: (_) => serviceLocator<AdminSettingsCubit>()..load(),
       child: const AdminShell(
-        selectedIndex: 5,
-        child: RoutePlaceholderPage(title: 'Settings'),
+        section: AdminSection.settings,
+        child: AdminSettingsPage(),
       ),
     ),
   ),
