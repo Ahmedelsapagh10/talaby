@@ -8,6 +8,7 @@ import '../../../../../core/design_system/typography.dart';
 import '../../../../../core/widgets/app_buttons.dart';
 import '../../../../../core/widgets/pricing.dart';
 import '../../../orders/data/models/commerce_order.dart';
+import '../../../orders/data/models/order_status.dart';
 import '../../cubit/admin_order_cubit.dart';
 
 class AdminCustomerCard extends StatelessWidget {
@@ -88,11 +89,12 @@ class AdminFinancialCard extends StatelessWidget {
       _MoneyRow(label: 'paid'.tr(), value: order.paidAmount),
       _MoneyRow(label: 'remaining'.tr(), value: order.remainingAmount),
       const SizedBox(height: AppTokens.s16),
-      AppButton(
-        text: 'update_delivery_fee'.tr(),
-        isPrimary: false,
-        onPressed: () => _editDeliveryFee(context),
-      ),
+      if (order.orderStatus != OrderStatus.cancelled && order.orderStatus != OrderStatus.delivered)
+        AppButton(
+          text: 'update_delivery_fee'.tr(),
+          isPrimary: false,
+          onPressed: () => _editDeliveryFee(context),
+        ),
     ],
   );
 

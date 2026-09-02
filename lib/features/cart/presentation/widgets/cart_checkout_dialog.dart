@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl_phone_field/phone_number.dart';
 
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/widgets/app_buttons.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/app_text_fields.dart';
 import '../../../../core/widgets/pricing.dart';
 import '../../../../core/widgets/product_ui.dart';
@@ -16,6 +18,7 @@ import '../../cubit/cart_cubit.dart';
 import '../../cubit/cart_state.dart';
 import '../../data/models/cart_item.dart';
 import '../../../../injector.dart';
+import 'checkout_phone_field.dart';
 
 class CartCheckoutDialog extends StatefulWidget {
   const CartCheckoutDialog({super.key});
@@ -49,6 +52,8 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
   final _phone = TextEditingController();
   final _address = TextEditingController();
   final _notes = TextEditingController();
+  String _completePhoneNumber = '';
+  String _initialCountryCode = 'EG';
 
   @override
   void initState() {
@@ -57,7 +62,7 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
     final profile = context.read<CheckoutCubit>().state.profile;
     if (profile != null) {
       _name.text = profile.name;
-      _phone.text = profile.phone;
+      _prefillPhone(profile.phone);
       _address.text = profile.defaultAddress;
     }
   }
@@ -76,18 +81,15 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
     return BlocConsumer<CheckoutCubit, CheckoutState>(
       listener: (context, checkoutState) {
         if (checkoutState.status == CheckoutStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text((checkoutState.message ?? 'checkout_failed').tr()),
-            ),
+          AppToast.error(
+            context,
+            (checkoutState.message ?? 'checkout_failed').tr(),
           );
         }
         if (checkoutState.status == CheckoutStatus.success) {
           context.read<CartCubit>().clear();
+          AppToast.success(context, 'order_placed_successfully'.tr());
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('order_placed_successfully'.tr())),
-          );
         }
       },
       builder: (context, checkoutState) {
@@ -213,14 +215,11 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                                           : null,
                                     ),
                                     const SizedBox(height: AppTokens.s16),
-                                    AppTextField(
+                                    CheckoutPhoneField(
                                       controller: _phone,
-                                      label: 'phone'.tr(),
-                                      keyboardType: TextInputType.phone,
-                                      validator: (v) =>
-                                          v?.trim().isEmpty == true
-                                          ? 'required_field'.tr()
-                                          : null,
+                                      initialCountryCode: _initialCountryCode,
+                                      onChanged: (phone) =>
+                                          _completePhoneNumber = phone,
                                     ),
                                     const SizedBox(height: AppTokens.s16),
                                     AppTextField(
@@ -260,7 +259,7 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                                   context.read<CheckoutCubit>().submit(
                                     CheckoutDetails(
                                       name: _name.text,
-                                      mobile: _phone.text,
+                                      mobile: _completePhoneNumber,
                                       city: 'N/A', // Bypassing city requirement
                                       address: _address.text,
                                       notes: _notes.text.trim().isEmpty
@@ -294,6 +293,34 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
         );
       },
     );
+  }
+
+  void _prefillPhone(String storedPhone) {
+    final sanitized = storedPhone.trim().replaceAll(RegExp(r'[^+\d]'), '');
+    if (sanitized.isEmpty) return;
+
+    if (sanitized.startsWith('+')) {
+      try {
+        final phone = PhoneNumber.fromCompleteNumber(completeNumber: sanitized);
+        if (phone.countryISOCode.isNotEmpty) {
+          _initialCountryCode = phone.countryISOCode;
+          _phone.text = phone.number;
+          _completePhoneNumber = sanitized;
+          return;
+        }
+      } catch (_) {
+        // Fall back to the configured default country for malformed old data.
+      }
+    }
+
+    var egyptianNumber = sanitized.replaceAll(RegExp(r'\D'), '');
+    if (egyptianNumber.length == 12 && egyptianNumber.startsWith('20')) {
+      egyptianNumber = egyptianNumber.substring(2);
+    } else if (egyptianNumber.length == 11 && egyptianNumber.startsWith('0')) {
+      egyptianNumber = egyptianNumber.substring(1);
+    }
+    _phone.text = egyptianNumber;
+    _completePhoneNumber = '+20$egyptianNumber';
   }
 
   Widget _buildCartItem(BuildContext context, CartItem item) {

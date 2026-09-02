@@ -10,6 +10,7 @@ import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/ux_states.dart';
 import '../../catalog/data/models/product.dart';
 import '../cubit/admin_products_cubit.dart';
@@ -38,10 +39,9 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
     return BlocConsumer<AdminProductsCubit, AdminProductsState>(
       listener: (context, state) {
         if (state.status == AdminProductsStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message ?? 'product_operation_failed'.tr()),
-            ),
+          AppToast.error(
+            context,
+            state.message ?? 'product_operation_failed'.tr(),
           );
         }
       },

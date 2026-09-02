@@ -6,6 +6,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/ux_states.dart';
 import '../../store/data/models/store_settings.dart';
 import '../cubit/admin_settings_cubit.dart';
@@ -46,9 +47,10 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
       listener: (context, state) {
         if (state.status == AdminSettingsStatus.success) {
           setState(() => _dirty = false);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('settings_saved'.tr())));
+          AppToast.success(context, 'settings_saved'.tr());
+        } else if (state.status == AdminSettingsStatus.failure &&
+            _initialized) {
+          AppToast.error(context, state.message ?? 'settings_save_failed'.tr());
         }
       },
       builder: (context, state) {
@@ -157,7 +159,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
     fields.fill(state.owner!);
     final settings = state.settings ?? const StoreSettings();
     _currency = settings.currencyCode;
-    _storeActive = state.owner!.active;
+    _storeActive = settings.active;
     _stockControl = settings.stockControlEnabled;
     _manualPayment = settings.manualPaymentEnabled;
     _cashOnDelivery = settings.cashOnDeliveryEnabled;
@@ -169,10 +171,10 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
   Future<void> _save() async {
     final cubit = context.read<AdminSettingsCubit>();
     final owner = cubit.state.owner!;
-    await cubit.saveOwner(fields.toOwner(owner).copyWith(active: _storeActive));
-    if (!mounted || cubit.state.status == AdminSettingsStatus.failure) return;
-    await cubit.save(
+    await cubit.saveAll(
+      fields.toOwner(owner),
       StoreSettings(
+        active: _storeActive,
         currencyCode: _currency.trim().toUpperCase(),
         stockControlEnabled: _stockControl,
         manualPaymentEnabled: _manualPayment,
@@ -195,8 +197,6 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
   }
 
   void _showUnsavedMessage() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('unsaved_changes'.tr())));
+    AppToast.info(context, 'unsaved_changes'.tr());
   }
 }

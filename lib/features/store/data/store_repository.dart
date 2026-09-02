@@ -28,6 +28,22 @@ class StoreRepository {
     });
   }
 
+  Future<void> updateOwnerAndSettings(
+    Owner owner,
+    StoreSettings settings,
+  ) async {
+    final batch = _firestore.batch();
+    batch.update(_firestore.doc(FirestorePaths.owner), {
+      ...owner.toPublicProfileMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    batch.set(_firestore.doc(FirestorePaths.generalSettings), {
+      ...settings.toMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+    await batch.commit();
+  }
+
   Stream<StoreSettings?> watchSettings() {
     return _firestore
         .doc(FirestorePaths.generalSettings)

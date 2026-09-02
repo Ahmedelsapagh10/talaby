@@ -2,16 +2,51 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import '../../features/catalog/data/models/category.dart';
 import '../../features/catalog/data/models/product.dart';
+import '../../features/store/data/models/store_settings.dart';
 import '../config/app_config.dart';
 import '../firebase/firestore_paths.dart';
 
 class DataSeeder {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  static Future<void> seedStoreOwner() async {
+    final ownerReference = _firestore.doc(FirestorePaths.owner);
+    final settingsReference = _firestore.doc(FirestorePaths.generalSettings);
+    final snapshots = await Future.wait([
+      ownerReference.get(),
+      settingsReference.get(),
+    ]);
+    final owner = snapshots[0];
+    final settings = snapshots[1];
+    final now = FieldValue.serverTimestamp();
+
+    await ownerReference.set({
+      'updatedAt': now,
+      if (!owner.exists) 'createdAt': now,
+    }, SetOptions(merge: true));
+
+    if (!settings.exists) {
+      await settingsReference.set({
+        ...const StoreSettings().toMap(),
+        'createdAt': now,
+        'updatedAt': now,
+      });
+    } else if (settings.data()?['active'] == null) {
+      await settingsReference.set({
+        'active': true,
+        'updatedAt': now,
+      }, SetOptions(merge: true));
+    }
+  }
+
   static Future<void> seedData() async {
     try {
       debugPrint('Starting data seeding...');
       final ownerId = AppConfig.ownerId;
+
+      // The parent owner document must exist and be active before checkout can
+      // create orders under its subcollection.
+      await seedStoreOwner();
 
       // 1. Seed Categories
       final categoriesRef = _firestore.collection(FirestorePaths.categories);

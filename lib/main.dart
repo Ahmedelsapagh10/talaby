@@ -4,12 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app.dart';
 import 'core/init_config/initalization_config.dart';
+import 'core/utils/data_seeder.dart';
 import 'core/utils/restart_app_class.dart';
 
 void main() async {
   usePathUrlStrategy();
   await initializationClass();
-
+  // await DataSeeder.seedData();
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('ar')],

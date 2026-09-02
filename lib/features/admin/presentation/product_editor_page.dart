@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/widgets/ux_states.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../catalog/data/models/discount.dart';
 import '../../catalog/data/models/product.dart';
 import '../../catalog/data/models/product_color.dart';
@@ -114,9 +115,7 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
       context.go('/admin/products');
     }
     if (state.status == ProductEditorStatus.failure && _initialized) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message ?? 'save_product_failed'.tr())),
-      );
+      AppToast.error(context, state.message ?? 'save_product_failed'.tr());
     }
   }
 
@@ -157,9 +156,7 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
       variants: _variants,
     );
     if (validationKey != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(validationKey.tr())));
+      AppToast.error(context, validationKey.tr());
       return;
     }
     final current = context.read<ProductEditorCubit>().state.product;

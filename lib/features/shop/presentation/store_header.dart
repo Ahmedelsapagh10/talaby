@@ -7,6 +7,7 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
+import '../../auth/cubit/auth_cubit.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../cart/cubit/cart_state.dart';
 import '../../cart/presentation/widgets/cart_checkout_dialog.dart';
@@ -151,6 +152,12 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
               onPressed:
                   onWishlistPressed ??
                   () => openProtectedStoreRoute(context, Routes.wishlistRoute),
+            ),
+            const SizedBox(width: AppTokens.s8),
+            IconActionButton(
+              icon: PhosphorIconsRegular.shieldCheck,
+              tooltip: 'لوحة التحكم',
+              onPressed: () => context.go('/admin'),
             ),
             const SizedBox(width: AppTokens.s8),
             _buildCartButton(context),

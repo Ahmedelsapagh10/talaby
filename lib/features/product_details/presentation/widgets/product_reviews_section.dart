@@ -5,6 +5,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
+import '../../../../../core/widgets/app_toast.dart';
 import '../../../auth/cubit/auth_cubit.dart';
 import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';
 import '../../../catalog/data/models/product.dart';
@@ -21,15 +22,12 @@ class ProductReviewsSection extends StatelessWidget {
     return BlocConsumer<ReviewsCubit, ReviewsState>(
       listener: (context, state) {
         if (state.submitted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('review_pending'.tr())));
+          AppToast.success(context, 'review_pending'.tr());
         }
         if (state.status == ReviewsStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text((state.message ?? 'review_submit_failed').tr()),
-            ),
+          AppToast.error(
+            context,
+            (state.message ?? 'review_submit_failed').tr(),
           );
         }
       },

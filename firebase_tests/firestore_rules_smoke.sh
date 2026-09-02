@@ -148,7 +148,6 @@ customer_token="$(print -r -- "$customer_auth" | jq -r '.idToken')"
 other_token="$(print -r -- "$other_auth" | jq -r '.idToken')"
 
 bootstrap_owner_fields="$(jq -nc --arg time "$fixed_time" '{
-  active: {booleanValue: true},
   createdAt: {timestampValue: $time},
   updatedAt: {timestampValue: $time}
 }')"
@@ -157,22 +156,39 @@ bootstrap_member_fields="$(jq -nc --arg time "$fixed_time" '{
   createdAt: {timestampValue: $time},
   updatedAt: {timestampValue: $time}
 }')"
+bootstrap_settings_fields="$(jq -nc --arg time "$fixed_time" '{
+  active: {booleanValue: true}, currencyCode: {stringValue: "EGP"},
+  currencyMinorDigits: {integerValue: "2"},
+  stockControlEnabled: {booleanValue: true},
+  manualPaymentEnabled: {booleanValue: true},
+  cashOnDeliveryEnabled: {booleanValue: true},
+  bannerEnabled: {booleanValue: true}, bannerTitleAr: {stringValue: ""},
+  bannerSubtitleAr: {stringValue: ""}, bannerImageUrl: {nullValue: null},
+  public: {booleanValue: true}, createdAt: {timestampValue: $time},
+  updatedAt: {timestampValue: $time}
+}')"
 expect_status 200 PATCH "${firestore_url}/owners/${other_id}" \
   "$other_token" "$(document_body "$bootstrap_owner_fields")"
 expect_status 403 PATCH "${firestore_url}/owners/${customer_id}" \
   "$other_token" "$(document_body "$bootstrap_owner_fields")"
 expect_status 200 PATCH "${firestore_url}/owners/${other_id}/members/${other_id}" \
   "$other_token" "$(document_body "$bootstrap_member_fields")"
+expect_status 200 PATCH "${firestore_url}/owners/${other_id}/settings/general" \
+  "$other_token" "$(document_body "$bootstrap_settings_fields")"
+expect_status 403 PATCH "${firestore_url}/owners/${other_id}/settings/general" \
+  "$customer_token" "$(document_body "$bootstrap_settings_fields")"
 expect_status 403 PATCH "${firestore_url}/owners/${other_id}/members/${other_id}?updateMask.fieldPaths=role" \
   "$other_token" '{"fields":{"role":{"stringValue":"staff"}}}'
 
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}" owner \
-  '{"fields":{"active":{"booleanValue":true},"name":{"stringValue":"Talaby"}}}'
+  '{"fields":{"name":{"stringValue":"Talaby"}}}'
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/members/${admin_id}" owner \
   '{"fields":{"role":{"stringValue":"admin"}}}'
-expect_status 200 PATCH "${firestore_url}/owners/${owner_id}?updateMask.fieldPaths=active" \
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/settings/general" owner \
+  "$(document_body "$bootstrap_settings_fields")"
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/settings/general?updateMask.fieldPaths=active" \
   "$admin_token" '{"fields":{"active":{"booleanValue":false}}}'
-expect_status 200 PATCH "${firestore_url}/owners/${owner_id}?updateMask.fieldPaths=active" \
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/settings/general?updateMask.fieldPaths=active" \
   "$admin_token" '{"fields":{"active":{"booleanValue":true}}}'
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/categories/category-1" \
   "$admin_token" \
@@ -225,6 +241,12 @@ expect_status 403 GET "${firestore_url}/owners/${owner_id}/customers/${other_id}
   "$customer_token"
 
 order_fields_json="$(order_fields 'ORD-1')"
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/settings/general?updateMask.fieldPaths=active" \
+  "$admin_token" '{"fields":{"active":{"booleanValue":false}}}'
+expect_status 403 PATCH "${firestore_url}/owners/${owner_id}/orders/order-inactive" \
+  "$customer_token" "$(document_body "$order_fields_json")"
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/settings/general?updateMask.fieldPaths=active" \
+  "$admin_token" '{"fields":{"active":{"booleanValue":true}}}'
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/orders/order-1" \
   "$customer_token" "$(document_body "$order_fields_json")"
 bad_order_fields="$(print -r -- "$order_fields_json" | jq -c '.orderStatus.stringValue = "delivered"')"

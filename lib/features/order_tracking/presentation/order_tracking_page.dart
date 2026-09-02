@@ -2,6 +2,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/widgets/badges.dart';
@@ -49,14 +50,14 @@ class OrderTrackingPage extends StatelessWidget {
                     children: [
                       const SizedBox(height: AppTokens.s24),
                       Text(
-                        'Order #${order.readableOrderNumber}',
+                        'order_number'.tr(namedArgs: {'number': order.readableOrderNumber}),
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: AppTokens.s8),
                       Text(
                         order.createdAt != null
-                            ? 'Placed on ${DateFormat('MMM dd, yyyy - hh:mm a').format(order.createdAt!)}'
-                            : 'Unknown Date',
+                            ? 'placed_on'.tr(args: [DateFormat('MMM dd, yyyy - hh:mm a').format(order.createdAt!)])
+                            : 'unknown_date'.tr(),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -113,7 +114,7 @@ class OrderTrackingPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Order Status', style: Theme.of(context).textTheme.titleLarge),
+        Text('order_status_timeline'.tr(), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: AppTokens.s24),
         ...events.asMap().entries.map((entry) {
           final index = entry.key;
@@ -138,19 +139,19 @@ class OrderTrackingPage extends StatelessWidget {
   String _formatEventName(OrderEventType type) {
     switch (type) {
       case OrderEventType.orderCreated:
-        return 'Order Created';
+        return 'order_created'.tr();
       case OrderEventType.orderConfirmed:
-        return 'Order Confirmed';
+        return 'order_confirmed'.tr();
       case OrderEventType.preparing:
-        return 'Preparing';
+        return 'preparing'.tr();
       case OrderEventType.ready:
-        return 'Ready for Pickup / Shipping';
+        return 'ready_for_pickup'.tr();
       case OrderEventType.outForDelivery:
-        return 'Out for Delivery';
+        return 'out_for_delivery'.tr();
       case OrderEventType.delivered:
-        return 'Delivered';
+        return 'delivered'.tr();
       case OrderEventType.cancelled:
-        return 'Cancelled';
+        return 'cancelled'.tr();
       default:
         return type.name;
     }
@@ -231,10 +232,10 @@ class OrderTrackingPage extends StatelessWidget {
 
   Widget _buildPaymentSummary(BuildContext context, CommerceOrder order) {
     final statusBadge = order.paymentStatus.name == 'paid'
-        ? StatusBadge.success('Paid')
+        ? StatusBadge.success('paid'.tr())
         : (order.paymentStatus.name == 'partiallyPaid'
-              ? StatusBadge.warning('Partially Paid')
-              : StatusBadge.error('Pending'));
+              ? StatusBadge.warning('partially_paid'.tr())
+              : StatusBadge.error('pending_payment'.tr()));
 
     return Container(
       padding: const EdgeInsets.all(AppTokens.s24),
@@ -250,7 +251,7 @@ class OrderTrackingPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Payment Status',
+                'payment_status'.tr(),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               statusBadge,
@@ -259,19 +260,19 @@ class OrderTrackingPage extends StatelessWidget {
           const SizedBox(height: AppTokens.s24),
           _buildSummaryRow(
             context,
-            'Total',
+            'total'.tr(),
             '${(order.total / 100).toStringAsFixed(2)} EGP',
           ),
           const SizedBox(height: AppTokens.s12),
           _buildSummaryRow(
             context,
-            'Paid',
+            'paid'.tr(),
             '${(order.paidAmount / 100).toStringAsFixed(2)} EGP',
           ),
           const SizedBox(height: AppTokens.s12),
           _buildSummaryRow(
             context,
-            'Remaining',
+            'remaining'.tr(),
             '${(order.remainingAmount / 100).toStringAsFixed(2)} EGP',
             isBold: true,
           ),

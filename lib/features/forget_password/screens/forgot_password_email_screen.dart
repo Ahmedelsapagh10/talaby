@@ -3,6 +3,7 @@ import 'package:new_strucuture/core/exports.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
+import 'package:new_strucuture/core/widgets/app_toast.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 
@@ -68,22 +69,10 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
         child: BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
           listener: (context, state) {
             if (state is ForgetPasswordCodeSent) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('reset_link_sent'.tr()),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.success59,
-                ),
-              );
+              AppToast.success(context, 'reset_link_sent'.tr());
               context.push(Routes.forgotPasswordOtpRoute, extra: state.email);
             } else if (state is ForgetPasswordError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.red,
-                ),
-              );
+              AppToast.error(context, state.message);
             }
           },
           builder: (context, state) {

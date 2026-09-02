@@ -25,16 +25,16 @@ class OrderCheckoutDataSource {
       throw StateError('Order items are invalid.');
     }
     final customer = _customerData(details);
-    final ownerRef = _firestore.doc(FirestorePaths.owner);
+    final settingsRef = _firestore.doc(FirestorePaths.generalSettings);
     final counterRef = _firestore.doc(FirestorePaths.orderCounter);
     final customerRef = _firestore.doc(FirestorePaths.customer(userId));
     final orderRef = _firestore.collection(FirestorePaths.orders).doc();
 
     Future<void> createOrder(Transaction transaction) async {
-      final owner = await transaction.get(ownerRef);
+      final settings = await transaction.get(settingsRef);
       final counter = await transaction.get(counterRef);
       final customerSnapshot = await transaction.get(customerRef);
-      if (!owner.exists || owner.data()?['active'] != true) {
+      if (!settings.exists || settings.data()?['active'] != true) {
         throw StateError('Store is not active.');
       }
 

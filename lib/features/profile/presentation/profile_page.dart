@@ -9,8 +9,10 @@ import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/ux_states.dart';
 import '../../auth/cubit/auth_cubit.dart';
+import '../../auth/cubit/auth_state.dart';
 import '../../shop/presentation/store_header.dart';
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
@@ -31,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final _city = TextEditingController();
   final _address = TextEditingController();
   bool _initialized = false;
+  bool _socialSignInLoading = false;
 
   @override
   void dispose() {
@@ -47,9 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
           if (state.status == ProfileStatus.success) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('profile_saved'.tr())));
+            AppToast.success(context, 'profile_saved'.tr());
           }
         },
         builder: (context, state) {
@@ -122,6 +123,15 @@ class _ProfilePageState extends State<ProfilePage> {
                               isLoading: state.status == ProfileStatus.saving,
                               onPressed: _save,
                             ),
+                            BlocBuilder<AuthCubit, AuthState>(
+                              builder: (context, authState) {
+                                final hasEmail =
+                                    authState.session?.email != null &&
+                                    authState.session!.email!.isNotEmpty;
+                                if (hasEmail) return const SizedBox.shrink();
+                                return _buildSocialSignInSection(context);
+                              },
+                            ),
                             const Divider(height: AppTokens.s48),
                             ListTile(
                               leading: const Icon(PhosphorIconsRegular.receipt),
@@ -150,6 +160,79 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
+  }
+
+  Widget _buildSocialSignInSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Divider(height: AppTokens.s48),
+        Text(
+          'sign_in_with_account'.tr(),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppTokens.s8),
+        Text(
+          'sign_in_with_account_hint'.tr(),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        const SizedBox(height: AppTokens.s16),
+        AppButton(
+          text: 'continue_with_google'.tr(),
+          icon: PhosphorIconsRegular.googleLogo,
+          isPrimary: false,
+          isLoading: _socialSignInLoading,
+          onPressed: _socialSignInLoading ? null : _signInWithGoogle,
+        ),
+        const SizedBox(height: AppTokens.s12),
+        AppButton(
+          text: 'continue_with_apple'.tr(),
+          icon: PhosphorIconsRegular.appleLogo,
+          isLoading: _socialSignInLoading,
+          onPressed: _socialSignInLoading ? null : _signInWithApple,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _socialSignInLoading = true);
+    try {
+      await context.read<AuthCubit>().signInWithGoogle();
+      if (!mounted) return;
+      final authState = context.read<AuthCubit>().state;
+      if (authState.status == AuthStatus.failure) {
+        _showSignInError(authState.message);
+      }
+    } catch (_) {
+      if (mounted) _showSignInError(null);
+    } finally {
+      if (mounted) setState(() => _socialSignInLoading = false);
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() => _socialSignInLoading = true);
+    try {
+      await context.read<AuthCubit>().signInWithApple();
+      if (!mounted) return;
+      final authState = context.read<AuthCubit>().state;
+      if (authState.status == AuthStatus.failure) {
+        _showSignInError(authState.message);
+      }
+    } catch (_) {
+      if (mounted) _showSignInError(null);
+    } finally {
+      if (mounted) setState(() => _socialSignInLoading = false);
+    }
+  }
+
+  void _showSignInError(String? message) {
+    AppToast.error(context, message ?? 'auth_sign_in_failed'.tr());
   }
 
   void _initialize(CustomerProfile profile) {

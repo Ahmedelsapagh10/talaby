@@ -11,10 +11,15 @@ void main() {
     );
 
     expect(settings.toMap(), containsPair('bannerEnabled', false));
+    expect(settings.toMap(), containsPair('active', true));
     expect(settings.toMap(), containsPair('bannerTitleAr', 'عنوان'));
     expect(
       settings.toMap(),
       containsPair('bannerImageUrl', 'https://example.com/banner.jpg'),
     );
+  });
+
+  test('store settings preserve the admin-controlled active state', () {
+    expect(const StoreSettings(active: false).toMap()['active'], isFalse);
   });
 }

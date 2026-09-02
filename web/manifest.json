@@ -1,11 +1,11 @@
 {
-    "name": "X STORE",
-    "short_name": "X STORE",
+    "name": "Talaby",
+    "short_name": "Talaby",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#F5F7FE",
     "theme_color": "#31538E",
-    "description": "A new Flutter project.",
+    "description": "متجر طلبي الإلكتروني",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

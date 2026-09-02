@@ -48,22 +48,41 @@ class _PaymentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    contentPadding: EdgeInsets.zero,
-    title: Text('${(payment.claimedAmount / 100).toStringAsFixed(2)} EGP'),
+    contentPadding: const EdgeInsets.symmetric(vertical: AppTokens.s8),
+    title: Text('${(payment.claimedAmount / 100).toStringAsFixed(2)} EGP', style: AppTypography.h4),
     subtitle: Text(_statusLabel(payment.status)),
-    leading: IconButton(
-      icon: const Icon(PhosphorIconsRegular.receipt),
-      onPressed: () => launchUrl(Uri.parse(payment.proofUrl)),
+    leading: GestureDetector(
+      onTap: () => _showProofImage(context, payment.proofUrl),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppTokens.r8),
+          border: Border.all(color: Theme.of(context).dividerColor),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.network(
+          payment.proofUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const Icon(PhosphorIconsRegular.imageBroken),
+        ),
+      ),
     ),
     trailing: payment.status == PaymentRecordStatus.proofSubmitted
-        ? Wrap(
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(PhosphorIconsRegular.x),
+                icon: const Icon(PhosphorIconsRegular.xCircle),
+                color: Theme.of(context).colorScheme.error,
+                tooltip: 'reject'.tr(),
                 onPressed: () => _review(context, false),
               ),
               IconButton(
-                icon: const Icon(PhosphorIconsRegular.check),
+                icon: const Icon(PhosphorIconsRegular.checkCircle),
+                color: Colors.green,
+                tooltip: 'approve'.tr(),
                 onPressed: () => _review(context, true),
               ),
             ],
@@ -77,6 +96,46 @@ class _PaymentTile extends StatelessWidget {
       paymentId: payment.id,
       approved: approved,
       confirmedAmount: approved ? payment.claimedAmount : null,
+    );
+  }
+
+  void _showProofImage(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r16),
+        ),
+        child: Stack(
+          children: [
+            InteractiveViewer(
+              panEnabled: true,
+              minScale: 1.0,
+              maxScale: 4.0,
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(PhosphorIconsRegular.imageBroken, size: 64),
+                ),
+              ),
+            ),
+            Positioned(
+              top: AppTokens.s16,
+              right: AppTokens.s16,
+              child: IconButton(
+                icon: const Icon(PhosphorIconsRegular.xCircle, size: 32),
+                color: Colors.white,
+                style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

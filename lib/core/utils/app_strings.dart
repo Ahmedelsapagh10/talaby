@@ -1,5 +1,5 @@
 class AppStrings {
-  static const String appName = 'X STORE';
+  static const String appName = 'Talaby';
 
   static const String fontFamily = 'Alexandria';
   static const String noRouteFound = 'الصفحة غير موجودة';

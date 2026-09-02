@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/error/checkout_errors.dart';
 import '../../auth/data/auth_repository.dart';
 import '../../cart/data/cart_repository.dart';
 import '../../orders/data/order_repository.dart';
@@ -57,7 +58,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
       emit(
         CheckoutState(
           status: CheckoutStatus.failure,
-          message: error.toString(),
+          message: mapCheckoutError(error),
           profile: state.profile,
         ),
       );

@@ -99,6 +99,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.7
 
 # firebase_core_web 3.11.0 uses a JS interop API unavailable to the Dart 3.11
 # compiler bundled with Flutter 3.41. Pin until the upstream compatibility
@@ -198,3 +199,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#FCFBF8"
+  image: "assets/images/talaby.png"
+  android: true
+  ios: true
+  web: true

@@ -178,13 +178,12 @@ class AppRoutes {
           ? requested
           : '/admin';
     }
-    if (isAdminPath && !auth.isAuthenticated) {
+    if (isAdminPath && !auth.isAdmin) {
       return '${Routes.adminLoginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
     }
     if (requiresCustomerAuth && !auth.isAuthenticated) {
       return '${Routes.loginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
     }
-    if (isAdminPath && !auth.isAdmin) return Routes.initialRoute;
     if (path == Routes.loginRoute && auth.isAuthenticated) {
       final requested = uri.queryParameters['redirect'];
       if (auth.isAdmin) {

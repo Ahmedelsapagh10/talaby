@@ -13,7 +13,6 @@ class Owner {
     this.email,
     this.instagram,
     this.facebook,
-    this.active = true,
     this.createdAt,
     this.updatedAt,
   });
@@ -29,7 +28,6 @@ class Owner {
   final String? email;
   final String? instagram;
   final String? facebook;
-  final bool active;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -44,7 +42,6 @@ class Owner {
     String? email,
     String? instagram,
     String? facebook,
-    bool? active,
   }) => Owner(
     id: id,
     name: name ?? this.name,
@@ -57,7 +54,6 @@ class Owner {
     email: email ?? this.email,
     instagram: instagram ?? this.instagram,
     facebook: facebook ?? this.facebook,
-    active: active ?? this.active,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -76,7 +72,6 @@ class Owner {
       email: map['email']?.toString(),
       instagram: map['instagram']?.toString(),
       facebook: map['facebook']?.toString(),
-      active: map['active'] as bool? ?? true,
       createdAt: (map['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (map['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -93,6 +88,5 @@ class Owner {
     'email': email,
     'instagram': instagram,
     'facebook': facebook,
-    'active': active,
   };
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../config/routes/app_routes.dart';
 import '../../../../config/themes/app_colors_extension.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../auth/cubit/auth_cubit.dart';
 import 'admin_section.dart';
 
 class AdminShell extends StatelessWidget {
@@ -98,12 +97,11 @@ class _MobileAdminLayout extends StatelessWidget {
               );
             }),
             ListTile(
-              leading: Icon(PhosphorIconsRegular.signOut),
-              title: Text('sign_out'.tr()),
+              leading: Icon(PhosphorIconsRegular.storefront),
+              title: Text('view_store'.tr()),
               onTap: () {
-                final authCubit = context.read<AuthCubit>();
                 Navigator.pop(sheetContext);
-                authCubit.logout();
+                context.go(Routes.initialRoute);
               },
             ),
           ],
@@ -211,11 +209,11 @@ class _AdminSidebar extends StatelessWidget {
             ),
             child: ListTile(
               leading: Icon(
-                PhosphorIconsRegular.signOut,
+                PhosphorIconsRegular.storefront,
                 color: mutedTextColor,
               ),
               title: Text(
-                'sign_out'.tr(),
+                'view_store'.tr(),
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: mutedTextColor,
                 ),
@@ -223,7 +221,7 @@ class _AdminSidebar extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppTokens.r12),
               ),
-              onTap: () => context.read<AuthCubit>().logout(),
+              onTap: () => context.go(Routes.initialRoute),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppTokens.s16,
               ),

@@ -4,6 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
 import 'package:new_strucuture/features/forget_password/data/model/forget_password_model.dart';
+import 'package:new_strucuture/core/widgets/app_toast.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 import 'package:pinput/pinput.dart';
@@ -26,13 +27,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
     if (_otpCode.length == 4) {
       context.read<ForgetPasswordCubit>().verifyCode(email, _otpCode);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("verification_code_invalid".tr()),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.red,
-        ),
-      );
+      AppToast.error(context, 'verification_code_invalid'.tr());
     }
   }
 
@@ -93,13 +88,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                 ),
               );
             } else if (state is ForgetPasswordError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.red,
-                ),
-              );
+              AppToast.error(context, state.message);
             }
           },
           builder: (context, state) {
@@ -237,12 +226,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                                     context
                                         .read<ForgetPasswordCubit>()
                                         .sendCode(email);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('reset_link_sent'.tr()),
-                                        behavior: SnackBarBehavior.floating,
-                                        backgroundColor: AppColors.success59,
-                                      ),
+                                    AppToast.success(
+                                      context,
+                                      'reset_link_sent'.tr(),
                                     );
                                   },
                             child: Text(

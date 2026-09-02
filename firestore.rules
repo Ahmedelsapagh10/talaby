@@ -23,12 +23,32 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == ownerId;
     }
 
+    function storeActive(ownerId) {
+      return exists(/databases/$(database)/documents/owners/$(ownerId)/settings/general)
+        && get(/databases/$(database)/documents/owners/$(ownerId)/settings/general).data.active == true;
+    }
+
     function validOwnerBootstrap(ownerId) {
       return bootstrapsOwnStore(ownerId)
         && request.resource.data.keys().hasOnly([
-          'active', 'createdAt', 'updatedAt'
+          'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    function validSettingsBootstrap(ownerId, settingId) {
+      return bootstrapsOwnStore(ownerId)
+        && settingId == 'general'
+        && request.resource.data.keys().hasOnly([
+          'active', 'currencyCode', 'currencyMinorDigits',
+          'stockControlEnabled', 'manualPaymentEnabled',
+          'cashOnDeliveryEnabled', 'bannerEnabled', 'bannerTitleAr',
+          'bannerSubtitleAr', 'bannerImageUrl', 'public', 'createdAt',
+          'updatedAt'
         ])
         && request.resource.data.active == true
+        && request.resource.data.public == true
         && request.resource.data.createdAt is timestamp
         && request.resource.data.updatedAt is timestamp;
     }
@@ -161,7 +181,8 @@ service cloud.firestore {
     }
 
     function validOrderCreate(ownerId) {
-      return request.resource.data.keys().hasOnly([
+      return storeActive(ownerId)
+        && request.resource.data.keys().hasOnly([
           'readableOrderNumber', 'ownerId', 'customerId', 'customerName',
           'phone', 'email', 'defaultCity', 'defaultAddress', 'searchName',
           'searchPhone', 'searchPrefixes', 'city', 'address', 'notes', 'items',
@@ -344,7 +365,7 @@ service cloud.firestore {
     }
 
     match /owners/{ownerId} {
-      allow read: if resource.data.active == true
+      allow read: if storeActive(ownerId)
         || managesStore(ownerId)
         || bootstrapsOwnStore(ownerId);
       allow create: if validOwnerBootstrap(ownerId);
@@ -352,13 +373,7 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
             'name', 'slug', 'logoUrl', 'primaryColor', 'secondaryColor',
             'phone', 'whatsappPhone', 'email', 'instagram', 'facebook',
-            'active', 'updatedAt'
-          ]))
-        || (bootstrapsOwnStore(ownerId)
-          && resource.data.get('active', null) == null
-          && request.resource.data.active == true
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-            'active', 'updatedAt'
+            'updatedAt'
           ]));
       allow delete: if false;
 
@@ -376,7 +391,8 @@ service cloud.firestore {
       }
 
       match /products/{productId} {
-        allow read: if resource.data.active == true || managesStore(ownerId);
+        allow read: if (storeActive(ownerId) && resource.data.active == true)
+          || managesStore(ownerId);
         allow create: if managesStore(ownerId)
           && request.resource.data.ownerId == ownerId;
         allow update: if (managesStore(ownerId)
@@ -387,14 +403,18 @@ service cloud.firestore {
       }
 
       match /categories/{categoryId} {
-        allow read: if resource.data.active == true || managesStore(ownerId);
+        allow read: if (storeActive(ownerId) && resource.data.active == true)
+          || managesStore(ownerId);
         allow create, update: if managesStore(ownerId);
         allow delete: if false;
       }
 
       match /settings/{settingId} {
         allow read: if resource.data.public == true || managesStore(ownerId);
-        allow write: if managesStore(ownerId);
+        allow create: if managesStore(ownerId)
+          || validSettingsBootstrap(ownerId, settingId);
+        allow update: if managesStore(ownerId);
+        allow delete: if false;
       }
 
       match /orders/{orderId} {
@@ -421,7 +441,9 @@ service cloud.firestore {
             && ((managesStore(ownerId)
                 && request.resource.data.type in [
                   'orderCreated', 'paymentProofSubmitted', 'paymentApproved',
-                  'paymentRejected', 'statusUpdated'
+                  'paymentRejected', 'statusUpdated', 'deliveryFeeUpdated',
+                  'orderConfirmed', 'preparing', 'outForDelivery',
+                  'delivered', 'cancelled'
                 ])
               || (request.resource.data.type in [
                   'orderCreated', 'paymentProofSubmitted'

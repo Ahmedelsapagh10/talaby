@@ -7,6 +7,7 @@ import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/ux_states.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../orders/cubit/order_tracking_cubit.dart';
 import '../../orders/cubit/order_tracking_state.dart';
 import '../../orders/data/models/commerce_order.dart';
@@ -26,9 +27,8 @@ class OrderDetailsPage extends StatelessWidget {
       listenWhen: (before, current) =>
           current.status == AdminOrderStatus.failure &&
           before.message != current.message,
-      listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message ?? 'update_order_failed'.tr())),
-      ),
+      listener: (context, state) =>
+          AppToast.error(context, state.message ?? 'update_order_failed'.tr()),
       child: BlocBuilder<OrderTrackingCubit, OrderTrackingState>(
         builder: (context, state) {
           if (state.status == OrderTrackingStatus.loading) {

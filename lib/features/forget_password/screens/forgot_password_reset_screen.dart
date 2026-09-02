@@ -4,6 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
 import 'package:new_strucuture/features/forget_password/data/model/forget_password_model.dart';
+import 'package:new_strucuture/core/widgets/app_toast.dart';
 import '../cubit/cubit.dart';
 import '../cubit/state.dart';
 import 'package:go_router/go_router.dart';
@@ -76,25 +77,13 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
         child: BlocConsumer<ForgetPasswordCubit, ForgetPasswordState>(
           listener: (context, state) {
             if (state is ForgetPasswordSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('password_reset_success'.tr()),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.success59,
-                ),
-              );
+              AppToast.success(context, 'password_reset_success'.tr());
               // Clean Cubit State
               context.read<ForgetPasswordCubit>().reset();
               // Navigate back to Login Screen cleanly
               context.go(Routes.loginRoute);
             } else if (state is ForgetPasswordError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.red,
-                ),
-              );
+              AppToast.error(context, state.message);
             }
           },
           builder: (context, state) {

@@ -54,6 +54,28 @@ class AdminSettingsCubit extends Cubit<AdminSettingsState> {
     }
   }
 
+  Future<void> saveAll(Owner owner, StoreSettings settings) async {
+    emit(
+      AdminSettingsState(
+        status: AdminSettingsStatus.saving,
+        owner: owner,
+        settings: settings,
+      ),
+    );
+    try {
+      await _repository.updateOwnerAndSettings(owner, settings);
+      emit(
+        AdminSettingsState(
+          status: AdminSettingsStatus.success,
+          owner: owner,
+          settings: settings,
+        ),
+      );
+    } catch (error) {
+      _emitFailure(error, owner: owner, settings: settings);
+    }
+  }
+
   Future<void> saveOwner(Owner owner) async {
     emit(
       AdminSettingsState(

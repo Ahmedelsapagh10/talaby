@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../config/routes/app_routes.dart';
+import '../../../auth/cubit/auth_cubit.dart';
 import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';
 
 Future<void> openProtectedStoreRoute(BuildContext context, String route) async {
@@ -13,6 +15,7 @@ Future<void> openProtectedStoreRoute(BuildContext context, String route) async {
 }
 
 void showStoreMenu(BuildContext context) {
+  final isAdmin = context.read<AuthCubit>().state.isAdmin;
   showModalBottomSheet<void>(
     context: context,
     builder: (sheetContext) => SafeArea(
@@ -40,6 +43,14 @@ void showStoreMenu(BuildContext context) {
             'my_orders',
             Routes.accountRoute,
           ),
+          ListTile(
+            leading: const Icon(PhosphorIconsRegular.shieldCheck),
+            title: Text('dashboard'.tr()),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              context.go('/admin');
+            },
+          ),
         ],
       ),
     ),
@@ -60,3 +71,4 @@ Widget _item(
     openProtectedStoreRoute(context, route);
   },
 );
+

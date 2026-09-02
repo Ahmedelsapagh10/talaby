@@ -5,6 +5,7 @@ import 'package:new_strucuture/core/widgets/custom_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../config/routes/app_routes.dart';
+import '../../../core/widgets/app_toast.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import '../../auth/cubit/auth_state.dart';
 
@@ -54,13 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.red,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    AppToast.error(context, message);
   }
 
   @override
@@ -153,9 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    // Username/Email Field
+                    // Email Field
                     Text(
-                      (widget.adminOnly ? 'email' : 'username_email').tr(),
+                      'email'.tr(),
                       style: getBoldStyle(
                         fontSize: 13.0,
                         color: primaryTextColor,
@@ -168,17 +163,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       autofillHints: const [AutofillHints.email],
                       style: TextStyle(fontSize: 14, color: textColor),
                       decoration: InputDecoration(
-                        hintText:
-                            (widget.adminOnly
-                                    ? 'enter_email'
-                                    : 'enter_username_email')
-                                .tr(),
+                        hintText: 'enter_email'.tr(),
                         hintStyle: const TextStyle(
                           fontSize: 13,
                           color: AppColors.greya8,
                         ),
                         prefixIcon: const Icon(
-                          PhosphorIconsRegular.user,
+                          PhosphorIconsRegular.envelope,
                           size: 20,
                           color: AppColors.greya8,
                         ),
@@ -216,13 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return (widget.adminOnly
-                                  ? 'email_required'
-                                  : 'username_email_required')
-                              .tr();
+                          return 'email_required'.tr();
                         }
-                        if (widget.adminOnly &&
-                            !RegExp(
+                        if (!RegExp(
                               r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
                             ).hasMatch(value.trim())) {
                           return 'email_invalid'.tr();

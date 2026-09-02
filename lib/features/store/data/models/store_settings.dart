@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StoreSettings {
   const StoreSettings({
+    this.active = true,
     this.currencyCode = 'EGP',
     this.currencyMinorDigits = 2,
     this.stockControlEnabled = true,
@@ -13,6 +14,7 @@ class StoreSettings {
     this.bannerImageUrl,
   });
 
+  final bool active;
   final String currencyCode;
   final int currencyMinorDigits;
   final bool stockControlEnabled;
@@ -28,6 +30,7 @@ class StoreSettings {
   ) {
     final map = doc.data() ?? const <String, dynamic>{};
     return StoreSettings(
+      active: map['active'] as bool? ?? true,
       currencyCode: map['currencyCode']?.toString() ?? 'EGP',
       currencyMinorDigits: (map['currencyMinorDigits'] as num?)?.toInt() ?? 2,
       stockControlEnabled: map['stockControlEnabled'] as bool? ?? true,
@@ -41,6 +44,7 @@ class StoreSettings {
   }
 
   Map<String, dynamic> toMap() => {
+    'active': active,
     'currencyCode': currencyCode,
     'currencyMinorDigits': currencyMinorDigits,
     'stockControlEnabled': stockControlEnabled,

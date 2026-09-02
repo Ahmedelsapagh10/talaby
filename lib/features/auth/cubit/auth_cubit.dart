@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/error/firebase_auth_errors.dart';
 import '../data/auth_repository.dart';
 import '../data/models/auth_session.dart';
 import 'auth_state.dart';
@@ -25,7 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
       final session = await _repository.loadSession(user);
       emit(AuthState(status: AuthStatus.authenticated, session: session));
     } catch (error) {
-      emit(AuthState(status: AuthStatus.failure, message: error.toString()));
+      emit(AuthState(status: AuthStatus.failure, message: mapFirebaseAuthError(error)));
     }
   }
 
@@ -54,7 +55,7 @@ class AuthCubit extends Cubit<AuthState> {
       await _repository.sendPasswordReset(email);
       emit(const AuthState(status: AuthStatus.unauthenticated));
     } catch (error) {
-      emit(AuthState(status: AuthStatus.failure, message: error.toString()));
+      emit(AuthState(status: AuthStatus.failure, message: mapFirebaseAuthError(error)));
     }
   }
 
@@ -66,7 +67,7 @@ class AuthCubit extends Cubit<AuthState> {
       final session = await operation();
       emit(AuthState(status: AuthStatus.authenticated, session: session));
     } catch (error) {
-      emit(AuthState(status: AuthStatus.failure, message: error.toString()));
+      emit(AuthState(status: AuthStatus.failure, message: mapFirebaseAuthError(error)));
     }
   }
 

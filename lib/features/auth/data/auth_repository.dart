@@ -11,6 +11,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/firebase/firestore_paths.dart';
 import '../../../core/utils/search_normalizer.dart';
+import '../../store/data/models/store_settings.dart';
 import 'models/auth_session.dart';
 import 'models/user_role.dart';
 
@@ -171,25 +172,21 @@ class AuthRepository {
     final memberReference = _firestore.doc(
       FirestorePaths.member(AppConfig.ownerId),
     );
+    final settingsReference = _firestore.doc(FirestorePaths.generalSettings);
     final snapshots = await Future.wait([
       ownerReference.get(),
       memberReference.get(),
+      settingsReference.get(),
     ]);
     final owner = snapshots[0];
     final member = snapshots[1];
+    final settings = snapshots[2];
     final batch = _firestore.batch();
     final now = FieldValue.serverTimestamp();
     var hasWrites = false;
 
     if (!owner.exists) {
-      batch.set(ownerReference, {
-        'active': true,
-        'createdAt': now,
-        'updatedAt': now,
-      });
-      hasWrites = true;
-    } else if (owner.data()?['active'] == null) {
-      batch.update(ownerReference, {'active': true, 'updatedAt': now});
+      batch.set(ownerReference, {'createdAt': now, 'updatedAt': now});
       hasWrites = true;
     }
 
@@ -199,6 +196,18 @@ class AuthRepository {
         'createdAt': now,
         'updatedAt': now,
       });
+      hasWrites = true;
+    }
+
+    if (!settings.exists) {
+      batch.set(settingsReference, {
+        ...const StoreSettings().toMap(),
+        'createdAt': now,
+        'updatedAt': now,
+      });
+      hasWrites = true;
+    } else if (settings.data()?['active'] == null) {
+      batch.update(settingsReference, {'active': true, 'updatedAt': now});
       hasWrites = true;
     }
 
