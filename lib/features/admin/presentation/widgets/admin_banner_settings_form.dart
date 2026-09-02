@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
@@ -48,7 +49,7 @@ class AdminBannerSettingsForm extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 900),
       padding: const EdgeInsets.all(AppTokens.s24),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: Theme.of(context).dividerColor),
         borderRadius: BorderRadius.circular(AppTokens.r8),
       ),
       child: Column(
@@ -81,7 +82,7 @@ class AdminBannerSettingsForm extends StatelessWidget {
             children: [
               AppButton(
                 text: 'upload_banner_image'.tr(),
-                icon: Icons.image_outlined,
+                icon: PhosphorIconsRegular.image,
                 isPrimary: false,
                 isLoading: busy,
                 onPressed: busy ? null : onUploadImage,
@@ -89,7 +90,7 @@ class AdminBannerSettingsForm extends StatelessWidget {
               if (imageUrl?.isNotEmpty == true)
                 AppButton(
                   text: 'remove_banner_image'.tr(),
-                  icon: Icons.delete_outline,
+                  icon: PhosphorIconsRegular.trash,
                   isPrimary: false,
                   onPressed: busy ? null : onRemoveImage,
                 ),

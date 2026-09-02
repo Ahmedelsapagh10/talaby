@@ -72,8 +72,8 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp.router(
               supportedLocales: const [Locale('ar')],
               locale: const Locale('ar'),
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
+              theme: AppTheme.lightThemeFor(context.locale),
+              darkTheme: AppTheme.darkThemeFor(context.locale),
               themeMode: themeMode,
               localizationsDelegates: context.localizationDelegates,
               debugShowCheckedModeBanner: false,

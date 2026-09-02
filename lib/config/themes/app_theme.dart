@@ -20,10 +20,14 @@ class AppTheme {
       currentThemeMode == ThemeMode.dark ? darkTheme : lightTheme;
 
   // ثيم الوضع النهاري
-  static final ThemeData lightTheme = LightTheme.theme;
+  static ThemeData get lightTheme => LightTheme.theme;
 
   // ثيم الوضع الليلي
-  static final ThemeData darkTheme = DarkTheme.theme;
+  static ThemeData get darkTheme => DarkTheme.theme;
+
+  static ThemeData lightThemeFor(Locale locale) => LightTheme.themeFor(locale);
+
+  static ThemeData darkThemeFor(Locale locale) => DarkTheme.themeFor(locale);
 
   // تبديل الثيم
   static void toggleTheme() {

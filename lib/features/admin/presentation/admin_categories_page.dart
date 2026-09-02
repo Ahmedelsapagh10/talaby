@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
@@ -29,7 +30,7 @@ class AdminCategoriesPage extends StatelessWidget {
                     Text('categories'.tr(), style: AppTypography.h2),
                     AppButton(
                       text: 'add_category'.tr(),
-                      icon: Icons.add,
+                      icon: PhosphorIconsRegular.plus,
                       onPressed: () => _edit(context),
                     ),
                   ],
@@ -40,9 +41,11 @@ class AdminCategoriesPage extends StatelessWidget {
             ),
           ),
           if (state.isUpdating)
-            const Positioned.fill(
+            Positioned.fill(
               child: ColoredBox(
-                color: Colors.black26,
+                color: Theme.of(
+                  context,
+                ).colorScheme.scrim.withValues(alpha: 0.18),
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
@@ -68,7 +71,7 @@ class AdminCategoriesPage extends StatelessWidget {
       return SizedBox(
         height: 300,
         child: EmptyState(
-          icon: Icons.category_outlined,
+          icon: PhosphorIconsRegular.tag,
           title: 'no_categories'.tr(),
         ),
       );
@@ -85,7 +88,7 @@ class AdminCategoriesPage extends StatelessWidget {
                     height: 52,
                     fit: BoxFit.cover,
                   )
-                : const Icon(Icons.category_outlined),
+                : const Icon(PhosphorIconsRegular.tag),
             title: Text(category.name),
             subtitle: Text(
               'sort_order_value'.tr(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
 
 class CustomButton extends StatelessWidget {
@@ -12,7 +11,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.minimumHeight = 52,
-    this.borderRadius = 8,
+    this.borderRadius = 12,
   });
 
   final String title;
@@ -25,8 +24,9 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedBackgroundColor = backgroundColor ?? AppColors.primary;
-    final resolvedForegroundColor = foregroundColor ?? AppColors.white;
+    final scheme = Theme.of(context).colorScheme;
+    final resolvedBackgroundColor = backgroundColor ?? scheme.primary;
+    final resolvedForegroundColor = foregroundColor ?? scheme.onPrimary;
 
     return ElevatedButton(
       onPressed: isLoading ? null : onTap,

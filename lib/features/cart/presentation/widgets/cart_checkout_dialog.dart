@@ -1,10 +1,10 @@
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
 import '../../../../core/widgets/pricing.dart';
@@ -25,7 +25,7 @@ class CartCheckoutDialog extends StatefulWidget {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTokens.r16),
+          borderRadius: BorderRadius.circular(AppTokens.r24),
         ),
         clipBehavior: Clip.antiAlias,
         child: ConstrainedBox(
@@ -77,7 +77,9 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
       listener: (context, checkoutState) {
         if (checkoutState.status == CheckoutStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text((checkoutState.message ?? 'checkout_failed').tr())),
+            SnackBar(
+              content: Text((checkoutState.message ?? 'checkout_failed').tr()),
+            ),
           );
         }
         if (checkoutState.status == CheckoutStatus.success) {
@@ -99,25 +101,28 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                   // Header
                   Container(
                     padding: const EdgeInsets.all(AppTokens.s24),
-                    color: Colors.grey.shade50,
+                    color: Theme.of(context).colorScheme.surface,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.shopping_cart_outlined),
+                            const Icon(PhosphorIconsRegular.shoppingCart),
                             const SizedBox(width: AppTokens.s8),
-                            Text('shopping_cart'.tr(), style: AppTypography.h4),
+                            Text(
+                              'shopping_cart'.tr(),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ],
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close),
+                          icon: const Icon(PhosphorIconsRegular.x),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   Flexible(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(AppTokens.s24),
@@ -126,8 +131,13 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                           if (cartState.items.isEmpty) {
                             return Center(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 48),
-                                child: Text('cart_empty_hint'.tr(), style: AppTypography.bodyLarge),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 48,
+                                ),
+                                child: Text(
+                                  'cart_empty_hint'.tr(),
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
                               ),
                             );
                           }
@@ -140,34 +150,56 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: cartState.items.length,
-                                separatorBuilder: (_, __) => const Divider(height: AppTokens.s32),
+                                separatorBuilder: (_, _) =>
+                                    const Divider(height: AppTokens.s32),
                                 itemBuilder: (context, index) {
-                                  return _buildCartItem(context, cartState.items[index]);
+                                  return _buildCartItem(
+                                    context,
+                                    cartState.items[index],
+                                  );
                                 },
                               ),
                               const SizedBox(height: AppTokens.s24),
-                              
+
                               // Total
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('total'.tr(), style: AppTypography.h4),
+                                  Text(
+                                    'total'.tr(),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
+                                  ),
                                   Text(
                                     '${(cartState.subtotal / 100).toStringAsFixed(2)} EGP',
-                                    style: AppTypography.h4.copyWith(color: Theme.of(context).primaryColor),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
                                   ),
                                 ],
                               ),
-                              
+
                               const Padding(
-                                padding: EdgeInsets.symmetric(vertical: AppTokens.s24),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppTokens.s24,
+                                ),
                                 child: Divider(),
                               ),
 
                               // Checkout Form
-                              Text('checkout_details'.tr(), style: AppTypography.h4),
+                              Text(
+                                'checkout_details'.tr(),
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
                               const SizedBox(height: AppTokens.s16),
-                              
+
                               Form(
                                 key: _formKey,
                                 child: Column(
@@ -175,20 +207,29 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                                     AppTextField(
                                       controller: _name,
                                       label: 'name'.tr(),
-                                      validator: (v) => v?.trim().isEmpty == true ? 'required_field'.tr() : null,
+                                      validator: (v) =>
+                                          v?.trim().isEmpty == true
+                                          ? 'required_field'.tr()
+                                          : null,
                                     ),
                                     const SizedBox(height: AppTokens.s16),
                                     AppTextField(
                                       controller: _phone,
                                       label: 'phone'.tr(),
                                       keyboardType: TextInputType.phone,
-                                      validator: (v) => v?.trim().isEmpty == true ? 'required_field'.tr() : null,
+                                      validator: (v) =>
+                                          v?.trim().isEmpty == true
+                                          ? 'required_field'.tr()
+                                          : null,
                                     ),
                                     const SizedBox(height: AppTokens.s16),
                                     AppTextField(
                                       controller: _address,
                                       label: 'address'.tr(),
-                                      validator: (v) => v?.trim().isEmpty == true ? 'required_field'.tr() : null,
+                                      validator: (v) =>
+                                          v?.trim().isEmpty == true
+                                          ? 'required_field'.tr()
+                                          : null,
                                     ),
                                     const SizedBox(height: AppTokens.s16),
                                     AppTextField(
@@ -199,23 +240,32 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                                   ],
                                 ),
                               ),
-                              
+
                               const SizedBox(height: AppTokens.s32),
-                              
+
                               // Submit Button
                               AppButton(
-                                text: 'complete_order'.tr(), // "إتمام الطلب"
-                                isLoading: checkoutState.status == CheckoutStatus.loading,
+                                text: 'complete_order'.tr(),
+                                icon: PhosphorIconsRegular.checkCircle,
+                                variant: AppButtonVariant.accent,
+                                isLoading:
+                                    checkoutState.status ==
+                                    CheckoutStatus.loading,
                                 onPressed: () {
-                                  if (!(_formKey.currentState?.validate() ?? false)) return;
-                                  
+                                  if (!(_formKey.currentState?.validate() ??
+                                      false)) {
+                                    return;
+                                  }
+
                                   context.read<CheckoutCubit>().submit(
                                     CheckoutDetails(
                                       name: _name.text,
                                       mobile: _phone.text,
                                       city: 'N/A', // Bypassing city requirement
                                       address: _address.text,
-                                      notes: _notes.text.trim().isEmpty ? null : _notes.text,
+                                      notes: _notes.text.trim().isEmpty
+                                          ? null
+                                          : _notes.text,
                                     ),
                                   );
                                 },
@@ -229,12 +279,14 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                 ],
               ),
             ),
-            
+
             // Loading Overlay
             if (checkoutState.status == CheckoutStatus.loading)
-              const Positioned.fill(
+              Positioned.fill(
                 child: ColoredBox(
-                  color: Colors.black26,
+                  color: Theme.of(
+                    context,
+                  ).scaffoldBackgroundColor.withValues(alpha: 0.7),
                   child: Center(child: CircularProgressIndicator()),
                 ),
               ),
@@ -253,16 +305,20 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
           height: 60,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppTokens.r8),
           ),
           child: item.imageUrl != null
               ? CachedNetworkImage(
                   imageUrl: item.imageUrl!,
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
+                  errorWidget: (_, _, _) =>
+                      const Icon(PhosphorIconsRegular.imageBroken),
                 )
-              : const Icon(Icons.image, color: Colors.grey),
+              : Icon(
+                  PhosphorIconsRegular.image,
+                  color: Theme.of(context).dividerColor,
+                ),
         ),
         const SizedBox(width: AppTokens.s16),
         Expanded(
@@ -271,7 +327,9 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
             children: [
               Text(
                 item.productName,
-                style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: AppTokens.s8),
               PriceText(price: item.lineTotal / 100),
@@ -280,11 +338,15 @@ class _CartCheckoutDialogState extends State<CartCheckoutDialog> {
                 children: [
                   QuantitySelector(
                     quantity: item.quantity,
-                    onQuantityChanged: (q) => context.read<CartCubit>().updateQuantity(item.key, q),
+                    onQuantityChanged: (q) =>
+                        context.read<CartCubit>().updateQuantity(item.key, q),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    icon: Icon(
+                      PhosphorIconsRegular.trash,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                     onPressed: () => context.read<CartCubit>().remove(item.key),
                   ),
                 ],

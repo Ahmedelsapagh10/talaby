@@ -1,3 +1,4 @@
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -5,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/product_ui.dart';
 import '../../../../core/widgets/ux_states.dart';
 import '../../catalog/data/models/product.dart';
@@ -34,26 +34,31 @@ class WishlistPage extends StatelessWidget {
           }
           if (state.products.isEmpty) {
             return EmptyState(
-              icon: Icons.favorite_border,
+              icon: PhosphorIconsRegular.heart,
               title: 'wishlist_empty'.tr(),
               subtitle: 'wishlist_empty_hint'.tr(),
             );
           }
           return SingleChildScrollView(
             child: ResponsiveContentWidth(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTokens.s24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('wishlist'.tr(), style: AppTypography.h2),
-                    const SizedBox(height: AppTokens.s24),
-                    ResponsiveLayout(
-                      mobile: _grid(context, state.products, 2),
-                      tablet: _grid(context, state.products, 3),
-                      desktop: _grid(context, state.products, 4),
-                    ),
-                  ],
+              child: ResponsiveGutter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppTokens.s24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'wishlist'.tr(),
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: AppTokens.s24),
+                      ResponsiveLayout(
+                        mobile: _grid(context, state.products, 2),
+                        tablet: _grid(context, state.products, 3),
+                        desktop: _grid(context, state.products, 4),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

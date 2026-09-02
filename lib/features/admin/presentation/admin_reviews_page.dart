@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
@@ -45,9 +46,11 @@ class AdminReviewsPage extends StatelessWidget {
             ),
           ),
           if (state.isUpdating)
-            const Positioned.fill(
+            Positioned.fill(
               child: ColoredBox(
-                color: Colors.black26,
+                color: Theme.of(
+                  context,
+                ).colorScheme.scrim.withValues(alpha: 0.18),
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
@@ -75,7 +78,7 @@ class AdminReviewsPage extends StatelessWidget {
       return SizedBox(
         height: 300,
         child: EmptyState(
-          icon: Icons.rate_review_outlined,
+          icon: PhosphorIconsRegular.chatCenteredText,
           title: 'no_reviews_found'.tr(),
         ),
       );

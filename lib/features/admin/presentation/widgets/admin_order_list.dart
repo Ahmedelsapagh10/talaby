@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../core/design_system/tokens.dart';
-import '../../../../../core/design_system/typography.dart';
 import '../../../../../core/widgets/badges.dart';
 import '../../../../../core/widgets/pricing.dart';
 import '../../../orders/data/models/commerce_order.dart';
 import '../../../orders/data/models/order_status.dart';
 import '../../../orders/data/models/payment_status.dart';
+import 'admin_table.dart';
 
 class AdminOrdersTable extends StatelessWidget {
   const AdminOrdersTable({
@@ -21,37 +21,28 @@ class AdminOrdersTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(AppTokens.r8),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: [
-            DataColumn(label: Text('order'.tr())),
-            DataColumn(label: Text('customer'.tr())),
-            DataColumn(label: Text('total'.tr())),
-            DataColumn(label: Text('status'.tr())),
-            DataColumn(label: Text('payment'.tr())),
-            DataColumn(label: Text('date'.tr())),
+    return AdminTable(
+      columns: [
+        DataColumn(label: Text('order'.tr())),
+        DataColumn(label: Text('customer'.tr())),
+        DataColumn(label: Text('total'.tr())),
+        DataColumn(label: Text('status'.tr())),
+        DataColumn(label: Text('payment'.tr())),
+        DataColumn(label: Text('date'.tr())),
+      ],
+      rows: orders.map((order) {
+        return DataRow(
+          onSelectChanged: (_) => onOpen(order.id),
+          cells: [
+            DataCell(Text(order.readableOrderNumber)),
+            DataCell(Text('${order.customerName}\n${order.phone}')),
+            DataCell(PriceText(price: order.total / 100)),
+            DataCell(orderStatusBadge(order.orderStatus)),
+            DataCell(paymentStatusBadge(order.paymentStatus)),
+            DataCell(Text(_date(order.createdAt))),
           ],
-          rows: orders.map((order) {
-            return DataRow(
-              onSelectChanged: (_) => onOpen(order.id),
-              cells: [
-                DataCell(Text(order.readableOrderNumber)),
-                DataCell(Text('${order.customerName}\n${order.phone}')),
-                DataCell(PriceText(price: order.total / 100)),
-                DataCell(orderStatusBadge(order.orderStatus)),
-                DataCell(paymentStatusBadge(order.paymentStatus)),
-                DataCell(Text(_date(order.createdAt))),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
+        );
+      }).toList(),
     );
   }
 }
@@ -78,7 +69,10 @@ class AdminOrderCards extends StatelessWidget {
         return Card(
           child: ListTile(
             onTap: () => onOpen(order.id),
-            title: Text(order.readableOrderNumber, style: AppTypography.h4),
+            title: Text(
+              order.readableOrderNumber,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             subtitle: Text('${order.customerName}\n${_date(order.createdAt)}'),
             trailing: orderStatusBadge(order.orderStatus),
           ),

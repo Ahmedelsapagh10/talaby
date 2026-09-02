@@ -8,7 +8,7 @@ import 'package:new_strucuture/features/cart/data/models/cart_item.dart';
 import 'package:new_strucuture/features/shop/presentation/store_header.dart';
 
 void main() {
-  testWidgets('store name uses the Major Mono Display font', (tester) async {
+  testWidgets('store name uses the Manrope brand font', (tester) async {
     final router = GoRouter(
       routes: [
         GoRoute(
@@ -26,7 +26,7 @@ void main() {
     await tester.pump();
 
     final title = tester.widget<Text>(find.text('TALABY'));
-    expect(title.style?.fontFamily, 'MajorMonoDisplay');
+    expect(title.style?.fontFamily, 'Manrope');
     expect(find.byIcon(Icons.language), findsNothing);
   });
 }

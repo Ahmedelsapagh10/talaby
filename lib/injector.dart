@@ -72,7 +72,12 @@ Future<void> setupCubit() async {
     () => CartCubit(serviceLocator())..load(),
   );
   serviceLocator.registerFactory(
-    () => CheckoutCubit(serviceLocator(), serviceLocator(), serviceLocator()),
+    () => CheckoutCubit(
+      serviceLocator(),
+      serviceLocator(),
+      serviceLocator(),
+      serviceLocator(),
+    ),
   );
   serviceLocator.registerFactory(() => OrderTrackingCubit(serviceLocator()));
   serviceLocator.registerFactory(() => CustomerOrdersCubit(serviceLocator()));

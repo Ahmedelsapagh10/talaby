@@ -30,7 +30,7 @@ class OrderCheckoutDataSource {
     final customerRef = _firestore.doc(FirestorePaths.customer(userId));
     final orderRef = _firestore.collection(FirestorePaths.orders).doc();
 
-    await _firestore.runTransaction((transaction) async {
+    Future<void> createOrder(Transaction transaction) async {
       final owner = await transaction.get(ownerRef);
       final counter = await transaction.get(counterRef);
       final customerSnapshot = await transaction.get(customerRef);
@@ -164,7 +164,28 @@ class OrderCheckoutDataSource {
         'updatedAt': now,
         if (!customerSnapshot.exists) 'createdAt': now,
       }, SetOptions(merge: true));
-    });
+    }
+
+    Object? callbackError;
+    StackTrace? callbackStackTrace;
+    try {
+      await _firestore.runTransaction((transaction) async {
+        try {
+          await createOrder(transaction);
+        } catch (error, stackTrace) {
+          callbackError = error;
+          callbackStackTrace = stackTrace;
+          rethrow;
+        }
+      });
+    } catch (error, stackTrace) {
+      final originalError = callbackError;
+      final originalStackTrace = callbackStackTrace;
+      if (originalError != null && originalStackTrace != null) {
+        Error.throwWithStackTrace(originalError, originalStackTrace);
+      }
+      Error.throwWithStackTrace(error, stackTrace);
+    }
 
     await addOrderAuditEvent(orderRef, 'orderCreated', userId, const {});
     return orderRef.id;

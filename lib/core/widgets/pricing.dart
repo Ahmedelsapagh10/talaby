@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../design_system/tokens.dart';
-import '../design_system/typography.dart';
 
 class PriceText extends StatelessWidget {
   final double price;
@@ -18,7 +17,11 @@ class PriceText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '${price.toStringAsFixed(2)} $currency',
-      style: isLarge ? AppTypography.priceLarge : AppTypography.priceMedium,
+      style:
+          (isLarge
+                  ? Theme.of(context).textTheme.titleLarge
+                  : Theme.of(context).textTheme.titleMedium)
+              ?.copyWith(fontWeight: FontWeight.w700),
     );
   }
 }
@@ -48,8 +51,10 @@ class DiscountPrice extends StatelessWidget {
           ), // small adjustment for baseline alignment visually
           child: Text(
             '${originalPrice.toStringAsFixed(2)} $currency',
-            style: AppTypography.bodyMedium.copyWith(
-              color: Colors.grey.shade500,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
               decoration: TextDecoration.lineThrough,
             ),
           ),

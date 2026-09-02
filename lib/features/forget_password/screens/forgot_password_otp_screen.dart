@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:new_strucuture/core/exports.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
 import 'package:new_strucuture/features/forget_password/data/model/forget_password_model.dart';
@@ -76,7 +77,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: primaryTextColor),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: primaryTextColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -137,7 +138,7 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                             alpha: 0.1,
                           ),
                           child: const Icon(
-                            Icons.mark_email_read_outlined,
+                            PhosphorIconsRegular.envelopeOpen,
                             size: 40,
                             color: AppColors.primary,
                           ),

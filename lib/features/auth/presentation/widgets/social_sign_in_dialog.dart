@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/app_routes.dart';
@@ -79,7 +80,7 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
                         onPressed: isLoading
                             ? null
                             : () => Navigator.of(context).pop(false),
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(PhosphorIconsRegular.x),
                       ),
                     ],
                   ),
@@ -102,7 +103,7 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
                   const SizedBox(height: AppTokens.s24),
                   AppButton(
                     text: 'continue_with_google'.tr(),
-                    icon: Icons.g_mobiledata,
+                    icon: PhosphorIconsRegular.googleLogo,
                     isPrimary: false,
                     isLoading:
                         isLoading && _activeProvider == _SignInProvider.google,
@@ -113,7 +114,7 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
                   const SizedBox(height: AppTokens.s12),
                   AppButton(
                     text: 'continue_with_apple'.tr(),
-                    icon: Icons.apple,
+                    icon: PhosphorIconsRegular.appleLogo,
                     isLoading:
                         isLoading && _activeProvider == _SignInProvider.apple,
                     onPressed: isLoading
@@ -123,7 +124,7 @@ class _SocialSignInDialogState extends State<SocialSignInDialog> {
                   const SizedBox(height: AppTokens.s12),
                   AppButton(
                     text: 'admin_sign_in'.tr(),
-                    icon: Icons.admin_panel_settings_outlined,
+                    icon: PhosphorIconsRegular.shieldCheck,
                     isPrimary: false,
                     onPressed: isLoading ? null : _openAdminLogin,
                   ),

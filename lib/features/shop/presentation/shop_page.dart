@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/ux_states.dart';
 import '../../catalog/cubit/products_cubit.dart';
 import '../../catalog/cubit/products_state.dart';
@@ -19,25 +19,29 @@ class ShopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: const StoreHeader(),
       body: SingleChildScrollView(
         child: ResponsiveContentWidth(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppTokens.s16,
-              AppTokens.s24,
-              AppTokens.s16,
-              AppTokens.s64,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const ShopHeroBanner(),
-                Text('products'.tr(), style: AppTypography.h3),
-                const SizedBox(height: AppTokens.s24),
-                const _ProductsSection(),
-              ],
+          child: ResponsiveGutter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppTokens.s24,
+                0,
+                0,
+                AppTokens.s64,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ShopHeroBanner(),
+                  Text(
+                    'products'.tr(),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: AppTokens.s24),
+                  const _ProductsSection(),
+                ],
+              ),
             ),
           ),
         ),
@@ -71,7 +75,7 @@ class _ProductsSection extends StatelessWidget {
           return SizedBox(
             height: 300,
             child: EmptyState(
-              icon: Icons.inventory_2_outlined,
+              icon: PhosphorIconsRegular.package,
               title: 'no_products_found'.tr(),
             ),
           );

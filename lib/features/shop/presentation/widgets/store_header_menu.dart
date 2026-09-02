@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../config/routes/app_routes.dart';
 import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';
@@ -21,21 +22,21 @@ void showStoreMenu(BuildContext context) {
           _item(
             context,
             sheetContext,
-            Icons.person_outline,
+            PhosphorIconsRegular.user,
             'profile',
             Routes.profileRoute,
           ),
           _item(
             context,
             sheetContext,
-            Icons.favorite_border,
+            PhosphorIconsRegular.heart,
             'wishlist',
             Routes.wishlistRoute,
           ),
           _item(
             context,
             sheetContext,
-            Icons.receipt_long_outlined,
+            PhosphorIconsRegular.receipt,
             'my_orders',
             Routes.accountRoute,
           ),

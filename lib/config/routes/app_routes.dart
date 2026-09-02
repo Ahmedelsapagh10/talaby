@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-
 import '../../features/auth/cubit/auth_cubit.dart';
 import '../../features/auth/cubit/auth_state.dart';
 import '../../features/catalog/cubit/products_cubit.dart';
@@ -22,7 +21,6 @@ import '../../features/orders/presentation/customer_orders_page.dart';
 
 import '../../features/profile/cubit/profile_cubit.dart';
 import '../../features/profile/presentation/profile_page.dart';
-import '../../features/reviews/cubit/reviews_cubit.dart';
 import '../../features/shop/presentation/shop_page.dart';
 import '../../features/shop/presentation/search_page.dart';
 import '../../features/splash/screens/splash_screen.dart';

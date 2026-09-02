@@ -131,7 +131,7 @@ class ProductFormSection extends StatelessWidget {
     constraints: const BoxConstraints(maxWidth: 900),
     padding: const EdgeInsets.all(AppTokens.s24),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade200),
+      border: Border.all(color: Theme.of(context).dividerColor),
       borderRadius: BorderRadius.circular(AppTokens.r8),
     ),
     child: Column(

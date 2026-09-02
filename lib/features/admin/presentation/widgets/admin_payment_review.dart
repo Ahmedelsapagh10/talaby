@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
@@ -20,7 +21,7 @@ class AdminPaymentReview extends StatelessWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(AppTokens.s24),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade200),
+      border: Border.all(color: Theme.of(context).dividerColor),
       borderRadius: BorderRadius.circular(AppTokens.r8),
     ),
     child: Column(
@@ -51,18 +52,18 @@ class _PaymentTile extends StatelessWidget {
     title: Text('${(payment.claimedAmount / 100).toStringAsFixed(2)} EGP'),
     subtitle: Text(_statusLabel(payment.status)),
     leading: IconButton(
-      icon: const Icon(Icons.receipt_long_outlined),
+      icon: const Icon(PhosphorIconsRegular.receipt),
       onPressed: () => launchUrl(Uri.parse(payment.proofUrl)),
     ),
     trailing: payment.status == PaymentRecordStatus.proofSubmitted
         ? Wrap(
             children: [
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(PhosphorIconsRegular.x),
                 onPressed: () => _review(context, false),
               ),
               IconButton(
-                icon: const Icon(Icons.check),
+                icon: const Icon(PhosphorIconsRegular.check),
                 onPressed: () => _review(context, true),
               ),
             ],

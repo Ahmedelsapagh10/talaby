@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../design_system/tokens.dart';
-import '../design_system/typography.dart';
 
 class AppTextField extends StatelessWidget {
   final String label;
@@ -28,17 +28,20 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF191B1A),
+        if (label.isNotEmpty) ...[
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
           ),
-        ),
-        const SizedBox(height: AppTokens.s8),
+          const SizedBox(height: AppTokens.s8),
+        ],
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -47,40 +50,8 @@ class AppTextField extends StatelessWidget {
           validator: validator,
           onChanged: onChanged,
           enabled: enabled,
-          style: AppTypography.bodyMedium,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: AppTypography.bodyMedium.copyWith(
-              color: Colors.grey.shade400,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTokens.s16,
-              vertical: AppTokens.s12,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-                width: AppTokens.bThin,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-                width: AppTokens.bThin,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: const BorderSide(
-                color: Color(0xFF191B1A),
-                width: AppTokens.bThick,
-              ),
-            ),
-          ),
+          style: theme.textTheme.bodyLarge,
+          decoration: InputDecoration(hintText: hint),
         ),
       ],
     );
@@ -103,52 +74,32 @@ class AppDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: AppTypography.bodySmall.copyWith(
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF191B1A),
+        if (label.isNotEmpty) ...[
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
           ),
-        ),
-        const SizedBox(height: AppTokens.s8),
+          const SizedBox(height: AppTokens.s8),
+        ],
         DropdownButtonFormField<T>(
           initialValue: value,
           items: items,
           onChanged: onChanged,
-          style: AppTypography.bodyMedium,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF191B1A)),
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTokens.s16,
-              vertical: AppTokens.s12,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-                width: AppTokens.bThin,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: BorderSide(
-                color: Colors.grey.shade300,
-                width: AppTokens.bThin,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.r4),
-              borderSide: const BorderSide(
-                color: Color(0xFF191B1A),
-                width: AppTokens.bThick,
-              ),
-            ),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface,
           ),
+          icon: Icon(
+            PhosphorIconsRegular.caretDown,
+            color: theme.colorScheme.onSurface,
+          ),
+          decoration: const InputDecoration(),
         ),
       ],
     );

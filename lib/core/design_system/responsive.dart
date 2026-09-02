@@ -42,11 +42,13 @@ class ResponsiveLayout extends StatelessWidget {
 class ResponsiveContentWidth extends StatelessWidget {
   final Widget child;
   final double maxWidth;
+  final EdgeInsetsGeometry padding;
 
   const ResponsiveContentWidth({
     super.key,
     required this.child,
     this.maxWidth = AppTokens.maxContentWidth,
+    this.padding = EdgeInsets.zero,
   });
 
   @override
@@ -54,8 +56,33 @@ class ResponsiveContentWidth extends StatelessWidget {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        child: child,
+        child: Padding(padding: padding, child: child),
       ),
+    );
+  }
+}
+
+/// Consistent page gutters that preserve useful tablet width and add breathing
+/// room on wide desktop layouts.
+class ResponsiveGutter extends StatelessWidget {
+  const ResponsiveGutter({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final horizontal = constraints.maxWidth > AppTokens.tabletMax
+            ? AppTokens.s32
+            : constraints.maxWidth > AppTokens.mobileMax
+            ? AppTokens.s24
+            : AppTokens.s16;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontal),
+          child: child,
+        );
+      },
     );
   }
 }

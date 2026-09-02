@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/responsive.dart';
@@ -29,10 +30,11 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+        color: theme.appBarTheme.backgroundColor,
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
       ),
       child: SafeArea(
         bottom: false,
@@ -56,6 +58,7 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
     final bool canPop =
         context.canPop() &&
         GoRouterState.of(context).uri.path != Routes.initialRoute;
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -63,24 +66,31 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
           children: [
             if (canPop)
               IconActionButton(
-                icon: Icons.arrow_back,
+                icon: PhosphorIconsRegular.arrowLeft,
                 onPressed: () => context.pop(),
               )
             else
               IconActionButton(
-                icon: Icons.menu,
+                icon: PhosphorIconsRegular.list,
                 onPressed: onMenuPressed ?? () => showStoreMenu(context),
               ),
           ],
         ),
         GestureDetector(
           onTap: () => context.go(Routes.initialRoute),
-          child: Text('TALABY', style: AppTypography.brandTitle),
+          child: Text(
+            'TALABY',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontFamily: AppTypography.latinFontFamily,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.2,
+            ),
+          ),
         ),
         Row(
           children: [
             IconActionButton(
-              icon: Icons.search,
+              icon: PhosphorIconsRegular.magnifyingGlass,
               onPressed:
                   onSearchPressed ?? () => context.push(Routes.searchRoute),
             ),
@@ -95,6 +105,7 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
     final bool canPop =
         context.canPop() &&
         GoRouterState.of(context).uri.path != Routes.initialRoute;
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -102,34 +113,41 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
           children: [
             if (canPop) ...[
               IconActionButton(
-                icon: Icons.arrow_back,
+                icon: PhosphorIconsRegular.arrowLeft,
                 onPressed: () => context.pop(),
               ),
               const SizedBox(width: AppTokens.s16),
             ],
             GestureDetector(
               onTap: () => context.go(Routes.initialRoute),
-              child: Text('TALABY', style: AppTypography.brandTitle),
+              child: Text(
+                'TALABY',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: AppTypography.latinFontFamily,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
+                ),
+              ),
             ),
           ],
         ),
         Row(
           children: [
             IconActionButton(
-              icon: Icons.search,
+              icon: PhosphorIconsRegular.magnifyingGlass,
               onPressed:
                   onSearchPressed ?? () => context.push(Routes.searchRoute),
             ),
             const SizedBox(width: AppTokens.s8),
             IconActionButton(
-              icon: Icons.person_outline,
+              icon: PhosphorIconsRegular.user,
               onPressed:
                   onAccountPressed ??
                   () => openProtectedStoreRoute(context, Routes.profileRoute),
             ),
             const SizedBox(width: AppTokens.s8),
             IconActionButton(
-              icon: Icons.favorite_border,
+              icon: PhosphorIconsRegular.heart,
               onPressed:
                   onWishlistPressed ??
                   () => openProtectedStoreRoute(context, Routes.wishlistRoute),
@@ -143,14 +161,18 @@ class StoreHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildCartButton(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
         return Badge(
           isLabelVisible: state.itemCount > 0,
-          label: Text(state.itemCount.toString()),
-          backgroundColor: Colors.red,
+          label: Text(
+            state.itemCount.toString(),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: theme.colorScheme.error,
           child: IconActionButton(
-            icon: Icons.shopping_bag_outlined,
+            icon: PhosphorIconsRegular.bag,
             onPressed: () {
               if (onCartPressed != null) {
                 onCartPressed!();

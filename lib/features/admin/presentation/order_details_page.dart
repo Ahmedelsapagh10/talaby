@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
@@ -42,7 +43,7 @@ class OrderDetailsPage extends StatelessWidget {
           final order = state.order;
           if (order == null) {
             return EmptyState(
-              icon: Icons.receipt_long_outlined,
+              icon: PhosphorIconsRegular.receipt,
               title: 'order_not_found'.tr(),
             );
           }
@@ -79,9 +80,11 @@ class _OrderBody extends StatelessWidget {
         BlocSelector<AdminOrderCubit, AdminOrderState, bool>(
           selector: (state) => state.isUpdating,
           builder: (_, updating) => updating
-              ? const Positioned.fill(
+              ? Positioned.fill(
                   child: ColoredBox(
-                    color: Colors.black26,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.scrim.withValues(alpha: 0.18),
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 )

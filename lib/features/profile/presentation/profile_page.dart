@@ -1,3 +1,4 @@
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -6,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
 import '../../../../core/widgets/ux_states.dart';
@@ -69,68 +69,79 @@ class _ProfilePageState extends State<ProfilePage> {
           _initialize(profile);
           return SingleChildScrollView(
             child: ResponsiveContentWidth(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTokens.s24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('my_profile'.tr(), style: AppTypography.h2),
-                      const SizedBox(height: AppTokens.s24),
-                      AppTextField(
-                        label: 'name'.tr(),
-                        controller: _name,
-                        validator: _required,
+              maxWidth: 820,
+              child: ResponsiveGutter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppTokens.s32),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTokens.s24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'my_profile'.tr(),
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                            const SizedBox(height: AppTokens.s24),
+                            AppTextField(
+                              label: 'name'.tr(),
+                              controller: _name,
+                              validator: _required,
+                            ),
+                            const SizedBox(height: AppTokens.s16),
+                            AppTextField(
+                              label: 'email'.tr(),
+                              controller: _email,
+                              enabled: false,
+                            ),
+                            const SizedBox(height: AppTokens.s16),
+                            AppTextField(
+                              label: 'phone'.tr(),
+                              controller: _phone,
+                              validator: _required,
+                            ),
+                            const SizedBox(height: AppTokens.s16),
+                            AppTextField(
+                              label: 'city'.tr(),
+                              controller: _city,
+                              validator: _required,
+                            ),
+                            const SizedBox(height: AppTokens.s16),
+                            AppTextField(
+                              label: 'default_address'.tr(),
+                              controller: _address,
+                              maxLines: 3,
+                              validator: _required,
+                            ),
+                            const SizedBox(height: AppTokens.s24),
+                            AppButton(
+                              text: 'save_profile'.tr(),
+                              isLoading: state.status == ProfileStatus.saving,
+                              onPressed: _save,
+                            ),
+                            const Divider(height: AppTokens.s48),
+                            ListTile(
+                              leading: const Icon(PhosphorIconsRegular.receipt),
+                              title: Text('my_orders'.tr()),
+                              onTap: () => context.push(Routes.accountRoute),
+                            ),
+                            ListTile(
+                              leading: const Icon(PhosphorIconsRegular.heart),
+                              title: Text('wishlist'.tr()),
+                              onTap: () => context.push(Routes.wishlistRoute),
+                            ),
+                            ListTile(
+                              leading: const Icon(PhosphorIconsRegular.signOut),
+                              title: Text('sign_out'.tr()),
+                              onTap: context.read<AuthCubit>().logout,
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: AppTokens.s16),
-                      AppTextField(
-                        label: 'email'.tr(),
-                        controller: _email,
-                        enabled: false,
-                      ),
-                      const SizedBox(height: AppTokens.s16),
-                      AppTextField(
-                        label: 'phone'.tr(),
-                        controller: _phone,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: AppTokens.s16),
-                      AppTextField(
-                        label: 'city'.tr(),
-                        controller: _city,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: AppTokens.s16),
-                      AppTextField(
-                        label: 'default_address'.tr(),
-                        controller: _address,
-                        maxLines: 3,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: AppTokens.s24),
-                      AppButton(
-                        text: 'save_profile'.tr(),
-                        isLoading: state.status == ProfileStatus.saving,
-                        onPressed: _save,
-                      ),
-                      const Divider(height: AppTokens.s48),
-                      ListTile(
-                        leading: const Icon(Icons.receipt_long_outlined),
-                        title: Text('my_orders'.tr()),
-                        onTap: () => context.push(Routes.accountRoute),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.favorite_border),
-                        title: Text('wishlist'.tr()),
-                        onTap: () => context.push(Routes.wishlistRoute),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.logout),
-                        title: Text('sign_out'.tr()),
-                        onTap: context.read<AuthCubit>().logout,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

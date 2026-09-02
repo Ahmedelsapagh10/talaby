@@ -147,10 +147,33 @@ admin_token="$(print -r -- "$admin_auth" | jq -r '.idToken')"
 customer_token="$(print -r -- "$customer_auth" | jq -r '.idToken')"
 other_token="$(print -r -- "$other_auth" | jq -r '.idToken')"
 
+bootstrap_owner_fields="$(jq -nc --arg time "$fixed_time" '{
+  active: {booleanValue: true},
+  createdAt: {timestampValue: $time},
+  updatedAt: {timestampValue: $time}
+}')"
+bootstrap_member_fields="$(jq -nc --arg time "$fixed_time" '{
+  role: {stringValue: "admin"},
+  createdAt: {timestampValue: $time},
+  updatedAt: {timestampValue: $time}
+}')"
+expect_status 200 PATCH "${firestore_url}/owners/${other_id}" \
+  "$other_token" "$(document_body "$bootstrap_owner_fields")"
+expect_status 403 PATCH "${firestore_url}/owners/${customer_id}" \
+  "$other_token" "$(document_body "$bootstrap_owner_fields")"
+expect_status 200 PATCH "${firestore_url}/owners/${other_id}/members/${other_id}" \
+  "$other_token" "$(document_body "$bootstrap_member_fields")"
+expect_status 403 PATCH "${firestore_url}/owners/${other_id}/members/${other_id}?updateMask.fieldPaths=role" \
+  "$other_token" '{"fields":{"role":{"stringValue":"staff"}}}'
+
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}" owner \
   '{"fields":{"active":{"booleanValue":true},"name":{"stringValue":"Talaby"}}}'
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/members/${admin_id}" owner \
   '{"fields":{"role":{"stringValue":"admin"}}}'
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}?updateMask.fieldPaths=active" \
+  "$admin_token" '{"fields":{"active":{"booleanValue":false}}}'
+expect_status 200 PATCH "${firestore_url}/owners/${owner_id}?updateMask.fieldPaths=active" \
+  "$admin_token" '{"fields":{"active":{"booleanValue":true}}}'
 expect_status 200 PATCH "${firestore_url}/owners/${owner_id}/categories/category-1" \
   "$admin_token" \
   '{"fields":{"name":{"stringValue":"Category"},"active":{"booleanValue":true},"sortOrder":{"integerValue":"1"}}}'

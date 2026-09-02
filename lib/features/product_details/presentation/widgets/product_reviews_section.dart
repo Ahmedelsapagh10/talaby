@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
@@ -36,8 +37,9 @@ class ProductReviewsSection extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppTokens.s24),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade200),
-          borderRadius: BorderRadius.circular(AppTokens.r8),
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(color: Theme.of(context).dividerColor),
+          borderRadius: BorderRadius.circular(AppTokens.r16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +51,7 @@ class ProductReviewsSection extends StatelessWidget {
                   onPressed: state.status == ReviewsStatus.submitting
                       ? null
                       : () => _writeReview(context),
-                  icon: const Icon(Icons.rate_review_outlined),
+                  icon: const Icon(PhosphorIconsRegular.notePencil),
                   label: Text('write_review'.tr()),
                 ),
               ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
@@ -55,10 +56,11 @@ class AdminOrderItems extends StatelessWidget {
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const Icon(Icons.broken_image),
+                  errorBuilder: (_, _, _) =>
+                      const Icon(PhosphorIconsRegular.imageBroken),
                 ),
               )
-            : const Icon(Icons.inventory_2_outlined),
+            : const Icon(PhosphorIconsRegular.package),
         title: Text(item.productName),
         subtitle: options.isEmpty ? null : Text(options),
         trailing: Text(
@@ -163,7 +165,7 @@ class _Panel extends StatelessWidget {
     width: double.infinity,
     padding: const EdgeInsets.all(AppTokens.s24),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade200),
+      border: Border.all(color: Theme.of(context).dividerColor),
       borderRadius: BorderRadius.circular(AppTokens.r8),
     ),
     child: Column(

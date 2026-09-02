@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:new_strucuture/core/exports.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
 import '../cubit/cubit.dart';
@@ -59,7 +60,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: primaryTextColor),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: primaryTextColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -123,7 +124,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                               alpha: 0.1,
                             ),
                             child: const Icon(
-                              Icons.lock_reset_rounded,
+                              PhosphorIconsRegular.lockKey,
                               size: 40,
                               color: AppColors.primary,
                             ),
@@ -253,7 +254,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                                 color: AppColors.greya8,
                               ),
                               prefixIcon: const Icon(
-                                Icons.email_outlined,
+                                PhosphorIconsRegular.envelope,
                                 size: 20,
                                 color: AppColors.greya8,
                               ),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:new_strucuture/core/exports.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
 import 'package:new_strucuture/features/forget_password/data/model/forget_password_model.dart';
@@ -67,7 +68,7 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: primaryTextColor),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: primaryTextColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -134,7 +135,7 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
                               alpha: 0.1,
                             ),
                             child: const Icon(
-                              Icons.verified_user_outlined,
+                              PhosphorIconsRegular.shieldCheck,
                               size: 40,
                               color: AppColors.primary,
                             ),
@@ -186,15 +187,15 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
                               color: AppColors.greya8,
                             ),
                             prefixIcon: const Icon(
-                              Icons.lock_outline_rounded,
+                              PhosphorIconsRegular.lock,
                               size: 20,
                               color: AppColors.greya8,
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
+                                    ? PhosphorIconsRegular.eyeSlash
+                                    : PhosphorIconsRegular.eye,
                                 size: 20,
                                 color: AppColors.greya8,
                               ),
@@ -270,15 +271,15 @@ class _ForgotPasswordResetScreenState extends State<ForgotPasswordResetScreen> {
                               color: AppColors.greya8,
                             ),
                             prefixIcon: const Icon(
-                              Icons.lock_outline_rounded,
+                              PhosphorIconsRegular.lock,
                               size: 20,
                               color: AppColors.greya8,
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscureConfirmPassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
+                                    ? PhosphorIconsRegular.eyeSlash
+                                    : PhosphorIconsRegular.eye,
                                 size: 20,
                                 color: AppColors.greya8,
                               ),

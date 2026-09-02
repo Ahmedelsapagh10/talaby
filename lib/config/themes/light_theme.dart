@@ -1,102 +1,212 @@
 import 'package:flutter/material.dart';
-import 'package:new_strucuture/core/utils/app_constants.dart';
+import '../../core/design_system/tokens.dart';
+import '../../core/design_system/typography.dart';
 import 'app_colors_extension.dart';
 
 class LightTheme {
   LightTheme._();
 
-  static final ThemeData theme = ThemeData(
-    dividerColor: Colors.transparent,
+  static ThemeData get theme => themeFor(const Locale('ar'));
 
-    useMaterial3: true,
-    brightness: Brightness.light,
-    primaryColor: AppColorsExtension.light.primary,
-    colorScheme: ColorScheme.light(
-      primary: AppColorsExtension.light.primary,
-      secondary: AppColorsExtension.light.secondary,
-      surface: AppColorsExtension.light.surface,
-
-      error: AppColorsExtension.light.error,
-    ),
-
-    // Background colors
-    scaffoldBackgroundColor: AppColorsExtension.light.background,
-    cardColor: AppColorsExtension.light.cardColor,
-
-    // App bar
-    appBarTheme: AppBarTheme(
-      backgroundColor: AppColorsExtension.light.primary,
-      foregroundColor: Colors.white,
-      elevation: 0,
-    ),
-
-    // Card theme
-    cardTheme: CardThemeData(
-      color: AppColorsExtension.light.cardColor,
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppConstance.radiusTiny),
-        side: BorderSide(
-          color: AppColorsExtension.light.borderColor.withValues(alpha: 0.3),
-        ),
+  static ThemeData themeFor(Locale locale) {
+    const colors = AppColorsExtension.light;
+    final fontFamily = AppTypography.familyFor(locale);
+    final baseTextTheme = ThemeData.light().textTheme.apply(
+      fontFamily: fontFamily,
+      bodyColor: colors.textPrimary,
+      displayColor: colors.textPrimary,
+    );
+    final textTheme = baseTextTheme.copyWith(
+      displayLarge: baseTextTheme.displayLarge?.copyWith(
+        fontWeight: FontWeight.w800,
       ),
-    ),
+      displayMedium: baseTextTheme.displayMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+      ),
+      displaySmall: baseTextTheme.displaySmall?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      headlineLarge: baseTextTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      headlineMedium: baseTextTheme.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      headlineSmall: baseTextTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: baseTextTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      titleMedium: baseTextTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      titleSmall: baseTextTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      bodyLarge: baseTextTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+      bodySmall: baseTextTheme.bodySmall?.copyWith(color: colors.textSecondary),
+      labelLarge: baseTextTheme.labelLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      labelMedium: baseTextTheme.labelMedium?.copyWith(
+        color: colors.textSecondary,
+        fontWeight: FontWeight.w600,
+      ),
+      labelSmall: baseTextTheme.labelSmall?.copyWith(
+        color: colors.textSecondary,
+      ),
+    );
 
-    // Input decoration
-    inputDecorationTheme: InputDecorationTheme(
-      fillColor: AppColorsExtension.light.surface,
-      filled: true,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppConstance.radiusTiny),
-        borderSide: BorderSide(color: AppColorsExtension.light.borderColor),
+    return ThemeData(
+      dividerColor: AppColorsExtension.light.borderColor,
+      useMaterial3: true,
+      brightness: Brightness.light,
+      fontFamily: fontFamily,
+      primaryColor: colors.primary,
+      colorScheme: ColorScheme.light(
+        primary: colors.primary,
+        secondary: colors.accent,
+        tertiary: colors.secondary,
+        surface: colors.surface,
+        surfaceContainerHighest: colors.surfaceMuted,
+        error: colors.error,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onTertiary: colors.textPrimary,
+        onSurface: colors.textPrimary,
+        onError: Colors.white,
+        outline: colors.border,
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppConstance.radiusTiny),
-        borderSide: BorderSide(
-          color: AppColorsExtension.light.borderColor.withValues(alpha: 0.3),
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppConstance.radiusTiny),
-        borderSide: BorderSide(color: AppColorsExtension.light.primary),
-      ),
-    ),
 
-    // Text theme
-    textTheme: TextTheme(
-      titleLarge: TextStyle(
-        color: AppColorsExtension.light.textPrimary,
-        fontWeight: FontWeight.bold,
-      ),
-      titleMedium: TextStyle(
-        color: AppColorsExtension.light.textPrimary,
-        fontWeight: FontWeight.bold,
-      ),
-      titleSmall: TextStyle(
-        color: AppColorsExtension.light.textPrimary,
-        fontWeight: FontWeight.w500,
-      ),
-      bodyLarge: TextStyle(color: AppColorsExtension.light.textPrimary),
-      bodyMedium: TextStyle(color: AppColorsExtension.light.textPrimary),
-      bodySmall: TextStyle(color: AppColorsExtension.light.textSecondary),
-    ),
+      scaffoldBackgroundColor: colors.background,
+      cardColor: colors.cardColor,
 
-    // Elevated button theme
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColorsExtension.light.primary,
-        foregroundColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colors.background,
+        foregroundColor: colors.textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        titleTextStyle: textTheme.titleLarge,
+      ),
+
+      cardTheme: CardThemeData(
+        color: colors.cardColor,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstance.radiusTiny),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: AppConstance.vPadding,
-          horizontal: 24,
+          borderRadius: BorderRadius.circular(AppTokens.r16),
+          side: BorderSide(
+            color: colors.border.withValues(alpha: 0.7),
+            width: AppTokens.bThin,
+          ),
         ),
       ),
-    ),
 
-    // Extensions
-    extensions: [AppColorsExtension.light],
-  );
+      inputDecorationTheme: InputDecorationTheme(
+        fillColor: colors.surface,
+        filled: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppTokens.s16,
+          vertical: AppTokens.s16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r12),
+          borderSide: BorderSide(color: colors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r12),
+          borderSide: BorderSide(color: colors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r12),
+          borderSide: BorderSide(
+            color: colors.primary,
+            width: AppTokens.bThick,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r12),
+          borderSide: BorderSide(color: colors.error),
+        ),
+        hintStyle: textTheme.bodyMedium?.copyWith(color: colors.textSecondary),
+      ),
+
+      textTheme: textTheme,
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          textStyle: textTheme.labelLarge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.r12),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppTokens.s16,
+            horizontal: AppTokens.s24,
+          ),
+        ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colors.textPrimary,
+          backgroundColor: colors.surfaceMuted,
+          side: BorderSide(color: colors.border),
+          textStyle: textTheme.labelLarge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.r12),
+          ),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppTokens.s16,
+            horizontal: AppTokens.s24,
+          ),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colors.primary,
+          textStyle: textTheme.labelLarge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.r12),
+          ),
+        ),
+      ),
+
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colors.surface,
+        indicatorColor: colors.secondary,
+        elevation: 0,
+      ),
+      dividerTheme: DividerThemeData(color: colors.border, thickness: 1),
+      dialogTheme: DialogThemeData(
+        backgroundColor: colors.surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.r24),
+          side: BorderSide(color: colors.border),
+        ),
+      ),
+      searchBarTheme: SearchBarThemeData(
+        backgroundColor: WidgetStatePropertyAll(colors.surface),
+        elevation: const WidgetStatePropertyAll(0),
+        side: WidgetStatePropertyAll(BorderSide(color: colors.border)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.r12),
+          ),
+        ),
+      ),
+      dataTableTheme: DataTableThemeData(
+        headingRowColor: WidgetStatePropertyAll(colors.surfaceMuted),
+        headingTextStyle: textTheme.labelLarge,
+        dataTextStyle: textTheme.bodyMedium,
+        dividerThickness: 1,
+      ),
+      extensions: [colors],
+    );
+  }
 }

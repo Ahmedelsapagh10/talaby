@@ -19,6 +19,20 @@ service cloud.firestore {
       return member(ownerId) && memberRole(ownerId) in ['admin', 'staff'];
     }
 
+    function bootstrapsOwnStore(ownerId) {
+      return signedIn() && request.auth.uid == ownerId;
+    }
+
+    function validOwnerBootstrap(ownerId) {
+      return bootstrapsOwnStore(ownerId)
+        && request.resource.data.keys().hasOnly([
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.active == true
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
     function validVariantStockChange(change) {
       let index = change.variantIndex;
       let quantity = change.quantity;
@@ -330,18 +344,35 @@ service cloud.firestore {
     }
 
     match /owners/{ownerId} {
-      allow read: if resource.data.active == true || managesStore(ownerId);
-      allow update: if managesStore(ownerId)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'name', 'slug', 'logoUrl', 'primaryColor', 'secondaryColor',
-          'phone', 'whatsappPhone', 'email', 'instagram', 'facebook',
-          'updatedAt'
-        ]);
-      allow create, delete: if false;
+      allow read: if resource.data.active == true
+        || managesStore(ownerId)
+        || bootstrapsOwnStore(ownerId);
+      allow create: if validOwnerBootstrap(ownerId);
+      allow update: if (managesStore(ownerId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'name', 'slug', 'logoUrl', 'primaryColor', 'secondaryColor',
+            'phone', 'whatsappPhone', 'email', 'instagram', 'facebook',
+            'active', 'updatedAt'
+          ]))
+        || (bootstrapsOwnStore(ownerId)
+          && resource.data.get('active', null) == null
+          && request.resource.data.active == true
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'active', 'updatedAt'
+          ]));
+      allow delete: if false;
 
       match /members/{uid} {
         allow read: if signedIn() && (request.auth.uid == uid || managesStore(ownerId));
-        allow write: if false;
+        allow create: if bootstrapsOwnStore(ownerId)
+          && uid == ownerId
+          && request.resource.data.keys().hasOnly([
+            'role', 'createdAt', 'updatedAt'
+          ])
+          && request.resource.data.role == 'admin'
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.updatedAt is timestamp;
+        allow update, delete: if false;
       }
 
       match /products/{productId} {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/widgets/product_ui.dart';
 import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';

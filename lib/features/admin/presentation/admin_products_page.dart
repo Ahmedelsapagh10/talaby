@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
 import '../../../../core/widgets/ux_states.dart';
@@ -14,6 +15,7 @@ import '../../catalog/data/models/product.dart';
 import '../cubit/admin_products_cubit.dart';
 import '../cubit/admin_products_state.dart';
 import 'widgets/admin_product_tile.dart';
+import 'widgets/admin_products_table.dart';
 
 class AdminProductsPage extends StatefulWidget {
   const AdminProductsPage({super.key});
@@ -45,27 +47,31 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       },
       builder: (context, state) => Stack(
         children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(AppTokens.s24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _header(context),
-                const SizedBox(height: AppTokens.s24),
-                AppTextField(
-                  label: '',
-                  hint: 'search_products_admin'.tr(),
-                  onChanged: _search,
-                ),
-                const SizedBox(height: AppTokens.s24),
-                _content(context, state),
-              ],
+          ResponsiveContentWidth(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppTokens.s24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _header(context),
+                  const SizedBox(height: AppTokens.s24),
+                  AppTextField(
+                    label: '',
+                    hint: 'search_products_admin'.tr(),
+                    onChanged: _search,
+                  ),
+                  const SizedBox(height: AppTokens.s24),
+                  _content(context, state),
+                ],
+              ),
             ),
           ),
           if (state.isUpdating)
-            const Positioned.fill(
+            Positioned.fill(
               child: ColoredBox(
-                color: Colors.black26,
+                color: Theme.of(
+                  context,
+                ).colorScheme.scrim.withValues(alpha: 0.18),
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
@@ -77,10 +83,10 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
   Widget _header(BuildContext context) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text('products'.tr(), style: AppTypography.h2),
+      Text('products'.tr(), style: Theme.of(context).textTheme.headlineMedium),
       AppButton(
         text: 'new_product'.tr(),
-        icon: Icons.add,
+        icon: PhosphorIconsRegular.plus,
         onPressed: () => context.push('/admin/products/new'),
       ),
     ],
@@ -103,17 +109,27 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       return SizedBox(
         height: 320,
         child: EmptyState(
-          icon: Icons.inventory_2_outlined,
+          icon: PhosphorIconsRegular.package,
           title: 'no_products_found'.tr(),
         ),
       );
     }
     return Column(
       children: [
-        ...state.products.map(
-          (product) => AdminProductTile(
-            product: product,
-            onDelete: () => _delete(product),
+        ResponsiveLayout(
+          mobile: Column(
+            children: state.products
+                .map(
+                  (product) => AdminProductTile(
+                    product: product,
+                    onDelete: () => _delete(product),
+                  ),
+                )
+                .toList(),
+          ),
+          desktop: AdminProductsTable(
+            products: state.products,
+            onDelete: _delete,
           ),
         ),
         if (state.hasMore) ...[

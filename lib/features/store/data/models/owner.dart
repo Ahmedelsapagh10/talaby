@@ -93,5 +93,6 @@ class Owner {
     'email': email,
     'instagram': instagram,
     'facebook': facebook,
+    'active': active,
   };
 }

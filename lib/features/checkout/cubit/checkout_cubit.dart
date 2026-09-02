@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../auth/data/auth_repository.dart';
 import '../../cart/data/cart_repository.dart';
 import '../../orders/data/order_repository.dart';
 import '../data/models/checkout_details.dart';
@@ -7,12 +8,13 @@ import '../../profile/data/profile_repository.dart';
 import 'checkout_state.dart';
 
 class CheckoutCubit extends Cubit<CheckoutState> {
-  CheckoutCubit(this._orders, this._cart, this._profiles)
+  CheckoutCubit(this._orders, this._cart, this._profiles, this._auth)
     : super(const CheckoutState());
 
   final OrderRepository _orders;
   final CartRepository _cart;
   final ProfileRepository _profiles;
+  final AuthRepository _auth;
 
   Future<void> loadProfile(String userId) async {
     try {
@@ -36,6 +38,9 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     }
     emit(CheckoutState(status: CheckoutStatus.loading, profile: state.profile));
     try {
+      // Ensure a Firebase user exists; signs in anonymously if needed.
+      await _auth.startGuestCheckout();
+
       final orderId = await _orders.finalizeOrder(
         items: items,
         details: details,

@@ -114,20 +114,24 @@ class StoreBehaviorForm extends StatelessWidget {
   const StoreBehaviorForm({
     super.key,
     required this.currency,
+    required this.storeActive,
     required this.stockControl,
     required this.manualPayment,
     required this.cashOnDelivery,
     required this.onCurrencyChanged,
+    required this.onStoreActiveChanged,
     required this.onStockControlChanged,
     required this.onManualPaymentChanged,
     required this.onCashOnDeliveryChanged,
   });
 
   final String currency;
+  final bool storeActive;
   final bool stockControl;
   final bool manualPayment;
   final bool cashOnDelivery;
   final ValueChanged<String> onCurrencyChanged;
+  final ValueChanged<bool> onStoreActiveChanged;
   final ValueChanged<bool> onStockControlChanged;
   final ValueChanged<bool> onManualPaymentChanged;
   final ValueChanged<bool> onCashOnDeliveryChanged;
@@ -140,6 +144,12 @@ class StoreBehaviorForm extends StatelessWidget {
         initialValue: currency,
         decoration: InputDecoration(labelText: 'currency_code'.tr()),
         onChanged: onCurrencyChanged,
+      ),
+      SwitchListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text('active'.tr()),
+        value: storeActive,
+        onChanged: onStoreActiveChanged,
       ),
       SwitchListTile(
         contentPadding: EdgeInsets.zero,
@@ -174,7 +184,7 @@ class _Panel extends StatelessWidget {
     constraints: const BoxConstraints(maxWidth: 900),
     padding: const EdgeInsets.all(AppTokens.s24),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade200),
+      border: Border.all(color: Theme.of(context).dividerColor),
       borderRadius: BorderRadius.circular(AppTokens.r8),
     ),
     child: Column(

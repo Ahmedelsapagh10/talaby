@@ -1,7 +1,9 @@
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../config/themes/app_colors_extension.dart';
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
 import '../../../store/cubit/store_cubit.dart';
@@ -79,7 +81,7 @@ class _BannerContent extends StatelessWidget {
                 end: isMobile ? -24 : 56,
                 bottom: isMobile ? -22 : -28,
                 child: Icon(
-                  Icons.shopping_bag_outlined,
+                  PhosphorIconsRegular.bag,
                   size: isMobile ? 160 : 270,
                   color: Colors.white.withValues(alpha: 0.12),
                 ),
@@ -140,16 +142,22 @@ class _BannerContent extends StatelessWidget {
     return value.trim().isEmpty ? 'shop_banner_subtitle'.tr() : value;
   }
 
-  static const _backgroundGradient = LinearGradient(
+  static final _backgroundGradient = LinearGradient(
     begin: AlignmentDirectional.topStart,
     end: AlignmentDirectional.bottomEnd,
-    colors: [Color(0xFF111827), Color(0xFF31538E)],
+    colors: [
+      AppColorsExtension.light.textPrimary,
+      AppColorsExtension.light.primary,
+    ],
   );
 
-  static const _imageOverlayGradient = LinearGradient(
+  static final _imageOverlayGradient = LinearGradient(
     begin: AlignmentDirectional.centerStart,
     end: AlignmentDirectional.centerEnd,
-    colors: [Color(0xE6111827), Color(0x4D111827)],
+    colors: [
+      AppColorsExtension.light.textPrimary.withValues(alpha: 0.9),
+      AppColorsExtension.light.textPrimary.withValues(alpha: 0.3),
+    ],
   );
 }
 

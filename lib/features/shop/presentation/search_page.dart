@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
@@ -49,25 +50,27 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: const StoreHeader(),
       body: ResponsiveContentWidth(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTokens.s24),
-          child: Column(
-            children: [
-              SearchBar(
-                controller: _controller,
-                autoFocus: true,
-                hintText: 'search_products'.tr(),
-                leading: const Icon(Icons.search),
-                onChanged: _scheduleSearch,
-                onSubmitted: _search,
-              ),
-              const SizedBox(height: AppTokens.s24),
-              Expanded(
-                child: BlocBuilder<ProductsCubit, ProductsState>(
-                  builder: (context, state) => _results(context, state),
+        child: ResponsiveGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppTokens.s24),
+            child: Column(
+              children: [
+                SearchBar(
+                  controller: _controller,
+                  autoFocus: true,
+                  hintText: 'search_products'.tr(),
+                  leading: const Icon(PhosphorIconsRegular.magnifyingGlass),
+                  onChanged: _scheduleSearch,
+                  onSubmitted: _search,
                 ),
-              ),
-            ],
+                const SizedBox(height: AppTokens.s24),
+                Expanded(
+                  child: BlocBuilder<ProductsCubit, ProductsState>(
+                    builder: (context, state) => _results(context, state),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -76,7 +79,10 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _results(BuildContext context, ProductsState state) {
     if (_controller.text.trim().length < 2) {
-      return EmptyState(icon: Icons.search, title: 'search_min_chars'.tr());
+      return EmptyState(
+        icon: PhosphorIconsRegular.magnifyingGlass,
+        title: 'search_min_chars'.tr(),
+      );
     }
     if (state.status == ProductsStatus.loading) return const LoadingState();
     if (state.status == ProductsStatus.failure) {
@@ -87,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
     }
     if (state.products.isEmpty) {
       return EmptyState(
-        icon: Icons.search_off,
+        icon: PhosphorIconsRegular.magnifyingGlassMinus,
         title: 'no_matching_products'.tr(),
       );
     }

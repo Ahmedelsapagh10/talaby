@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/design_system/typography.dart';
@@ -28,6 +29,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
   bool _stockControl = true;
   bool _manualPayment = true;
   bool _cashOnDelivery = true;
+  bool _storeActive = true;
   bool _bannerEnabled = true;
   String? _bannerImageUrl;
 
@@ -61,7 +63,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
         }
         if (state.owner == null) {
           return EmptyState(
-            icon: Icons.store_outlined,
+            icon: PhosphorIconsRegular.storefront,
             title: 'store_not_configured'.tr(),
           );
         }
@@ -109,11 +111,16 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
                   const SizedBox(height: AppTokens.s24),
                   StoreBehaviorForm(
                     currency: _currency,
+                    storeActive: _storeActive,
                     stockControl: _stockControl,
                     manualPayment: _manualPayment,
                     cashOnDelivery: _cashOnDelivery,
                     onCurrencyChanged: (value) => setState(() {
                       _currency = value;
+                      _dirty = true;
+                    }),
+                    onStoreActiveChanged: (value) => setState(() {
+                      _storeActive = value;
                       _dirty = true;
                     }),
                     onStockControlChanged: (value) => setState(() {
@@ -150,6 +157,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
     fields.fill(state.owner!);
     final settings = state.settings ?? const StoreSettings();
     _currency = settings.currencyCode;
+    _storeActive = state.owner!.active;
     _stockControl = settings.stockControlEnabled;
     _manualPayment = settings.manualPaymentEnabled;
     _cashOnDelivery = settings.cashOnDeliveryEnabled;
@@ -161,7 +169,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
   Future<void> _save() async {
     final cubit = context.read<AdminSettingsCubit>();
     final owner = cubit.state.owner!;
-    await cubit.saveOwner(fields.toOwner(owner));
+    await cubit.saveOwner(fields.toOwner(owner).copyWith(active: _storeActive));
     if (!mounted || cubit.state.status == AdminSettingsStatus.failure) return;
     await cubit.save(
       StoreSettings(

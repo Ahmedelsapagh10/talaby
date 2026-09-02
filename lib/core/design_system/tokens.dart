@@ -4,7 +4,7 @@ class AppTokens {
   static const double tabletMax = 1023;
 
   // Layout Widths
-  static const double maxContentWidth = 1200;
+  static const double maxContentWidth = 1360;
 
   // Spacing (Base 4)
   static const double s4 = 4.0;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:new_strucuture/core/utils/app_colors.dart';
 
 /// A custom ThemeExtension to hold app-specific color definitions.
 @immutable
@@ -8,12 +7,15 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     required this.lightGray,
     required this.primary,
     required this.secondary,
+    required this.accent,
     required this.background,
     required this.backgroundAppBar,
     required this.background2,
     required this.surface,
+    required this.surfaceMuted,
     required this.cardColor,
     required this.borderColor,
+    required this.border,
     required this.textPrimary,
     required this.textSecondary,
     required this.success,
@@ -57,12 +59,15 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   final Color primary;
   final Color secondary;
+  final Color accent;
   final Color background;
   final Color backgroundAppBar;
   final Color background2;
   final Color surface;
+  final Color surfaceMuted;
   final Color cardColor;
   final Color borderColor;
+  final Color border;
   final Color textPrimary;
   final Color textSecondary;
   final Color success;
@@ -118,143 +123,127 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   /// Light theme colors
   static const AppColorsExtension light = AppColorsExtension(
-    primary: AppColors.primary,
-    secondary: AppColors.secondPrimary, //0xFF98A2B3
-    background: Color(0xFFFFFFFF),
-    backgroundAppBar: AppColors.primary,
-    background2: Color(0xFFF4F5F7),
+    primary: Color(0xFF2C5745),
+    secondary: Color(0xFFEBE3A7),
+    accent: Color(0xFFEB7D00),
+    background: Color(0xFFFCFBF8),
+    backgroundAppBar: Color(0xFF2C5745),
+    background2: Color(0xFFF4F3ED),
     surface: Color(0xFFFFFFFF),
-    cardColor: Color(0xFFF7FBFA),
-    borderColor: Color(0xFF98A2B3),
-    textPrimary: AppColors.primary,
-    textSecondary: Color(0xFF98A2B3),
-    success: Color(0xFF2AC769),
-    warning: Color(0xFFF6A609),
-    error: Color(0xFFFB4E4E),
-    grey85: AppColors.secondPrimary,
+    surfaceMuted: Color(0xFFF4F3ED),
+    cardColor: Color(0xFFFFFFFF),
+    borderColor: Color(0xFFE0DCCF),
+    border: Color(0xFFE0DCCF),
+    textPrimary: Color(0xFF2E2910),
+    textSecondary: Color(0xFF7A7563),
+    success: Color(0xFF2C5745),
+    warning: Color(0xFFEB7D00),
+    error: Color(0xFFD64A4A),
+    grey85: Color(0xFF7A7563),
     white: Color(0xFFFFFFFF),
     black: Color(0xFF000000),
-    grey: Color(0xFF9E9E9E),
-    lightGrey: Color(0xFFBBC2CE),
-    greyFA: Color(0xFFF9F9FA),
-    greyE8: Color(0xFFE8E8E8),
-    greyE0: Color(0xFFDCDBE0),
-    greyE1: Color(0xFFE1E1E1),
-    greyCF: Color(0xFFCCCACF),
-    greyA8: Color(0xFFA2A0A8),
-    grey5C: Color(0xFF52525C),
-    grey32: Color(0xFF211F32),
-    grey1F: Color(0xFF15141F),
-    greyE7: Color(0xFFE7E7E7),
-    greyCE: Color(0xFFBBC2CE),
-    greyF3: Color(0xFFEDF1F3),
-    greyF4: Color(0xFFF1F2F4),
-    greyBB: Color(0xFFACB5BB),
-    primaryBackground: AppColors.primary,
-    // Same as primary in light mode
+    grey: Color(0xFFA19C8A),
+    lightGrey: Color(0xFFE0DCCF),
+    greyFA: Color(0xFFF4F3ED),
+    greyE8: Color(0xFFE0DCCF),
+    greyE0: Color(0xFFD1CDBF),
+    greyE1: Color(0xFFD1CDBF),
+    greyCF: Color(0xFFB8B4A5),
+    greyA8: Color(0xFFA19C8A),
+    grey5C: Color(0xFF7A7563),
+    grey32: Color(0xFF423E2D),
+    grey1F: Color(0xFF2E2910),
+    greyE7: Color(0xFFE0DCCF),
+    greyCE: Color(0xFFB8B4A5),
+    greyF3: Color(0xFFF4F3ED),
+    greyF4: Color(0xFFF4F3ED),
+    greyBB: Color(0xFFA19C8A),
+    primaryBackground: Color(0xFF2C5745),
     onPrimaryBackground: Color(0xFFFFFFFF),
-    // White text on primary background
-    fixedPrimary: AppColors.primary,
-
-    // Fixed primary color
-    greenStatus: Color(0xFF40DD7F),
-    redStatus: Color(0xFFFF6262),
-    yellowStatus: Color(0xFFFFB800),
-    completeStatus: AppColors.primary,
-    holdStatus: Color(0xFFb0c8c2),
-    greenTextStatus: Color(0xFF1AB759),
-    redTextStatus: Color(0xFFE93C3C),
-    yellowTextStatus: Color(0xFFF49A47),
-    completeTextStatus: AppColors.primary,
-    holdTextStatus: Color(0xFFb0c8c2),
-    lightGray: Color(0xFFEFF1F4),
-    text242: Color(0xFF404242),
-    text464: Color(0xFF616464),
+    fixedPrimary: Color(0xFF2C5745),
+    greenStatus: Color(0xFF2C5745),
+    redStatus: Color(0xFFD64A4A),
+    yellowStatus: Color(0xFFEB7D00),
+    completeStatus: Color(0xFF2C5745),
+    holdStatus: Color(0xFFEBE3A7),
+    greenTextStatus: Color(0xFF2C5745),
+    redTextStatus: Color(0xFFD64A4A),
+    yellowTextStatus: Color(0xFFEB7D00),
+    completeTextStatus: Color(0xFF2C5745),
+    holdTextStatus: Color(0xFF7A7563),
+    lightGray: Color(0xFFF4F3ED),
+    text242: Color(0xFF423E2D),
+    text464: Color(0xFF7A7563),
   );
 
   /// Dark theme colors
   static const AppColorsExtension dark = AppColorsExtension(
-    primary: Color(0xFFffffff),
-    secondary: Color(0xFFB0BEC5),
-    background: Color(0xFF151F30),
-    backgroundAppBar: Color(0xFF1B2639),
-    background2: Color(0xFF151F30),
-    surface: Color(0xFF1B2639),
-    cardColor: Color(0xFF1B2639),
-    borderColor: Color(0xFF223048),
-    textPrimary: Color(0xFFECEFF1),
-    textSecondary: Color(0xFFB0BEC5),
-    success: Color(0xFF66BB6A),
-    warning: Color(0xFFFFB74D),
-    error: Color(0xFFE57373),
-    grey85: Color(0xFFAAAAAA),
-    white: Color(0xFF1B2639),
-    // Dark mode interpretation of white
+    primary: Color(0xFF2C5745),
+    secondary: Color(0xFFEBE3A7),
+    accent: Color(0xFFEB7D00),
+    background: Color(0xFF1C1A14),
+    backgroundAppBar: Color(0xFF15130F),
+    background2: Color(0xFF24211A),
+    surface: Color(0xFF24211A),
+    surfaceMuted: Color(0xFF2E2A21),
+    cardColor: Color(0xFF24211A),
+    borderColor: Color(0xFF38342A),
+    border: Color(0xFF38342A),
+    textPrimary: Color(0xFFFCFBF8),
+    textSecondary: Color(0xFFB8B4A5),
+    success: Color(0xFF2C5745),
+    warning: Color(0xFFEB7D00),
+    error: Color(0xFFD64A4A),
+    grey85: Color(0xFF7A7563),
+    white: Color(0xFF24211A),
     black: Color(0xFFFFFFFF),
-    // Dark mode interpretation of black
-    lightGrey: Color(0xFFB0BEC5),
-    // Darker version
-    grey: Color(0xFF9E9E9E),
-    greyFA: Color(0xFF151F30),
-    // Darker version
-    greyE8: Color(0xFF223048),
-    // Darker version
-    greyE0: Color(0xFF223048),
-    // Darker version
-    greyE1: Color(0xFF223048),
-    // Darker version
-    greyCF: Color(0xFF223048),
-    // Darker version
-    greyA8: Color(0xFF666666),
-    // Darker version
-    grey5C: Color(0xFF8A8A8A),
-    // Lighter version for dark theme
-    grey32: Color(0xFFB0B0B0),
-    // Lighter version for dark theme
-    grey1F: Color(0xFFC5C5C5),
-    // Lighter version for dark theme
-    greyE7: Color(0xFF223048),
-    // Darker version
-    greyCE: Color(0xFFB0BEC5),
-    // Darker version
-    greyF3: Color(0xFF151F30),
-    // Darker version
-    greyF4: Color(0xFF151F30),
-    // Darker version
-    greyBB: Color(0xFFB0BEC5),
-    // Darker version
-    primaryBackground: Color(0xFF1A2530),
-    // Darker version of primary for dark mode
-    onPrimaryBackground: Color(0xFFECEFF1),
-    // Light text on dark primary background
-    fixedPrimary: AppColors.primary,
-
-    // Same fixed primary color in dark mode
-    greenStatus: Color(0xFF6DE89F),
-    redStatus: Color(0xFFEF9A9A),
-    yellowStatus: Color(0xFFFFD54F),
-    completeStatus: Color(0xFF9FA8DA),
-    holdStatus: Color(0xFFB0BEC5),
-    greenTextStatus: Color(0xFF81C784),
-    redTextStatus: Color(0xFFFFCDD2),
-    yellowTextStatus: Color(0xFFFFE082),
-    completeTextStatus: Color(0xFFC5CAE9),
-    holdTextStatus: Color(0xFFCFD8DC),
-    lightGray: Color(0xFFA9ACB4),
-    text242: Color(0x99FFFFFF),
-    text464: Color(0x99FFFFFF),
+    lightGrey: Color(0xFF423E2D),
+    grey: Color(0xFF7A7563),
+    greyFA: Color(0xFF1C1A14),
+    greyE8: Color(0xFF38342A),
+    greyE0: Color(0xFF38342A),
+    greyE1: Color(0xFF38342A),
+    greyCF: Color(0xFF423E2D),
+    greyA8: Color(0xFF7A7563),
+    grey5C: Color(0xFFB8B4A5),
+    grey32: Color(0xFFD1CDBF),
+    grey1F: Color(0xFFE0DCCF),
+    greyE7: Color(0xFF38342A),
+    greyCE: Color(0xFF423E2D),
+    greyF3: Color(0xFF1C1A14),
+    greyF4: Color(0xFF1C1A14),
+    greyBB: Color(0xFF423E2D),
+    primaryBackground: Color(0xFF15130F),
+    onPrimaryBackground: Color(0xFFFCFBF8),
+    fixedPrimary: Color(0xFF2C5745),
+    greenStatus: Color(0xFF2C5745),
+    redStatus: Color(0xFFD64A4A),
+    yellowStatus: Color(0xFFEB7D00),
+    completeStatus: Color(0xFF2C5745),
+    holdStatus: Color(0xFF38342A),
+    greenTextStatus: Color(0xFF423E2D),
+    redTextStatus: Color(0xFFE0DCCF),
+    yellowTextStatus: Color(0xFFEBE3A7),
+    completeTextStatus: Color(0xFFE0DCCF),
+    holdTextStatus: Color(0xFFB8B4A5),
+    lightGray: Color(0xFF38342A),
+    text242: Color(0xFFE0DCCF),
+    text464: Color(0xFFB8B4A5),
   );
 
   @override
   AppColorsExtension copyWith({
     Color? primary,
     Color? secondary,
+    Color? accent,
     Color? background,
     Color? backgroundAppBar,
     Color? background2,
     Color? surface,
+    Color? surfaceMuted,
     Color? cardColor,
     Color? borderColor,
+    Color? border,
     Color? textPrimary,
     Color? textSecondary,
     Color? success,
@@ -285,16 +274,29 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     Color? lightGray,
     Color? text242,
     Color? text464,
+    Color? greenStatus,
+    Color? redStatus,
+    Color? yellowStatus,
+    Color? completeStatus,
+    Color? holdStatus,
+    Color? greenTextStatus,
+    Color? redTextStatus,
+    Color? yellowTextStatus,
+    Color? completeTextStatus,
+    Color? holdTextStatus,
   }) {
     return AppColorsExtension(
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
+      accent: accent ?? this.accent,
       background: background ?? this.background,
       backgroundAppBar: backgroundAppBar ?? this.backgroundAppBar,
       background2: background2 ?? this.background2,
       surface: surface ?? this.surface,
+      surfaceMuted: surfaceMuted ?? this.surfaceMuted,
       cardColor: cardColor ?? this.cardColor,
       borderColor: borderColor ?? this.borderColor,
+      border: border ?? this.border,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       success: success ?? this.success,
@@ -322,16 +324,16 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
       primaryBackground: primaryBackground ?? this.primaryBackground,
       onPrimaryBackground: onPrimaryBackground ?? this.onPrimaryBackground,
       fixedPrimary: fixedPrimary ?? this.fixedPrimary,
-      greenStatus: greenStatus,
-      redStatus: redStatus,
-      yellowStatus: yellowStatus,
-      completeStatus: completeStatus,
-      holdStatus: holdStatus,
-      greenTextStatus: greenTextStatus,
-      redTextStatus: redTextStatus,
-      yellowTextStatus: yellowTextStatus,
-      completeTextStatus: completeTextStatus,
-      holdTextStatus: holdTextStatus,
+      greenStatus: greenStatus ?? this.greenStatus,
+      redStatus: redStatus ?? this.redStatus,
+      yellowStatus: yellowStatus ?? this.yellowStatus,
+      completeStatus: completeStatus ?? this.completeStatus,
+      holdStatus: holdStatus ?? this.holdStatus,
+      greenTextStatus: greenTextStatus ?? this.greenTextStatus,
+      redTextStatus: redTextStatus ?? this.redTextStatus,
+      yellowTextStatus: yellowTextStatus ?? this.yellowTextStatus,
+      completeTextStatus: completeTextStatus ?? this.completeTextStatus,
+      holdTextStatus: holdTextStatus ?? this.holdTextStatus,
       lightGray: lightGray ?? this.lightGray,
       text242: text242 ?? this.text242,
       text464: text464 ?? this.text464,
@@ -345,6 +347,7 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     return AppColorsExtension(
       primary: Color.lerp(primary, other.primary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
       background: Color.lerp(background, other.background, t)!,
       backgroundAppBar: Color.lerp(
         backgroundAppBar,
@@ -353,8 +356,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
       )!,
       background2: Color.lerp(background2, other.background2, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
+      surfaceMuted: Color.lerp(surfaceMuted, other.surfaceMuted, t)!,
       cardColor: Color.lerp(cardColor, other.cardColor, t)!,
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
+      border: Color.lerp(border, other.border, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       success: Color.lerp(success, other.success, t)!,
@@ -417,8 +422,9 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   @override
   String toString() {
     return 'AppColorsExtension('
-        'primary: $primary, secondary: $secondary, background: $background, '
-        'surface: $surface, cardColor: $cardColor, borderColor: $borderColor, '
+        'primary: $primary, secondary: $secondary, accent: $accent, '
+        'background: $background, surface: $surface, '
+        'surfaceMuted: $surfaceMuted, cardColor: $cardColor, border: $border, '
         'textPrimary: $textPrimary, textSecondary: $textSecondary, success: $success, '
         'warning: $warning, error: $error, grey85: $grey85, '
         'primaryBackground: $primaryBackground, onPrimaryBackground: $onPrimaryBackground, '

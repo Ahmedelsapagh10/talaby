@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/responsive.dart';
 import '../../../../../core/design_system/tokens.dart';
@@ -41,33 +42,32 @@ class ProductDetailsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: ResponsiveContentWidth(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTokens.s16,
-            vertical: AppTokens.s32,
-          ),
-          child: Column(
-            children: [
-              ResponsiveLayout(
-                mobile: Column(
-                  children: [
-                    _gallery(),
-                    const SizedBox(height: AppTokens.s24),
-                    _info(context),
-                  ],
+        child: ResponsiveGutter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppTokens.s32),
+            child: Column(
+              children: [
+                ResponsiveLayout(
+                  mobile: Column(
+                    children: [
+                      _gallery(),
+                      const SizedBox(height: AppTokens.s24),
+                      _info(context),
+                    ],
+                  ),
+                  desktop: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 6, child: _gallery()),
+                      const SizedBox(width: AppTokens.s48),
+                      Expanded(flex: 4, child: _info(context)),
+                    ],
+                  ),
                 ),
-                desktop: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 6, child: _gallery()),
-                    const SizedBox(width: AppTokens.s48),
-                    Expanded(flex: 4, child: _info(context)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppTokens.s48),
-              ProductReviewsSection(product: product),
-            ],
+                const SizedBox(height: AppTokens.s48),
+                ProductReviewsSection(product: product),
+              ],
+            ),
           ),
         ),
       ),
@@ -78,15 +78,18 @@ class ProductDetailsContent extends StatelessWidget {
     final imageUrl = product.images.isEmpty ? '' : product.images.first;
     return AspectRatio(
       aspectRatio: 1,
-      child: ColoredBox(
-        color: Colors.grey.shade100,
-        child: imageUrl.isEmpty
-            ? const Icon(Icons.image_not_supported_outlined)
-            : CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                errorWidget: (_, _, _) => const Icon(Icons.broken_image),
-              ),
+      child: Builder(
+        builder: (context) => ColoredBox(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: imageUrl.isEmpty
+              ? const Icon(PhosphorIconsRegular.imageBroken)
+              : CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) =>
+                      const Icon(PhosphorIconsRegular.imageBroken),
+                ),
+        ),
       ),
     );
   }
@@ -102,14 +105,21 @@ class ProductDetailsContent extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: Text(product.name, style: AppTypography.h2)),
+            Expanded(
+              child: Text(
+                product.name,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
             BlocBuilder<WishlistCubit, WishlistState>(
               builder: (context, state) => IconButton(
                 icon: Icon(
                   state.contains(product.id)
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: state.contains(product.id) ? Colors.red : null,
+                      ? PhosphorIconsFill.heart
+                      : PhosphorIconsRegular.heart,
+                  color: state.contains(product.id)
+                      ? Theme.of(context).colorScheme.error
+                      : null,
                 ),
                 onPressed: () => _toggleFavorite(context),
               ),
@@ -158,7 +168,12 @@ class ProductDetailsContent extends StatelessWidget {
         const SizedBox(height: AppTokens.s24),
         SizedBox(
           width: double.infinity,
-          child: AppButton(text: 'add_to_cart'.tr(), onPressed: onAddToCart),
+          child: AppButton(
+            text: 'add_to_cart'.tr(),
+            icon: PhosphorIconsRegular.bag,
+            variant: AppButtonVariant.accent,
+            onPressed: onAddToCart,
+          ),
         ),
         if (product.description.isNotEmpty) ...[
           const SizedBox(height: AppTokens.s24),

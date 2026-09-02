@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../config/themes/app_colors_extension.dart';
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import 'admin_section.dart';
 
@@ -22,7 +23,7 @@ class AdminShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ResponsiveLayout(
         mobile: _MobileAdminLayout(section: section, child: child),
         desktop: Row(
@@ -53,19 +54,19 @@ class _MobileAdminLayout extends StatelessWidget {
           onDestinationSelected: (value) => _onSelected(context, value),
           destinations: [
             NavigationDestination(
-              icon: const Icon(Icons.dashboard_outlined),
+              icon: Icon(PhosphorIconsRegular.squaresFour),
               label: 'overview'.tr(),
             ),
             NavigationDestination(
-              icon: const Icon(Icons.shopping_bag_outlined),
+              icon: Icon(PhosphorIconsRegular.shoppingBag),
               label: 'orders'.tr(),
             ),
             NavigationDestination(
-              icon: const Icon(Icons.inventory_2_outlined),
+              icon: Icon(PhosphorIconsRegular.package),
               label: 'products'.tr(),
             ),
             NavigationDestination(
-              icon: const Icon(Icons.more_horiz),
+              icon: Icon(PhosphorIconsRegular.dotsThree),
               label: 'more'.tr(),
             ),
           ],
@@ -97,7 +98,7 @@ class _MobileAdminLayout extends StatelessWidget {
               );
             }),
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading: Icon(PhosphorIconsRegular.signOut),
               title: Text('sign_out'.tr()),
               onTap: () {
                 final authCubit = context.read<AuthCubit>();
@@ -119,41 +120,115 @@ class _AdminSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors =
+        theme.extension<AppColorsExtension>() ??
+        (theme.brightness == Brightness.dark
+            ? AppColorsExtension.dark
+            : AppColorsExtension.light);
+    final sidebarColor = theme.brightness == Brightness.light
+        ? colors.textPrimary
+        : colors.surface;
+    final textColor = colors.onPrimaryBackground;
+    final mutedTextColor = textColor.withValues(alpha: 0.68);
+    final selectedTileColor = colors.primary.withValues(alpha: 0.45);
+
     return Container(
-      width: 250,
+      width: 260,
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border(right: BorderSide(color: Colors.grey.shade200)),
+        color: sidebarColor,
+        border: Border(right: BorderSide(color: theme.dividerColor)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(AppTokens.s24),
-            child: Text('admin_title'.tr(), style: AppTypography.h4),
-          ),
-          ...AdminSection.values.map(
-            (item) => ListTile(
-              leading: Icon(_iconFor(item)),
-              title: Text(_labelFor(item)),
-              selected: section == item,
-              selectedTileColor: Colors.grey.shade200,
-              onTap: () => context.go(item.route),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.s24,
+            padding: const EdgeInsets.all(AppTokens.s32),
+            child: Text(
+              'admin_title'.tr(),
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
+          ...AdminSection.values.map((item) {
+            final selected = section == item;
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.s16,
+                vertical: 2,
+              ),
+              child: AnimatedContainer(
+                duration: AppTokens.animFast,
+                decoration: BoxDecoration(
+                  color: selected ? selectedTileColor : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppTokens.r12),
+                ),
+                child: Row(
+                  children: [
+                    AnimatedContainer(
+                      duration: AppTokens.animFast,
+                      width: 4,
+                      height: selected ? 32 : 0,
+                      decoration: BoxDecoration(
+                        color: colors.accent,
+                        borderRadius: BorderRadius.circular(AppTokens.rMax),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListTile(
+                        leading: Icon(
+                          _iconFor(item),
+                          color: selected ? textColor : mutedTextColor,
+                        ),
+                        title: Text(
+                          _labelFor(item),
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: selected ? textColor : mutedTextColor,
+                            fontWeight: selected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                          ),
+                        ),
+                        selected: selected,
+                        onTap: () => context.go(item.route),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: AppTokens.s12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
           const Spacer(),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: Text('sign_out'.tr()),
-            onTap: () => context.read<AuthCubit>().logout(),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppTokens.s24,
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.s16,
+              vertical: AppTokens.s16,
+            ),
+            child: ListTile(
+              leading: Icon(
+                PhosphorIconsRegular.signOut,
+                color: mutedTextColor,
+              ),
+              title: Text(
+                'sign_out'.tr(),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: mutedTextColor,
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTokens.r12),
+              ),
+              onTap: () => context.read<AuthCubit>().logout(),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.s16,
+              ),
             ),
           ),
-          const SizedBox(height: AppTokens.s16),
         ],
       ),
     );
@@ -171,11 +246,11 @@ String _labelFor(AdminSection section) => switch (section) {
 }.tr();
 
 IconData _iconFor(AdminSection section) => switch (section) {
-  AdminSection.overview => Icons.dashboard_outlined,
-  AdminSection.orders => Icons.shopping_bag_outlined,
-  AdminSection.products => Icons.inventory_2_outlined,
-  AdminSection.categories => Icons.category_outlined,
-  AdminSection.customers => Icons.people_outline,
-  AdminSection.reviews => Icons.star_outline,
-  AdminSection.settings => Icons.settings_outlined,
+  AdminSection.overview => PhosphorIconsRegular.squaresFour,
+  AdminSection.orders => PhosphorIconsRegular.shoppingBag,
+  AdminSection.products => PhosphorIconsRegular.package,
+  AdminSection.categories => PhosphorIconsRegular.tag,
+  AdminSection.customers => PhosphorIconsRegular.users,
+  AdminSection.reviews => PhosphorIconsRegular.star,
+  AdminSection.settings => PhosphorIconsRegular.gear,
 };

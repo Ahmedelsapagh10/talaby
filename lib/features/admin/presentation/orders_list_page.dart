@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/design_system/responsive.dart';
 import '../../../../core/design_system/tokens.dart';
-import '../../../../core/design_system/typography.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_text_fields.dart';
 import '../../../../core/widgets/ux_states.dart';
@@ -21,17 +21,22 @@ class OrdersListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AdminOrderCubit, AdminOrderState>(
       builder: (context, state) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTokens.s24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('orders'.tr(), style: AppTypography.h2),
-              const SizedBox(height: AppTokens.s24),
-              _OrderFilters(state: state),
-              const SizedBox(height: AppTokens.s24),
-              _content(context, state),
-            ],
+        return ResponsiveContentWidth(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTokens.s24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'orders'.tr(),
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: AppTokens.s24),
+                _OrderFilters(state: state),
+                const SizedBox(height: AppTokens.s24),
+                _content(context, state),
+              ],
+            ),
           ),
         );
       },
@@ -55,7 +60,7 @@ class OrdersListPage extends StatelessWidget {
       return SizedBox(
         height: 320,
         child: EmptyState(
-          icon: Icons.shopping_bag_outlined,
+          icon: PhosphorIconsRegular.shoppingBag,
           title: 'no_orders_found'.tr(),
         ),
       );
@@ -76,7 +81,7 @@ class OrdersListPage extends StatelessWidget {
           const SizedBox(height: AppTokens.s24),
           AppButton(
             text: 'load_more'.tr(),
-            isPrimary: false,
+            variant: AppButtonVariant.secondary,
             onPressed: context.read<AdminOrderCubit>().loadMore,
           ),
         ],

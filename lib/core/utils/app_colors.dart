@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF31538E); //#F5F7FE
+  static const Color primary = Color(0xFF2C5745);
 
-  static const Color primary49 = Color(0xFF152949);
-  static const Color secondPrimary = Color.fromARGB(255, 19, 198, 198);
+  static const Color primary49 = Color(0xFF2E2910);
+  static const Color secondPrimary = Color(0xFFEBE3A7);
 
-  static const Color primary8e = Color(0xFF31538E);
-  static const Color success = Color(0xFF31538E);
-  static const Color primaryfd = Color(0xFFF4F6FD);
+  static const Color primary8e = Color(0xFF2C5745);
+  static const Color success = Color(0xFF2C5745);
+  static const Color primaryfd = Color(0xFFF4F3ED);
   static const Color grey = Colors.grey;
   static const Color gray = Colors.grey;
-  static const Color secondary = Color(0xFFF5F7FE);
+  static const Color secondary = Color(0xFFF4F3ED);
 
   // alerts
   static const Color success69 = Color(0xFF2AC769);
@@ -33,18 +33,18 @@ class AppColors {
   static const Color error49 = Color(0xFFF04349);
 
   // buttons
-  static const Color disabledf3 = Color(0xFFACBBF3);
-  static const Color disabledfe = Color(0xFFF5F7FE);
+  static const Color disabledf3 = Color(0xFFB8B4A5);
+  static const Color disabledfe = Color(0xFFF4F3ED);
   // static Color get disabledfe => ThemeNotifier.isDarkMode ? const Color(0xFF0E182A) : const Color(0xFFF5F7FE);
 
   // text #
   static const Color textField = Color(0xFFF9F9FA);
-  static const Color text = Color(0xFF152949);
-  static const Color hint = Color(0xFFA2A0A8);
-  static const Color black = Color(0xFF15141F);
-  static const Color greye8 = Color(0xFFE8E8E8);
-  static const Color greyfa = Color(0xFFF9F9FA);
-  static const Color greya8 = Color(0xFFA2A0A8);
+  static const Color text = Color(0xFF2E2910);
+  static const Color hint = Color(0xFF7A7563);
+  static const Color black = Color(0xFF2E2910);
+  static const Color greye8 = Color(0xFFE0DCCF);
+  static const Color greyfa = Color(0xFFF4F3ED);
+  static const Color greya8 = Color(0xFF7A7563);
   // static Color get greya8 => ThemeNotifier.isDarkMode ? const Color(0xFF0E182A) : const Color(0xFFA2A0A8);
 
   static const Color greya9f = Color(0xFF9F9F9F);
@@ -54,13 +54,13 @@ class AppColors {
   static Color greyf8 = const Color(0xFFF5F4F8);
   static Color greya2 = const Color(0xFF8B97A2);
   static Color greyA8 = const Color(0xFFA2A0A8);
-  static Color greyfe = const Color(0xFfF5F7FE);
+  static Color greyfe = const Color(0xFFF4F3ED);
   static Color greyea = const Color(0xFfE6E7EA);
   static Color greyec = const Color(0xFfFDECEC);
   static Color grey2a = const Color(0xFf28292A);
   static Color greyfd = const Color(0xFfFCEDFD);
-  static Color greyfd2 = const Color(0xFff4f6fd);
-  static Color bluefa = const Color(0xFfd8e1fa);
+  static Color greyfd2 = const Color(0xFFF4F3ED);
+  static Color bluefa = const Color(0xFFEBE3A7);
 
   // white
   static Color white = const Color(0xFFFFFFFF);
@@ -69,10 +69,10 @@ class AppColors {
   static const Color bgLigth = Color(0xFFFFFFFF);
   static const Color bgDark = Color(0xFF0E182A);
 
-  static const Color textLight = Color(0xFF152949);
+  static const Color textLight = Color(0xFF2E2910);
   static const Color textDark = Color(0xFFFFFFFF);
 
-  static const Color text2Light = Color(0xFF31538D);
+  static const Color text2Light = Color(0xFF2C5745);
   static const Color text2Dark = Color(0xFFFFFFFF);
 
   static Color greyLight = const Color(0xFF8993A3);

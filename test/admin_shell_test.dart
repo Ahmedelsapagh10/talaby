@@ -30,4 +30,24 @@ void main() {
 
     expect(find.text('categories-content'), findsOneWidget);
   });
+
+  testWidgets('mobile admin shell exposes overflow sections without overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: AdminShell(child: Center(child: Text('overview-content'))),
+      ),
+    );
+    await tester.tap(find.text('more'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('categories'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

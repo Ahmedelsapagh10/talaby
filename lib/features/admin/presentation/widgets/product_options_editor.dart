@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../../core/design_system/tokens.dart';
 import '../../../../../core/design_system/typography.dart';
@@ -40,7 +41,7 @@ class ProductOptionsEditor extends StatelessWidget {
     constraints: const BoxConstraints(maxWidth: 900),
     padding: const EdgeInsets.all(AppTokens.s24),
     decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade200),
+      border: Border.all(color: Theme.of(context).dividerColor),
       borderRadius: BorderRadius.circular(AppTokens.r8),
     ),
     child: Column(
@@ -67,15 +68,15 @@ class ProductOptionsEditor extends StatelessWidget {
             trailing: Wrap(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_upward),
+                  icon: const Icon(PhosphorIconsRegular.arrowUp),
                   onPressed: () => onMoveImage(entry.$1, -1),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.arrow_downward),
+                  icon: const Icon(PhosphorIconsRegular.arrowDown),
                   onPressed: () => onMoveImage(entry.$1, 1),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline),
+                  icon: const Icon(PhosphorIconsRegular.trash),
                   onPressed: () => onRemoveImage(entry.$2),
                 ),
               ],
@@ -93,7 +94,7 @@ class ProductOptionsEditor extends StatelessWidget {
               '${color.hex} · ${'images_count'.tr(namedArgs: {'count': '${color.imageUrls.length}'})}',
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(PhosphorIconsRegular.trash),
               onPressed: () => onRemoveColor(color),
             ),
           ),
@@ -114,7 +115,7 @@ class ProductOptionsEditor extends StatelessWidget {
               ),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(PhosphorIconsRegular.trash),
               onPressed: () => onRemoveVariant(variant),
             ),
           ),
@@ -137,7 +138,7 @@ class _Header extends StatelessWidget {
       Text(title, style: AppTypography.bodyLarge),
       TextButton.icon(
         onPressed: onAdd,
-        icon: const Icon(Icons.add),
+        icon: const Icon(PhosphorIconsRegular.plus),
         label: Text('add'.tr()),
       ),
     ],

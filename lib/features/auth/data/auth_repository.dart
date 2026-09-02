@@ -20,12 +20,14 @@ class AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   bool _googleInitialized = false;
+  Future<void>? _adminBootstrap;
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
 
   Future<AuthSession?> loadSession(User? user) async {
     if (user == null) return null;
+    await _ensureConfiguredAdminStore(user);
     final member = await _firestore.doc(FirestorePaths.member(user.uid)).get();
     final role = UserRoleCodec.fromValue(member.data()?['role']);
     return AuthSession(
@@ -147,6 +149,60 @@ class AuthRepository {
         'createdAt': FieldValue.serverTimestamp(),
       },
     }, SetOptions(merge: true));
+  }
+
+  Future<void> _ensureConfiguredAdminStore(User user) async {
+    if (user.uid != AppConfig.ownerId) return;
+    final inFlight = _adminBootstrap;
+    if (inFlight != null) return inFlight;
+
+    final operation = _bootstrapConfiguredAdminStore();
+    _adminBootstrap = operation;
+    try {
+      await operation;
+    } catch (_) {
+      if (identical(_adminBootstrap, operation)) _adminBootstrap = null;
+      rethrow;
+    }
+  }
+
+  Future<void> _bootstrapConfiguredAdminStore() async {
+    final ownerReference = _firestore.doc(FirestorePaths.owner);
+    final memberReference = _firestore.doc(
+      FirestorePaths.member(AppConfig.ownerId),
+    );
+    final snapshots = await Future.wait([
+      ownerReference.get(),
+      memberReference.get(),
+    ]);
+    final owner = snapshots[0];
+    final member = snapshots[1];
+    final batch = _firestore.batch();
+    final now = FieldValue.serverTimestamp();
+    var hasWrites = false;
+
+    if (!owner.exists) {
+      batch.set(ownerReference, {
+        'active': true,
+        'createdAt': now,
+        'updatedAt': now,
+      });
+      hasWrites = true;
+    } else if (owner.data()?['active'] == null) {
+      batch.update(ownerReference, {'active': true, 'updatedAt': now});
+      hasWrites = true;
+    }
+
+    if (!member.exists) {
+      batch.set(memberReference, {
+        'role': UserRole.admin.value,
+        'createdAt': now,
+        'updatedAt': now,
+      });
+      hasWrites = true;
+    }
+
+    if (hasWrites) await batch.commit();
   }
 
   static String _randomNonce([int length = 32]) {

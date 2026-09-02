@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../design_system/tokens.dart';
-import '../design_system/typography.dart';
 import 'pricing.dart';
 
 class ProductCard extends StatefulWidget {
@@ -33,6 +33,8 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -48,8 +50,12 @@ class _ProductCardState extends State<ProductCard> {
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(AppTokens.r8),
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(AppTokens.r16),
+                        border: Border.all(
+                          color: theme.dividerColor,
+                          width: AppTokens.bThin,
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: AnimatedScale(
@@ -58,9 +64,11 @@ class _ProductCardState extends State<ProductCard> {
                         child: CachedNetworkImage(
                           imageUrl: widget.imageUrl,
                           fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.broken_image,
-                            color: Colors.grey,
+                          errorWidget: (context, url, error) => Icon(
+                            PhosphorIconsRegular.imageBroken,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                       ),
@@ -72,15 +80,20 @@ class _ProductCardState extends State<ProductCard> {
                     child: IconButton(
                       icon: Icon(
                         widget.isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border,
+                            ? PhosphorIconsFill.heart
+                            : PhosphorIconsRegular.heart,
                         color: widget.isFavorite
-                            ? Colors.red
-                            : const Color(0xFF191B1A),
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.onSurface,
+                        size: 20,
                       ),
                       onPressed: widget.onFavoriteToggle,
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.8),
+                        backgroundColor: theme.colorScheme.surface.withValues(
+                          alpha: 0.9,
+                        ),
+                        padding: const EdgeInsets.all(AppTokens.s8),
+                        minimumSize: Size.zero,
                       ),
                     ),
                   ),
@@ -90,9 +103,7 @@ class _ProductCardState extends State<ProductCard> {
             const SizedBox(height: AppTokens.s12),
             Text(
               widget.name,
-              style: AppTypography.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: theme.textTheme.titleSmall,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -126,6 +137,7 @@ class ColorSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Wrap(
       spacing: AppTokens.s8,
       runSpacing: AppTokens.s8,
@@ -141,18 +153,10 @@ class ColorSelector extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF191B1A)
-                    : Colors.grey.shade300,
+                    ? theme.colorScheme.onSurface
+                    : theme.dividerColor,
                 width: isSelected ? AppTokens.bThick : AppTokens.bThin,
               ),
-              boxShadow: [
-                if (isSelected)
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-              ],
             ),
           ),
         );
@@ -175,6 +179,7 @@ class SizeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Wrap(
       spacing: AppTokens.s8,
       runSpacing: AppTokens.s8,
@@ -188,18 +193,22 @@ class SizeSelector extends StatelessWidget {
               vertical: AppTokens.s8,
             ),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF191B1A) : Colors.white,
+              color: isSelected
+                  ? theme.colorScheme.onSurface
+                  : theme.colorScheme.surface,
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF191B1A)
-                    : Colors.grey.shade300,
+                    ? theme.colorScheme.onSurface
+                    : theme.dividerColor,
               ),
-              borderRadius: BorderRadius.circular(AppTokens.r4),
+              borderRadius: BorderRadius.circular(AppTokens.r12),
             ),
             child: Text(
               size,
-              style: AppTypography.bodyMedium.copyWith(
-                color: isSelected ? Colors.white : const Color(0xFF191B1A),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isSelected
+                    ? theme.colorScheme.surface
+                    : theme.colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
@@ -222,15 +231,16 @@ class QuantitySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.remove),
+          icon: Icon(PhosphorIconsRegular.minus, size: 20),
           onPressed: quantity > 1
               ? () => onQuantityChanged(quantity - 1)
               : null,
-          color: const Color(0xFF191B1A),
+          color: theme.colorScheme.onSurface,
         ),
         Container(
           padding: const EdgeInsets.symmetric(
@@ -238,20 +248,20 @@ class QuantitySelector extends StatelessWidget {
             vertical: AppTokens.s8,
           ),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(AppTokens.r4),
+            border: Border.all(color: theme.dividerColor),
+            borderRadius: BorderRadius.circular(AppTokens.r12),
           ),
           child: Text(
             quantity.toString(),
-            style: AppTypography.bodyLarge.copyWith(
+            style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.add),
+          icon: Icon(PhosphorIconsRegular.plus, size: 20),
           onPressed: () => onQuantityChanged(quantity + 1),
-          color: const Color(0xFF191B1A),
+          color: theme.colorScheme.onSurface,
         ),
       ],
     );

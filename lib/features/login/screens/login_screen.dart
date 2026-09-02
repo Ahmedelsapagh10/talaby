@@ -3,6 +3,7 @@ import 'package:new_strucuture/core/exports.dart';
 import 'package:new_strucuture/config/themes/theme_helper.dart';
 import 'package:new_strucuture/core/widgets/custom_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../config/routes/app_routes.dart';
 import '../../auth/cubit/auth_cubit.dart';
 import '../../auth/cubit/auth_state.dart';
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               decoration: BoxDecoration(
                 color: cardBg,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: cardBorder, width: 1),
                 boxShadow: [
                   BoxShadow(
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         tag: 'app-logo',
                         transitionOnUserGestures: true,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           child: Image.asset(
                             ImageAssets.appIconWithoutBG,
                             height: 64,
@@ -177,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: AppColors.greya8,
                         ),
                         prefixIcon: const Icon(
-                          Icons.person_outline_rounded,
+                          PhosphorIconsRegular.user,
                           size: 20,
                           color: AppColors.greya8,
                         ),
@@ -188,25 +189,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         filled: true,
                         fillColor: fieldBg,
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: fieldBorder, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.primary,
                             width: 1.5,
                           ),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.red,
                             width: 1,
                           ),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.red,
                             width: 1.5,
@@ -252,15 +253,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: AppColors.greya8,
                         ),
                         prefixIcon: const Icon(
-                          Icons.lock_outline_rounded,
+                          PhosphorIconsRegular.lock,
                           size: 20,
                           color: AppColors.greya8,
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _showPassword
-                                ? Icons.visibility_off_rounded
-                                : Icons.visibility_rounded,
+                                ? PhosphorIconsRegular.eyeSlash
+                                : PhosphorIconsRegular.eye,
                             size: 20,
                             color: AppColors.greya8,
                           ),
@@ -277,25 +278,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         filled: true,
                         fillColor: fieldBg,
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: fieldBorder, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.primary,
                             width: 1.5,
                           ),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.red,
                             width: 1,
                           ),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
                             color: AppColors.red,
                             width: 1.5,
@@ -351,8 +352,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                       icon: Icon(
                         widget.adminOnly
-                            ? Icons.storefront_outlined
-                            : Icons.admin_panel_settings_outlined,
+                            ? PhosphorIconsRegular.storefront
+                            : PhosphorIconsRegular.shieldCheck,
                       ),
                       label: Text(
                         (widget.adminOnly
