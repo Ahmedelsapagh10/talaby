@@ -56,9 +56,12 @@ class AppRoutes {
 
   static GoRouter createRouter(AuthCubit authCubit, AppFlavor flavor) {
     return GoRouter(
-      initialLocation: flavor == AppFlavor.admin ? Routes.adminLoginRoute : Routes.initialRoute,
+      initialLocation: flavor == AppFlavor.admin
+          ? Routes.adminLoginRoute
+          : Routes.initialRoute,
       refreshListenable: CubitRouterRefresh(authCubit),
-      redirect: (context, state) => resolveRedirect(authCubit.state, state.uri, flavor),
+      redirect: (context, state) =>
+          resolveRedirect(authCubit.state, state.uri, flavor),
       routes: [
         GoRoute(
           path: Routes.splashRoute,
@@ -165,13 +168,28 @@ class AppRoutes {
     final path = uri.path;
 
     if (flavor == AppFlavor.admin) {
+      final isAdminPath = path == '/admin' || path.startsWith('/admin/');
+      final isPasswordRecoveryPath =
+          path == Routes.forgotPasswordEmailRoute ||
+          path == Routes.forgotPasswordOtpRoute ||
+          path == Routes.forgotPasswordResetRoute;
+
       if (!auth.isAuthenticated || !auth.isAdmin) {
-        return path == Routes.adminLoginRoute ? null : Routes.adminLoginRoute;
+        if (path == Routes.adminLoginRoute || isPasswordRecoveryPath) {
+          return null;
+        }
+        return isAdminPath
+            ? '${Routes.adminLoginRoute}?redirect=${Uri.encodeComponent(uri.toString())}'
+            : Routes.adminLoginRoute;
       }
       if (path == Routes.adminLoginRoute) {
-        return '/admin';
+        final requested = uri.queryParameters['redirect'];
+        return requested != null &&
+                (requested == '/admin' || requested.startsWith('/admin/'))
+            ? requested
+            : '/admin';
       }
-      return null;
+      return isAdminPath ? null : '/admin';
     }
 
     // User Flavor routing

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_strucuture/config/routes/app_routes.dart';
+import 'package:new_strucuture/core/config/app_flavor.dart';
 import 'package:new_strucuture/features/auth/cubit/auth_state.dart';
 import 'package:new_strucuture/features/auth/data/models/auth_session.dart';
 import 'package:new_strucuture/features/auth/data/models/user_role.dart';
@@ -27,6 +28,7 @@ void main() {
     final redirect = AppRoutes.resolveRedirect(
       unauthenticated,
       Uri.parse('/admin/products/42/edit'),
+      AppFlavor.admin,
     );
 
     expect(redirect, '/admin/login?redirect=%2Fadmin%2Fproducts%2F42%2Fedit');
@@ -36,6 +38,7 @@ void main() {
     final redirect = AppRoutes.resolveRedirect(
       admin,
       Uri.parse('/admin/login?redirect=%2Fadmin%2Forders'),
+      AppFlavor.admin,
     );
 
     expect(redirect, '/admin/orders');
@@ -43,14 +46,44 @@ void main() {
 
   test('customer cannot open a protected admin route', () {
     expect(
-      AppRoutes.resolveRedirect(customer, Uri.parse('/admin/products')),
+      AppRoutes.resolveRedirect(
+        customer,
+        Uri.parse('/admin/products'),
+        AppFlavor.user,
+      ),
       Routes.initialRoute,
     );
   });
 
   test('customer stays on admin login long enough to show access denied', () {
     expect(
-      AppRoutes.resolveRedirect(customer, Uri.parse('/admin/login')),
+      AppRoutes.resolveRedirect(
+        customer,
+        Uri.parse('/admin/login'),
+        AppFlavor.admin,
+      ),
+      isNull,
+    );
+  });
+
+  test('admin app keeps an authorized member inside admin routes', () {
+    expect(
+      AppRoutes.resolveRedirect(
+        admin,
+        Uri.parse(Routes.productsRoute),
+        AppFlavor.admin,
+      ),
+      '/admin',
+    );
+  });
+
+  test('admin password recovery remains reachable before login', () {
+    expect(
+      AppRoutes.resolveRedirect(
+        unauthenticated,
+        Uri.parse(Routes.forgotPasswordEmailRoute),
+        AppFlavor.admin,
+      ),
       isNull,
     );
   });

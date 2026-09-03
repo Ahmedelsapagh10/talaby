@@ -30,7 +30,8 @@ class AuthRepository {
     if (user == null) return null;
     await _ensureConfiguredAdminStore(user);
     final member = await _firestore.doc(FirestorePaths.member(user.uid)).get();
-    final role = UserRoleCodec.fromValue(member.data()?['role']);
+    final role =
+        UserRoleCodec.fromValue(member.data()?['role']) ?? UserRole.customer;
     return AuthSession(
       uid: user.uid,
       email: user.email,

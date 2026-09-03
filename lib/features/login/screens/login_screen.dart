@@ -210,8 +210,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           return 'email_required'.tr();
                         }
                         if (!RegExp(
-                              r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
-                            ).hasMatch(value.trim())) {
+                          r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                        ).hasMatch(value.trim())) {
                           return 'email_invalid'.tr();
                         }
                         return null;
@@ -327,27 +327,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           .tr(),
                       onTap: _handleLogin,
                       isLoading: _isLoading,
-                    ),
-                    const SizedBox(height: 12),
-                    TextButton.icon(
-                      onPressed: _isLoading
-                          ? null
-                          : () => context.go(
-                              widget.adminOnly
-                                  ? Routes.loginRoute
-                                  : Routes.adminLoginRoute,
-                            ),
-                      icon: Icon(
-                        widget.adminOnly
-                            ? PhosphorIconsRegular.storefront
-                            : PhosphorIconsRegular.shieldCheck,
-                      ),
-                      label: Text(
-                        (widget.adminOnly
-                                ? 'customer_sign_in'
-                                : 'admin_sign_in')
-                            .tr(),
-                      ),
                     ),
                   ],
                 ),
