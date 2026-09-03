@@ -120,7 +120,7 @@ flutter_launcher_icons:
     generate: true
     image_path: "assets/images/talaby.png"
     background_color: "#FCFBF8"
-    theme_color: "#2C5745"
+    theme_color: "#176B4D"
 
   windows:
     generate: true

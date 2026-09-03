@@ -72,7 +72,7 @@ class DarkTheme {
         surfaceContainerHighest: colors.surfaceMuted,
         error: colors.error,
         onPrimary: Colors.white,
-        onSecondary: Colors.white,
+        onSecondary: const Color(0xFF2E2910),
         onTertiary: const Color(0xFF2E2910),
         onSurface: colors.textPrimary,
         onError: Colors.white,

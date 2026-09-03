@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'hex_color.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF2C5745);
+  static const Color primary = Color(0xFF176B4D);
 
   static const Color primary49 = Color(0xFF2E2910);
-  static const Color secondPrimary = Color(0xFFEBE3A7);
+  static const Color secondPrimary = Color(0xFFF2C14E);
 
-  static const Color primary8e = Color(0xFF2C5745);
-  static const Color success = Color(0xFF2C5745);
+  static const Color primary8e = Color(0xFF176B4D);
+  static const Color success = Color(0xFF176B4D);
   static const Color primaryfd = Color(0xFFF4F3ED);
   static const Color grey = Colors.grey;
   static const Color gray = Colors.grey;
@@ -60,7 +60,7 @@ class AppColors {
   static Color grey2a = const Color(0xFf28292A);
   static Color greyfd = const Color(0xFfFCEDFD);
   static Color greyfd2 = const Color(0xFFF4F3ED);
-  static Color bluefa = const Color(0xFFEBE3A7);
+  static Color bluefa = const Color(0xFFF2C14E);
 
   // white
   static Color white = const Color(0xFFFFFFFF);
@@ -72,7 +72,7 @@ class AppColors {
   static const Color textLight = Color(0xFF2E2910);
   static const Color textDark = Color(0xFFFFFFFF);
 
-  static const Color text2Light = Color(0xFF2C5745);
+  static const Color text2Light = Color(0xFF176B4D);
   static const Color text2Dark = Color(0xFFFFFFFF);
 
   static Color greyLight = const Color(0xFF8993A3);
