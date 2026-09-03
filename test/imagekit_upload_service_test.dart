@@ -12,7 +12,7 @@ void main() {
       config: const ImageKitConfig(
         publicKey: 'public_key',
         privateKey: 'private_key',
-        uploadFolder: '/tenant/uploads',
+        uploadFolder: '/tenant/uploads/',
       ),
       client: client,
     );

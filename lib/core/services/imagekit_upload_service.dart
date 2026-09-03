@@ -14,11 +14,17 @@ class ImageKitConfig {
   });
 
   factory ImageKitConfig.fromEnvironment() => const ImageKitConfig(
-    publicKey: String.fromEnvironment('IMAGEKIT_PUBLIC_KEY'),
-    privateKey: String.fromEnvironment('IMAGEKIT_PRIVATE_KEY'),
+    publicKey: String.fromEnvironment(
+      'IMAGEKIT_PUBLIC_KEY',
+      defaultValue: 'public_/g6fXfLlAms0/Z7QIrTeUBc5fn8=',
+    ),
+    privateKey: String.fromEnvironment(
+      'IMAGEKIT_PRIVATE_KEY',
+      defaultValue: 'private_ZB4PuHTJ+FoKEzBMfWneyrMf1YA=',
+    ),
     uploadFolder: String.fromEnvironment(
       'IMAGEKIT_UPLOAD_FOLDER',
-      defaultValue: '/talaby/uploads',
+      defaultValue: '/talaby/products/',
     ),
   );
 
@@ -121,6 +127,9 @@ class ImageKitUploadService implements ImageUploadService {
   static String _normalizedFolder(String value) {
     final folder = value.trim();
     if (folder.isEmpty) return '/talaby/uploads';
-    return folder.startsWith('/') ? folder : '/$folder';
+    final withoutTrailingSlash = folder.replaceFirst(RegExp(r'/+$'), '');
+    return withoutTrailingSlash.startsWith('/')
+        ? withoutTrailingSlash
+        : '/$withoutTrailingSlash';
   }
 }
