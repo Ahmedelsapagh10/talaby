@@ -25,9 +25,9 @@ void main() {
   test('earthy semantic palette is exposed by the theme extension', () {
     final colors = AppTheme.lightTheme.extension<AppColorsExtension>();
 
-    expect(colors?.primary, const Color(0xFF2C5745));
+    expect(colors?.primary, const Color(0xFF176B4D));
     expect(colors?.accent, const Color(0xFFEB7D00));
-    expect(colors?.secondary, const Color(0xFFEBE3A7));
+    expect(colors?.secondary, const Color(0xFFF2C14E));
     expect(colors?.surfaceMuted, const Color(0xFFF4F3ED));
   });
 

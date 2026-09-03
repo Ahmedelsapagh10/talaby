@@ -72,7 +72,7 @@ class LightTheme {
         surfaceContainerHighest: colors.surfaceMuted,
         error: colors.error,
         onPrimary: Colors.white,
-        onSecondary: Colors.white,
+        onSecondary: colors.textPrimary,
         onTertiary: colors.textPrimary,
         onSurface: colors.textPrimary,
         onError: Colors.white,
