@@ -16,6 +16,8 @@ import 'features/auth/cubit/auth_cubit.dart';
 import 'features/auth/cubit/auth_state.dart';
 import 'features/cart/cubit/cart_cubit.dart';
 import 'features/store/cubit/store_cubit.dart';
+import 'features/store/cubit/store_state.dart';
+import 'features/store/presentation/store_brand_theme.dart';
 import 'features/wishlist/cubit/wishlist_cubit.dart';
 
 class MyApp extends StatefulWidget {
@@ -71,16 +73,28 @@ class _MyAppState extends State<MyApp> {
         listener: (_, state) => _wishlistCubit.bind(state.session?.uid),
         child: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
-            return MaterialApp.router(
-              supportedLocales: const [Locale('ar')],
-              locale: const Locale('ar'),
-              theme: AppTheme.lightThemeFor(context.locale),
-              darkTheme: AppTheme.darkThemeFor(context.locale),
-              themeMode: themeMode,
-              localizationsDelegates: context.localizationDelegates,
-              debugShowCheckedModeBanner: false,
-              title: AppStrings.appName,
-              routerConfig: _router,
+            return BlocBuilder<StoreCubit, StoreState>(
+              buildWhen: (previous, current) =>
+                  previous.owner?.primaryColor != current.owner?.primaryColor ||
+                  previous.owner?.secondaryColor !=
+                      current.owner?.secondaryColor,
+              builder: (context, storeState) => MaterialApp.router(
+                supportedLocales: const [Locale('ar')],
+                locale: const Locale('ar'),
+                theme: applyStoreBrandColors(
+                  AppTheme.lightThemeFor(context.locale),
+                  storeState.owner,
+                ),
+                darkTheme: applyStoreBrandColors(
+                  AppTheme.darkThemeFor(context.locale),
+                  storeState.owner,
+                ),
+                themeMode: themeMode,
+                localizationsDelegates: context.localizationDelegates,
+                debugShowCheckedModeBanner: false,
+                title: AppStrings.appName,
+                routerConfig: _router,
+              ),
             );
           },
         ),
