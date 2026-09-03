@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import '../../../../core/design_system/tokens.dart';
+import '../../../../core/widgets/app_text_fields.dart';
 import '../../../catalog/data/models/product_color.dart';
 import '../../../catalog/data/models/product_variant.dart';
+
+const _dialogContentWidth = 400.0;
 
 Future<ProductColor?> showProductColorDialog(
   BuildContext context,
@@ -13,24 +17,27 @@ Future<ProductColor?> showProductColorDialog(
   final result = await showDialog<ProductColor>(
     context: context,
     builder: (dialogContext) => AlertDialog(
+      scrollable: true,
+      insetPadding: const EdgeInsets.all(AppTokens.s24),
       title: Text('add_color'.tr()),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: name,
-            decoration: InputDecoration(labelText: 'name'.tr()),
-          ),
-          TextField(
-            controller: hex,
-            decoration: InputDecoration(labelText: 'hex_color'.tr()),
-          ),
-          Text(
-            'uploaded_images_count'.tr(
-              namedArgs: {'count': '${images.length}'},
+      content: SizedBox(
+        width: _dialogContentWidth,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppTextField(label: 'name'.tr(), controller: name),
+            const SizedBox(height: AppTokens.s16),
+            AppTextField(label: 'hex_color'.tr(), controller: hex),
+            const SizedBox(height: AppTokens.s16),
+            Text(
+              'uploaded_images_count'.tr(
+                namedArgs: {'count': '${images.length}'},
+              ),
+              style: Theme.of(dialogContext).textTheme.bodySmall,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -73,42 +80,50 @@ Future<ProductVariant?> showProductVariantDialog(
     context: context,
     builder: (dialogContext) => StatefulBuilder(
       builder: (_, setDialogState) => AlertDialog(
+        scrollable: true,
+        insetPadding: const EdgeInsets.all(AppTokens.s24),
         title: Text('add_variant'.tr()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'color'.tr()),
-              items: colors
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value.id,
-                      child: Text(value.name),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) => setDialogState(() => colorId = value),
-            ),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'size'.tr()),
-              items: sizes
-                  .map(
-                    (value) =>
-                        DropdownMenuItem(value: value, child: Text(value)),
-                  )
-                  .toList(),
-              onChanged: (value) => setDialogState(() => sizeId = value),
-            ),
-            TextField(
-              controller: sku,
-              decoration: InputDecoration(labelText: 'sku'.tr()),
-            ),
-            TextField(
-              controller: stock,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'stock'.tr()),
-            ),
-          ],
+        content: SizedBox(
+          width: _dialogContentWidth,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppDropdown<String>(
+                label: 'color'.tr(),
+                value: colorId,
+                items: colors
+                    .map(
+                      (value) => DropdownMenuItem(
+                        value: value.id,
+                        child: Text(value.name),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setDialogState(() => colorId = value),
+              ),
+              const SizedBox(height: AppTokens.s16),
+              AppDropdown<String>(
+                label: 'size'.tr(),
+                value: sizeId,
+                items: sizes
+                    .map(
+                      (value) =>
+                          DropdownMenuItem(value: value, child: Text(value)),
+                    )
+                    .toList(),
+                onChanged: (value) => setDialogState(() => sizeId = value),
+              ),
+              const SizedBox(height: AppTokens.s16),
+              AppTextField(label: 'sku'.tr(), controller: sku),
+              const SizedBox(height: AppTokens.s16),
+              AppTextField(
+                label: 'stock'.tr(),
+                controller: stock,
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
