@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../core/config/app_flavor.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +54,11 @@ class Routes {
 class AppRoutes {
   const AppRoutes._();
 
-  static GoRouter createRouter(AuthCubit authCubit) {
+  static GoRouter createRouter(AuthCubit authCubit, AppFlavor flavor) {
     return GoRouter(
-      initialLocation: Routes.initialRoute,
+      initialLocation: flavor == AppFlavor.admin ? Routes.adminLoginRoute : Routes.initialRoute,
       refreshListenable: CubitRouterRefresh(authCubit),
-      redirect: (context, state) => resolveRedirect(authCubit.state, state.uri),
+      redirect: (context, state) => resolveRedirect(authCubit.state, state.uri, flavor),
       routes: [
         GoRoute(
           path: Routes.splashRoute,
@@ -156,12 +157,24 @@ class AppRoutes {
   }
 
   @visibleForTesting
-  static String? resolveRedirect(AuthState auth, Uri uri) {
+  static String? resolveRedirect(AuthState auth, Uri uri, AppFlavor flavor) {
     if (auth.status == AuthStatus.initial ||
         auth.status == AuthStatus.loading) {
       return null;
     }
     final path = uri.path;
+
+    if (flavor == AppFlavor.admin) {
+      if (!auth.isAuthenticated || !auth.isAdmin) {
+        return path == Routes.adminLoginRoute ? null : Routes.adminLoginRoute;
+      }
+      if (path == Routes.adminLoginRoute) {
+        return '/admin';
+      }
+      return null;
+    }
+
+    // User Flavor routing
     final isAdminLogin = path == Routes.adminLoginRoute;
     final isAdminPath = path == '/admin' || path.startsWith('/admin/');
     final requiresCustomerAuth =
@@ -169,29 +182,17 @@ class AppRoutes {
         path == Routes.profileRoute ||
         path == Routes.wishlistRoute ||
         path.startsWith('/orders/');
-    if (isAdminLogin) {
-      if (!auth.isAuthenticated || !auth.isAdmin) return null;
-      final requested = uri.queryParameters['redirect'];
-      return requested != null &&
-              requested != Routes.adminLoginRoute &&
-              (requested == '/admin' || requested.startsWith('/admin/'))
-          ? requested
-          : '/admin';
+
+    if (isAdminLogin || isAdminPath) {
+      return Routes.initialRoute; // User app cannot access admin routes
     }
-    if (isAdminPath && !auth.isAdmin) {
-      return '${Routes.adminLoginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
-    }
+
     if (requiresCustomerAuth && !auth.isAuthenticated) {
       return '${Routes.loginRoute}?redirect=${Uri.encodeComponent(uri.toString())}';
     }
     if (path == Routes.loginRoute && auth.isAuthenticated) {
       final requested = uri.queryParameters['redirect'];
-      if (auth.isAdmin) {
-        return requested?.startsWith('/admin') == true ? requested : '/admin';
-      }
-      return requested?.startsWith('/admin') == true
-          ? Routes.initialRoute
-          : requested ?? Routes.initialRoute;
+      return requested ?? Routes.initialRoute;
     }
     return null;
   }

@@ -7,6 +7,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../config/routes/app_routes.dart';
 import '../../../auth/cubit/auth_cubit.dart';
 import '../../../auth/presentation/widgets/social_sign_in_dialog.dart';
+import '../../../../../core/config/app_flavor.dart';
+import 'package:new_strucuture/injector.dart' as injector;
 
 Future<void> openProtectedStoreRoute(BuildContext context, String route) async {
   if (await requireSocialSignIn(context) && context.mounted) {
@@ -43,14 +45,15 @@ void showStoreMenu(BuildContext context) {
             'my_orders',
             Routes.accountRoute,
           ),
-          ListTile(
-            leading: const Icon(PhosphorIconsRegular.shieldCheck),
-            title: Text('dashboard'.tr()),
-            onTap: () {
-              Navigator.pop(sheetContext);
-              context.go('/admin');
-            },
-          ),
+          if (isAdmin && injector.serviceLocator<AppFlavor>() == AppFlavor.admin)
+            ListTile(
+              leading: const Icon(PhosphorIconsRegular.shieldCheck),
+              title: Text('dashboard'.tr()),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                context.go('/admin');
+              },
+            ),
         ],
       ),
     ),

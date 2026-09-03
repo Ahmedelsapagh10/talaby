@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'core/config/app_flavor.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:new_strucuture/config/themes/theme_cubit.dart';
@@ -156,8 +157,9 @@ Future<void> setupRepo() async {
   );
 }
 
-Future<void> setupDependencyInjection() async {
+Future<void> setupDependencyInjection(AppFlavor flavor) async {
   await serviceLocator.reset();
+  serviceLocator.registerLazySingleton<AppFlavor>(() => flavor);
   final sharedPreferences = await SharedPreferences.getInstance();
   serviceLocator.registerLazySingleton(() => sharedPreferences);
   serviceLocator.registerLazySingleton<Box<CartItem>>(

@@ -8,6 +8,7 @@ import 'config/routes/app_routes.dart';
 import 'config/themes/app_theme.dart';
 import 'config/themes/theme_cubit.dart';
 import 'core/utils/app_strings.dart';
+import 'core/config/app_flavor.dart';
 import 'package:new_strucuture/injector.dart' as injector;
 import 'features/login/cubit/cubit.dart';
 import 'features/splash/cubit/cubit.dart';
@@ -18,7 +19,8 @@ import 'features/store/cubit/store_cubit.dart';
 import 'features/wishlist/cubit/wishlist_cubit.dart';
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final AppFlavor flavor;
+  const MyApp({super.key, required this.flavor});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -37,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     _cartCubit = injector.serviceLocator<CartCubit>();
     _wishlistCubit = injector.serviceLocator<WishlistCubit>();
     _wishlistCubit.bind(_authCubit.state.session?.uid);
-    _router = AppRoutes.createRouter(_authCubit);
+    _router = AppRoutes.createRouter(_authCubit, widget.flavor);
   }
 
   @override

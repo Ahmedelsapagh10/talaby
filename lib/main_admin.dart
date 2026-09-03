@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app.dart';
-import 'core/init_config/initalization_config.dart';
-import 'core/utils/data_seeder.dart';
-import 'core/utils/restart_app_class.dart';
-
 import 'core/config/app_flavor.dart';
+import 'core/init_config/initalization_config.dart';
+import 'core/utils/restart_app_class.dart';
 
 void main() async {
   usePathUrlStrategy();
-  await initializationClass(AppFlavor.user);
+  await initializationClass(AppFlavor.admin);
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('ar')],
@@ -25,7 +23,7 @@ void main() async {
           minTextAdapt: true,
           splitScreenMode: true,
           builder: (ctx, child) {
-            return const MyApp(flavor: AppFlavor.user);
+            return const MyApp(flavor: AppFlavor.admin);
           },
         ),
       ),

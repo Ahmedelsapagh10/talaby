@@ -15,9 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:new_strucuture/injector.dart' as injector;
 import '../preferences/preferences.dart';
 
+import '../config/app_flavor.dart';
+
 bool isFirebaseInitialized = false;
 
-Future<void> initializationClass() async {
+Future<void> initializationClass(AppFlavor flavor) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   bool isFirebaseConfigured = false;
@@ -67,7 +69,7 @@ Future<void> initializationClass() async {
   Hive.registerAdapter(CartItemAdapter());
   await Hive.openBox<CartItem>('cart_${AppConfig.ownerId}');
 
-  await injector.setupDependencyInjection();
+  await injector.setupDependencyInjection(flavor);
   await injector.setupCubit();
   await injector.setupRepo();
   Bloc.observer = AppBlocObserver();
